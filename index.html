@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Axiom Prospect Builder</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --surface: #101a2b;
+      --surface-2: #15223a;
+      --text: #f5f1e8;
+      --muted: #b9b3a3;
+      --gold: #d4af37;
+      --gold-2: #f0c75e;
+      --danger: #d06767;
+      --success: #5ebd91;
+      --radius: 14px;
+      --shadow: 0 8px 20px rgba(0,0,0,0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg, #060a12 0%, #0a1120 100%);
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+    h1,h2,h3 { margin: 0 0 10px; }
+    .brand {
+      border: 1px solid #23314d;
+      background: rgba(16,26,43,0.75);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .brand h1 { font-size: 1.5rem; color: var(--gold-2); }
+    .brand p { margin: 6px 0 0; color: var(--muted); }
+    .grid { display: grid; gap: 12px; }
+    .card {
+      background: rgba(16,26,43,0.95);
+      border: 1px solid #253351;
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat {
+      background: var(--surface-2);
+      border: 1px solid #2a3b5e;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .stat .label { color: var(--muted); font-size: 0.82rem; }
+    .stat .value { font-size: 1.35rem; font-weight: 700; color: var(--gold-2); }
+
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+    input, select, textarea, button {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #2a3b5e;
+      background: #0f1a2d;
+      color: var(--text);
+      padding: 10px;
+      font-size: 0.95rem;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .form-grid { display: grid; gap: 10px; }
+    .row { display: grid; gap: 10px; }
+    .btn-row { display: grid; gap: 8px; }
+    button {
+      background: linear-gradient(180deg, var(--gold-2), var(--gold));
+      color: #1b1608;
+      border: 0;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: #1f2f4b;
+      color: var(--text);
+      border: 1px solid #31496f;
+    }
+    button.danger { background: var(--danger); color: #fff; }
+    .tiny { font-size: 0.8rem; color: var(--muted); }
+    .pill-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px; background: #101d33; border: 1px solid #2c4266; border-radius: 999px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 980px; }
+    th,td { padding: 8px; border-bottom: 1px solid #22334f; text-align: left; vertical-align: top; }
+    th { color: var(--gold-2); font-size: 0.85rem; }
+    .actions { display: grid; gap: 6px; }
+    .msg-box { white-space: pre-wrap; background: #0f1a2d; border: 1px solid #2d4367; border-radius: 10px; padding: 10px; }
+
+    @media (min-width: 720px) {
+      .stats { grid-template-columns: repeat(4, minmax(0,1fr)); }
+      .row.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .row.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .btn-row { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="brand">
+      <h1>Axiom Prospect Builder</h1>
+      <p>Internal tool for Axiom AI Systems to manually find, qualify, and track local AI Systems Audit prospects.</p>
+    </section>
+
+    <section class="card">
+      <h2>Dashboard</h2>
+      <div id="dashboard" class="grid stats"></div>
+    </section>
+
+    <section class="card">
+      <h2>Add / Edit Prospect</h2>
+      <form id="prospectForm" class="form-grid">
+        <input type="hidden" id="prospectId" />
+        <div class="row two">
+          <div><label>Business Name</label><input id="businessName" required /></div>
+          <div><label>Owner / Contact Name</label><input id="ownerName" /></div>
+        </div>
+        <div class="row two">
+          <div><label>Business Type</label><input id="businessType" placeholder="e.g., Personal Trainer" /></div>
+          <div><label>City</label><input id="city" placeholder="e.g., Sumter, SC" /></div>
+        </div>
+        <div class="row two">
+          <div><label>Website</label><input id="website" /></div>
+          <div><label>Facebook / LinkedIn</label><input id="socialLink" /></div>
+        </div>
+        <div class="row two">
+          <div><label>Email</label><input id="email" type="email" /></div>
+          <div><label>Phone</label><input id="phone" /></div>
+        </div>
+        <div class="row three">
+          <div><label>Source</label><select id="source"></select></div>
+          <div><label>Pain Point Guess</label><input id="painPointGuess" /></div>
+          <div><label>AI System Angle</label><input id="aiSystemAngle" /></div>
+        </div>
+        <div class="row three">
+          <div><label>Contact Method</label><select id="contactMethod"></select></div>
+          <div><label>Status</label><select id="status"></select></div>
+          <div><label>Message Sent Date</label><input id="messageSentDate" type="date" /></div>
+        </div>
+        <div class="row two">
+          <div><label>Follow-Up Date</label><input id="followUpDate" type="date" /></div>
+          <div><label>Notes</label><textarea id="notes"></textarea></div>
+        </div>
+        <div class="btn-row">
+          <button type="submit">Save Prospect</button>
+          <button type="button" class="secondary" id="resetFormBtn">Reset Form</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Search Helper</h2>
+      <div class="row two">
+        <div><label>Business Category</label><select id="searchCategory"></select></div>
+        <div><label>Location</label><select id="searchLocation"></select></div>
+      </div>
+      <button id="generateSearchBtn">Generate Search Phrases</button>
+      <div id="searchPhrases" class="grid" style="margin-top:10px;"></div>
+    </section>
+
+    <section class="card">
+      <h2>Pain Point Selector</h2>
+      <div id="painPointSelector" class="pill-wrap"></div>
+      <p class="tiny">Click items to quickly paste into the form fields.</p>
+
+      <h2 style="margin-top:16px;">AI System Angle Selector</h2>
+      <div id="aiAngleSelector" class="pill-wrap"></div>
+    </section>
+
+    <section class="card">
+      <h2>Outreach Message Generator</h2>
+      <div class="row three">
+        <div><label>Business Type Context</label><select id="messageBusinessType"></select></div>
+        <div><label>Pain Point Context</label><input id="messagePainPoint" placeholder="Optional" /></div>
+        <div><label>Template Type</label><select id="messageTemplateType"></select></div>
+      </div>
+      <button id="generateMessageBtn">Generate Message</button>
+      <div id="generatedMessage" class="msg-box" style="margin-top:10px;"></div>
+      <div class="btn-row" style="margin-top:8px;"><button id="copyMessageBtn" class="secondary">Copy Message</button></div>
+    </section>
+
+    <section class="card">
+      <h2>Prospect Tracker Table</h2>
+      <div class="row three">
+        <div><label>Search</label><input id="tableSearch" placeholder="Search name, city, notes..." /></div>
+        <div><label>Filter by City</label><select id="filterCity"><option value="">All Cities</option></select></div>
+        <div><label>Filter by Business Type</label><select id="filterType"><option value="">All Types</option></select></div>
+      </div>
+      <div class="row two">
+        <div><label>Filter by Status</label><select id="filterStatus"><option value="">All Statuses</option></select></div>
+        <div style="align-self:end;"><button id="exportCsvBtn">Export All Prospects to CSV</button></div>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Business</th><th>Owner</th><th>Type</th><th>City</th><th>Status</th><th>Follow-Up</th><th>Actions</th></tr></thead><tbody id="prospectTableBody"></tbody></table></div>
+    </section>
+
+    <section class="card">
+      <h2>Template Generator</h2>
+      <div class="row two">
+        <div>
+          <h3>Prospect Notes</h3>
+          <div id="prospectTemplate" class="msg-box"></div>
+          <button class="secondary" data-copy-target="prospectTemplate">Copy Prospect Notes</button>
+        </div>
+        <div>
+          <h3>AI Systems Audit Report Outline</h3>
+          <div id="reportTemplate" class="msg-box"></div>
+          <button class="secondary" data-copy-target="reportTemplate">Copy Report Outline</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'axiom_prospect_builder_v1';
+    const sources = ['Google Maps','Facebook','LinkedIn','Chamber','Referral','Other'];
+    const contactMethods = ['Facebook DM','LinkedIn DM','Email','Phone','Other'];
+    const statuses = ['Not Contacted','Message Sent','Replied','Form Sent','Form Completed','Audit Offered','Audit Sold','Not Interested'];
+    const categories = ['sports coach','batting lessons','pitching instructor','personal trainer','fitness coach','tutoring service','cleaning service','lawn care','landscaping','mobile detailing','pressure washing','photographer','realtor','handyman','small contractor','veteran-owned business','local service business'];
+    const locations = ['Sumter, SC','Dalzell, SC','Shaw AFB area','Manning, SC','Bishopville, SC','Camden, SC','Columbia, SC','Lexington, SC','Irmo, SC','Florence, SC','Orangeburg, SC','Hartsville, SC'];
+    const painPoints = ['Scheduling looks manual','No intake form','Posts say DM to book','Likely repeats customer questions','Needs lead follow-up','Needs review request workflow','Needs quote/estimate workflow','Needs client tracking','Needs content planning','Uses scattered tools','No visible system'];
+    const aiAngles = ['Lead follow-up system','Client intake system','FAQ response assistant','Booking/reminder workflow','Quote/estimate workflow','Customer review system','Content planning system','Client tracking system','SOP/checklist builder','AI message response assistant'];
+
+    const templates = {
+      general: `Hey, I’m Michael with Axiom AI Systems here in South Carolina.\n\nI help small business owners simplify repetitive tasks like customer questions, follow-ups, scheduling, intake forms, and admin work using practical AI workflows and automation.\n\nI noticed your business looks like it may handle a lot through messages and manual follow-up.\n\nWould it be okay if I sent over a short intake form for a founder-rate AI Systems Audit? It helps identify where your workflow could save time.`,
+      coaches: `Hey, I’m Michael with Axiom AI Systems.\n\nI’m working with small business owners, coaches, and instructors to find repetitive tasks that can be simplified with AI, automation, or better workflows.\n\nFor coaches and instructors, that usually means things like scheduling, parent/client messages, session planning, follow-ups, reminders, and tracking client progress.\n\nI’m opening a few founder-rate AI Systems Audits and thought your business may be a good fit.\n\nWould it be okay if I sent over the short intake form?`,
+      service: `Hey, I’m Michael with Axiom AI Systems.\n\nI help local service businesses simplify repetitive admin work like quote requests, customer follow-ups, scheduling, review requests, reminders, and common customer questions.\n\nI’m opening a few founder-rate AI Systems Audits for small businesses in the area.\n\nWould it be okay if I sent over the short intake form to see where your workflow could save time?`,
+      followup: `Hey, just wanted to follow up on this.\n\nI’m still opening a few founder-rate AI Systems Audits for local small businesses. The intake form only takes a few minutes and helps identify where repetitive work, follow-up, scheduling, or admin tasks could be simplified.\n\nWould you like me to send it over?`
+    };
+
+    const $ = id => document.getElementById(id);
+    const prospects = loadProspects();
+
+    function setOptions(id, values){ $(id).innerHTML = values.map(v => `<option value="${v}">${v}</option>`).join(''); }
+    function loadProspects(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; } }
+    function saveProspects(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(prospects)); }
+    function uid(){ return `${Date.now()}_${Math.random().toString(36).slice(2,8)}`; }
+    function copyText(txt){ navigator.clipboard.writeText(txt); }
+
+    function init(){
+      setOptions('source', sources); setOptions('contactMethod', contactMethods); setOptions('status', statuses);
+      setOptions('searchCategory', categories); setOptions('searchLocation', locations);
+      setOptions('filterStatus', [''].concat(statuses));
+      setOptions('messageTemplateType', ['general','coaches','service','followup']);
+      setOptions('messageBusinessType', ['General','Coaches/Instructors','Local Service']);
+      renderSelectors(); renderTemplates(); renderFilters(); renderDashboard(); renderTable();
+    }
+
+    function renderSelectors(){
+      $('painPointSelector').innerHTML = painPoints.map(p => `<button class="secondary" type="button" onclick="document.getElementById('painPointGuess').value='${p.replace(/'/g,"&#39;")}'">${p}</button>`).join('');
+      $('aiAngleSelector').innerHTML = aiAngles.map(a => `<button class="secondary" type="button" onclick="document.getElementById('aiSystemAngle').value='${a.replace(/'/g,"&#39;")}'">${a}</button>`).join('');
+    }
+
+    function renderTemplates(){
+      $('prospectTemplate').textContent = `Axiom Prospect Notes\n\nBusiness Name:\nOwner / Contact:\nBusiness Type:\nCity:\nWebsite / Social:\nSource:\n\nObserved Pain Points:\n-\n\nPossible AI System Angle:\n-\n\nRecommended Outreach Message:\n-\n\nStatus:\nFollow-Up Date:\nNotes:`;
+      $('reportTemplate').textContent = `Axiom AI Systems Report\n\nClient:\nBusiness:\nDate:\n\n1. Business Snapshot\n\n2. Current Workflow Problems\n\n3. Repetitive Tasks Identified\n\n4. AI Opportunities\n\n5. Automation Opportunities\n\n6. Recommended First System\n\n7. Suggested Tools\n\n8. Estimated Time Saved\n\n9. 30-Day Implementation Roadmap\n\n10. Recommended Next Step`;
+    }
+
+    function renderFilters(){
+      const cities = [...new Set(prospects.map(p => p.city).filter(Boolean))];
+      const types = [...new Set(prospects.map(p => p.businessType).filter(Boolean))];
+      $('filterCity').innerHTML = `<option value="">All Cities</option>${cities.map(c => `<option>${c}</option>`).join('')}`;
+      $('filterType').innerHTML = `<option value="">All Types</option>${types.map(t => `<option>${t}</option>`).join('')}`;
+    }
+
+    function renderDashboard(){
+      const today = new Date().toISOString().slice(0,10);
+      const metrics = {
+        'Total Prospects': prospects.length,
+        'Messages Sent': prospects.filter(p=>p.status==='Message Sent').length,
+        'Replies Received': prospects.filter(p=>p.status==='Replied').length,
+        'Forms Sent': prospects.filter(p=>p.status==='Form Sent').length,
+        'Forms Completed': prospects.filter(p=>p.status==='Form Completed').length,
+        'Paid Audits': prospects.filter(p=>p.status==='Audit Sold').length,
+        'Follow-ups Due': prospects.filter(p=>p.followUpDate && p.followUpDate<=today).length
+      };
+      $('dashboard').innerHTML = Object.entries(metrics).map(([k,v]) => `<div class="stat"><div class="label">${k}</div><div class="value">${v}</div></div>`).join('');
+    }
+
+    function filteredProspects(){
+      const q = $('tableSearch').value.toLowerCase();
+      const city = $('filterCity').value;
+      const type = $('filterType').value;
+      const status = $('filterStatus').value;
+      return prospects.filter(p => {
+        const blob = Object.values(p).join(' ').toLowerCase();
+        return (!q || blob.includes(q)) && (!city || p.city===city) && (!type || p.businessType===type) && (!status || p.status===status);
+      });
+    }
+
+    function renderTable(){
+      const rows = filteredProspects();
+      $('prospectTableBody').innerHTML = rows.map(p => `<tr>
+        <td>${p.businessName||''}</td><td>${p.ownerName||''}</td><td>${p.businessType||''}</td><td>${p.city||''}</td><td>${p.status||''}</td><td>${p.followUpDate||''}</td>
+        <td class="actions">
+          <button class="secondary" onclick="editProspect('${p.id}')">Edit</button>
+          <button class="secondary" onclick="copyProspectMessage('${p.id}')">Copy Outreach</button>
+          <button class="secondary" onclick="markFollowUpDone('${p.id}')">Mark Follow-Up Complete</button>
+          <button class="danger" onclick="deleteProspect('${p.id}')">Delete</button>
+        </td></tr>`).join('');
+    }
+
+    function getFormData(){
+      return {
+        id: $('prospectId').value || uid(),
+        businessName: $('businessName').value.trim(), ownerName: $('ownerName').value.trim(), businessType: $('businessType').value.trim(), city: $('city').value.trim(),
+        website: $('website').value.trim(), socialLink: $('socialLink').value.trim(), email: $('email').value.trim(), phone: $('phone').value.trim(),
+        source: $('source').value, painPointGuess: $('painPointGuess').value.trim(), aiSystemAngle: $('aiSystemAngle').value.trim(), contactMethod: $('contactMethod').value,
+        status: $('status').value, messageSentDate: $('messageSentDate').value, followUpDate: $('followUpDate').value, notes: $('notes').value.trim()
+      };
+    }
+
+    function setFormData(p){ Object.keys(p).forEach(k=> $(k) && ($(k).value = p[k] || '')); }
+    function resetForm(){ $('prospectForm').reset(); $('prospectId').value=''; $('status').value='Not Contacted'; }
+
+    window.editProspect = id => { const p = prospects.find(x=>x.id===id); if (p) setFormData(p); window.scrollTo({top:0, behavior:'smooth'}); };
+    window.deleteProspect = id => { const i = prospects.findIndex(x=>x.id===id); if(i>-1){ prospects.splice(i,1); saveProspects(); rerender(); } };
+    window.markFollowUpDone = id => { const p = prospects.find(x=>x.id===id); if(p){ p.followUpDate=''; saveProspects(); rerender(); } };
+    window.copyProspectMessage = id => {
+      const p = prospects.find(x=>x.id===id); if(!p) return;
+      let t = templates.general;
+      const bt = (p.businessType||'').toLowerCase();
+      if (/(coach|trainer|instructor|batting|pitching|tutor)/.test(bt)) t = templates.coaches;
+      else if (/(clean|lawn|landscap|detail|pressure|realtor|handyman|contractor|service)/.test(bt)) t = templates.service;
+      copyText(t);
+    };
+
+    function rerender(){ renderFilters(); renderDashboard(); renderTable(); }
+
+    $('prospectForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const p = getFormData();
+      const i = prospects.findIndex(x => x.id===p.id);
+      if(i>-1) prospects[i] = p; else prospects.push(p);
+      saveProspects(); resetForm(); rerender();
+    });
+    $('resetFormBtn').addEventListener('click', resetForm);
+
+    $('generateSearchBtn').addEventListener('click', () => {
+      const c = $('searchCategory').value.replace(',', '');
+      const l = $('searchLocation').value.replace(',', '');
+      const base = [`${c} ${l}`, `${c} near ${l}`, `${c} ${l} facebook`, `${c} ${l} linkedin`, `${c} ${l} reviews`];
+      $('searchPhrases').innerHTML = base.map(p => `<div class="card" style="padding:10px;"><div>${p}</div><button class="secondary" onclick="navigator.clipboard.writeText('${p.replace(/'/g,"\\'")}')">Copy</button></div>`).join('');
+    });
+
+    $('generateMessageBtn').addEventListener('click', () => {
+      const type = $('messageTemplateType').value;
+      let msg = templates[type] || templates.general;
+      const pain = $('messagePainPoint').value.trim();
+      if (pain) msg += `\n\nContext note: Potential pain point observed: ${pain}.`;
+      $('generatedMessage').textContent = msg;
+    });
+    $('copyMessageBtn').addEventListener('click', () => copyText($('generatedMessage').textContent || templates.general));
+
+    document.querySelectorAll('[data-copy-target]').forEach(btn => {
+      btn.addEventListener('click', ()=> copyText($(btn.dataset.copyTarget).textContent));
+    });
+
+    ['tableSearch','filterCity','filterType','filterStatus'].forEach(id => $(id).addEventListener('input', renderTable));
+    ['filterCity','filterType','filterStatus'].forEach(id => $(id).addEventListener('change', renderTable));
+
+    $('exportCsvBtn').addEventListener('click', () => {
+      const headers = ['Business Name','Owner Name','Business Type','City','Website','Social Link','Email','Phone','Source','Pain Point Guess','AI System Angle','Contact Method','Status','Message Sent Date','Follow-Up Date','Notes'];
+      const rows = prospects.map(p => [p.businessName,p.ownerName,p.businessType,p.city,p.website,p.socialLink,p.email,p.phone,p.source,p.painPointGuess,p.aiSystemAngle,p.contactMethod,p.status,p.messageSentDate,p.followUpDate,p.notes]);
+      const esc = v => `"${(v||'').toString().replaceAll('"','""')}"`;
+      const csv = [headers, ...rows].map(r => r.map(esc).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'axiom_prospects.csv'; a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    init();
+  </script>
+</body>
+</html>

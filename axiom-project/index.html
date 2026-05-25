@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Axiom Follow-Up Command Center</title>
+  <style>
+    :root{--bg:#070b14;--surface:#101a2b;--surface2:#16243d;--text:#f7f2e7;--muted:#b7b09f;--gold:#d4af37;--gold2:#f3cf72;--ok:#5fbf92;--warn:#d7a55c;--bad:#cf6a6a;--r:14px}
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#060a12,#0b1322);color:var(--text);font-family:Inter,system-ui,sans-serif}
+    .app{max-width:1200px;margin:0 auto;padding:14px 14px 84px}
+    .panel{background:rgba(16,26,43,.95);border:1px solid #253451;border-radius:var(--r);padding:14px;margin-bottom:14px}
+    .section{display:none}.section.active{display:block}
+    h1,h2,h3{margin:0 0 8px}.sub{font-size:.85rem;color:var(--muted);margin:0 0 12px}
+    .grid{display:grid;gap:10px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .stat{background:var(--surface2);border:1px solid #314a71;border-radius:10px;padding:10px}.stat b{display:block;color:var(--gold2);font-size:1.2rem}
+    .chipbar{display:flex;gap:8px;overflow:auto;padding-bottom:4px}
+    button,input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #30486f;background:#0f1a2d;color:var(--text)}
+    button{background:linear-gradient(180deg,var(--gold2),var(--gold));border:0;color:#1a1404;font-weight:700;cursor:pointer}
+    .secondary{background:#1e2f4a;color:var(--text);border:1px solid #34517e}.danger{background:var(--bad);color:#fff}
+    .chips button{width:auto;white-space:nowrap}.row{display:grid;gap:10px}.compact{font-size:.9rem}
+    .card{background:var(--surface2);border:1px solid #30486f;border-radius:10px;padding:10px}
+    .head{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+    .meta{font-size:.82rem;color:var(--muted)} .bad{color:#ffb4b4}.warn{color:#ffd894}.ok{color:#9de0bc}
+    .hidden{display:none}.split{display:grid;gap:10px}.nav{position:fixed;left:0;right:0;bottom:0;background:#0b1322;border-top:1px solid #24324d;display:grid;grid-template-columns:repeat(5,1fr);z-index:10}
+    .nav button{border-radius:0;background:transparent;color:var(--muted);padding:10px 4px;border-right:1px solid #1c2942;font-size:.77rem}.nav button.active{color:var(--gold2);background:#111d31}
+    .msg{white-space:pre-wrap;background:#0f1a2d;border:1px solid #30486f;border-radius:10px;padding:10px}
+    @media (min-width:780px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.row.two{grid-template-columns:repeat(2,minmax(0,1fr))}.row.three{grid-template-columns:repeat(3,minmax(0,1fr))}.split{grid-template-columns:1fr 1fr}.app{padding-bottom:20px}.nav{position:sticky;top:0;bottom:auto;margin-bottom:12px;border:1px solid #253451;border-radius:12px;overflow:hidden}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="panel"><h1>Axiom Follow-Up Command Center</h1><p class="sub">Daily operating system for leads, follow-ups, tasks, and next actions. Internal Axiom use only.</p></div>
+
+    <nav class="nav" id="nav"></nav>
+
+    <section id="dashboard" class="panel section active">
+      <h2>Today’s Command Center</h2><p class="sub">Prioritized daily actions in one place.</p>
+      <div id="commandStats" class="grid stats"></div>
+      <div class="split" style="margin-top:10px">
+        <div class="card"><h3>Follow-ups Due / Overdue</h3><div id="followupList" class="compact"></div></div>
+        <div class="card"><h3>High-Priority Tasks</h3><div id="priorityTasks" class="compact"></div></div>
+      </div>
+      <div class="card" style="margin-top:10px"><h3>Open Client Requests + Checklist Due Today</h3><div id="requestsChecklist" class="compact"></div></div>
+    </section>
+
+    <section id="checklist" class="panel section">
+      <h2>Daily Checklist</h2><p class="sub">Must-do operating checklist for follow-up consistency.</p>
+      <div class="row two">
+        <div><input id="checklistTitle" placeholder="Checklist item" /></div>
+        <div><button id="addChecklistBtn">Add Checklist Item</button></div>
+      </div>
+      <div id="checklistWrap" class="grid" style="margin-top:10px"></div>
+    </section>
+
+    <section id="leads" class="panel section">
+      <h2>Leads</h2><p class="sub">Compact cards with expandable details to prevent page bloat.</p>
+      <div class="chipbar chips" id="leadFilters"></div>
+      <form id="leadForm" class="row three" style="margin-top:10px">
+        <input type="hidden" id="leadId" /><input id="leadName" placeholder="Lead/Business name" required/><input id="leadStatus" placeholder="Status (New, Follow-up Needed...)" />
+        <input id="leadPriority" placeholder="Priority (High/Medium/Low)"/><input id="leadDate" type="date"/><input id="leadAction" placeholder="Next action"/>
+        <input id="leadContact" placeholder="Contact info"/><input id="leadSource" placeholder="Lead source"/><input id="leadLastContact" type="date"/>
+        <textarea id="leadNotes" placeholder="Notes"></textarea><button type="submit">Save Lead</button><button type="button" class="secondary" id="leadReset">Reset</button>
+      </form>
+      <div id="leadList" class="grid" style="margin-top:10px"></div>
+    </section>
+
+    <section id="tasks" class="panel section">
+      <h2>Tasks</h2><p class="sub">Compact task cards with quick status/priority filtering.</p>
+      <div class="chipbar chips" id="taskFilters"></div>
+      <form id="taskForm" class="row three" style="margin-top:10px">
+        <input type="hidden" id="taskId" /><input id="taskTitle" placeholder="Task title" required/><input id="taskClient" placeholder="Related client/customer"/>
+        <input id="taskDue" type="date"/><input id="taskPriority" placeholder="Priority"/><input id="taskStatus" placeholder="Status"/>
+        <textarea id="taskNotes" placeholder="Notes"></textarea><button type="submit">Save Task</button><button type="button" class="secondary" id="taskReset">Reset</button>
+      </form>
+      <div id="taskList" class="grid" style="margin-top:10px"></div>
+    </section>
+
+    <section id="templates" class="panel section">
+      <h2>Templates</h2><p class="sub">Reusable outreach templates and notes/report outlines.</p>
+      <div class="row two">
+        <div><button class="secondary tbtn" data-t="general">General Outreach</button></div>
+        <div><button class="secondary tbtn" data-t="followup">Follow-up</button></div>
+      </div>
+      <div id="templateOut" class="msg" style="margin-top:10px"></div>
+      <button id="copyTemplate" class="secondary" style="margin-top:8px">Copy Message</button>
+      <div class="split" style="margin-top:10px">
+        <div><h3>Prospect Notes</h3><div id="prospectTemplate" class="msg"></div><button class="secondary copy-box" data-id="prospectTemplate">Copy Prospect Notes</button></div>
+        <div><h3>AI Systems Audit Report Outline</h3><div id="reportTemplate" class="msg"></div><button class="secondary copy-box" data-id="reportTemplate">Copy Report Outline</button></div>
+      </div>
+    </section>
+  </div>
+
+<script>
+const K='axiom_followup_command_center_v2';
+const today=()=>new Date().toISOString().slice(0,10);
+const state=JSON.parse(localStorage.getItem(K)||'null')||{
+  leads:[{id:'l1',name:'Sumter Shine Detailing',status:'Follow-up Needed',priority:'High',nextFollowUp:today(),nextAction:'Send audit intake form',contact:'owner@shine.com',source:'Facebook',lastContact:today(),notes:'Asked for pricing.'}],
+  tasks:[{id:'t1',title:'Follow up with Sumter Shine',client:'Sumter Shine Detailing',due:today(),priority:'High',status:'Open',notes:'Send follow-up template.'}],
+  checklist:[{id:'c1',title:'Review overdue follow-ups',due:today(),done:false}]
+};
+const navItems=['dashboard','leads','tasks','templates','checklist'];
+let leadFilter='All', taskFilter='All';
+const templates={general:`Hey, I’m Michael with Axiom AI Systems here in South Carolina.\n\nI help small business owners simplify repetitive tasks like follow-ups, scheduling, intake, and admin work with practical AI workflows.\n\nWould it be okay if I sent over a short intake form for a founder-rate AI Systems Audit?`,followup:`Hey, just following up on this.\n\nI’m still opening a few founder-rate AI Systems Audits for local businesses. The intake form is short and helps spot where time can be saved.\n\nWould you like me to send it over?`};
+const $=id=>document.getElementById(id); const save=()=>localStorage.setItem(K,JSON.stringify(state));
+const copy=t=>navigator.clipboard.writeText(t);
+
+function initNav(){ $('nav').innerHTML=navItems.map(n=>`<button data-s="${n}" class="${n==='dashboard'?'active':''}">${n[0].toUpperCase()+n.slice(1)}</button>`).join('');
+  $('nav').querySelectorAll('button').forEach(b=>b.onclick=()=>showSection(b.dataset.s)); }
+function showSection(id){ document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id)); $('nav').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.s===id)); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function renderDashboard(){
+  const due=state.leads.filter(l=>l.nextFollowUp===today()); const overdue=state.leads.filter(l=>l.nextFollowUp && l.nextFollowUp<today());
+  const hp=state.tasks.filter(t=>(t.priority||'').toLowerCase()==='high' && (t.status||'').toLowerCase()!=='completed');
+  const openReq=state.leads.filter(l=>(l.status||'').toLowerCase().includes('waiting on customer')).length;
+  const checkDue=state.checklist.filter(c=>c.due===today()&&!c.done).length;
+  const stats=[['Follow-ups due today',due.length],['Overdue follow-ups',overdue.length],['High-priority tasks',hp.length],['Open client requests',openReq],['Checklist due today',checkDue],['Active leads',state.leads.filter(l=>!['Won','Lost','Archived'].includes(l.status)).length],['Tasks open',state.tasks.filter(t=>t.status!=='Completed').length]];
+  $('commandStats').innerHTML=stats.map(([k,v])=>`<div class="stat"><span>${k}</span><b>${v}</b></div>`).join('');
+  $('followupList').innerHTML=[...due.map(l=>`<div>${l.name} — due today</div>`),...overdue.map(l=>`<div class="bad">${l.name} — overdue ${l.nextFollowUp}</div>`)].join('')||'<div class="ok">No follow-ups due.</div>';
+  $('priorityTasks').innerHTML=hp.map(t=>`<div>${t.title} (${t.client||'No client'})</div>`).join('')||'<div class="ok">No high-priority tasks.</div>';
+  $('requestsChecklist').innerHTML=`<div>Open client requests: ${openReq}</div><div>Checklist items due today: ${checkDue}</div>`;
+}
+
+function leadMatch(l){const s=(l.status||'').toLowerCase(),over=l.nextFollowUp&&l.nextFollowUp<today(); if(leadFilter==='All')return true; if(leadFilter==='Overdue')return !!over; return s===leadFilter.toLowerCase();}
+function renderLeadFilters(){ const filters=['All','New','Follow-up Needed','Waiting on Customer','Won','Lost','Overdue']; $('leadFilters').innerHTML=filters.map(f=>`<button class="secondary ${leadFilter===f?'active':''}" data-f="${f}">${f}</button>`).join(''); $('leadFilters').querySelectorAll('button').forEach(b=>b.onclick=()=>{leadFilter=b.dataset.f;renderLeads();renderLeadFilters();}); }
+function renderLeads(){ $('leadList').innerHTML=state.leads.filter(leadMatch).map(l=>`<div class="card"><div class="head"><div><b>${l.name}</b><div class="meta">${l.status||'-'} • ${l.priority||'-'} • Follow-up: ${l.nextFollowUp||'-'} • Next: ${l.nextAction||'-'}</div></div><button class="secondary" onclick="toggle('lead-${l.id}')">Details</button></div><div id="lead-${l.id}" class="hidden compact" style="margin-top:8px"><div>Contact: ${l.contact||'-'}</div><div>Source: ${l.source||'-'}</div><div>Last contact: ${l.lastContact||'-'}</div><div>Notes: ${l.notes||'-'}</div><div class="row two" style="margin-top:8px"><button class="secondary" onclick="editLead('${l.id}')">Edit</button><button class="danger" onclick="removeLead('${l.id}')">Delete/Archive</button></div></div></div>`).join('')||'<div class="card">No leads in this view.</div>'; }
+
+function taskMatch(t){const due=t.due===today(),over=t.due&&t.due<today(),pri=(t.priority||'').toLowerCase()==='high',st=(t.status||'').toLowerCase(); if(taskFilter==='All')return true; if(taskFilter==='Due Today')return due; if(taskFilter==='Overdue')return over; if(taskFilter==='High Priority')return pri; if(taskFilter==='Waiting')return st.includes('waiting'); if(taskFilter==='Completed')return st==='completed'; return true;}
+function renderTaskFilters(){const f=['All','Due Today','Overdue','High Priority','Waiting','Completed']; $('taskFilters').innerHTML=f.map(x=>`<button class="secondary ${taskFilter===x?'active':''}" data-f="${x}">${x}</button>`).join(''); $('taskFilters').querySelectorAll('button').forEach(b=>b.onclick=()=>{taskFilter=b.dataset.f;renderTasks();renderTaskFilters();});}
+function renderTasks(){ $('taskList').innerHTML=state.tasks.filter(taskMatch).map(t=>`<div class="card"><div class="head"><div><b>${t.title}</b><div class="meta">${t.client||'-'} • Due: ${t.due||'-'} • ${t.priority||'-'} • ${t.status||'-'}</div></div><button class="secondary" onclick="toggle('task-${t.id}')">Details</button></div><div id="task-${t.id}" class="hidden compact" style="margin-top:8px"><div>Notes: ${t.notes||'-'}</div><div class="row two" style="margin-top:8px"><button class="secondary" onclick="editTask('${t.id}')">Edit</button><button class="secondary" onclick="completeTask('${t.id}')">Mark Complete</button></div><button class="danger" style="margin-top:8px" onclick="removeTask('${t.id}')">Delete/Archive</button></div></div>`).join('')||'<div class="card">No tasks in this view.</div>'; }
+
+function renderChecklist(){ $('checklistWrap').innerHTML=state.checklist.map(c=>`<div class="card"><div class="head"><div><b>${c.title}</b><div class="meta">Due: ${c.due||'-'} • ${c.done?'Done':'Open'}</div></div><button class="secondary" onclick="toggleDone('${c.id}')">${c.done?'Undo':'Done'}</button></div></div>`).join('')||'<div class="card">No checklist items yet.</div>'; }
+function renderTemplates(){ $('templateOut').textContent=templates.general; $('prospectTemplate').textContent=`Axiom Prospect Notes\n\nBusiness Name:\nOwner / Contact:\nBusiness Type:\nCity:\nWebsite / Social:\nSource:\n\nObserved Pain Points:\n-\n\nPossible AI System Angle:\n-\n\nRecommended Outreach Message:\n-\n\nStatus:\nFollow-Up Date:\nNotes:`; $('reportTemplate').textContent=`Axiom AI Systems Report\n\nClient:\nBusiness:\nDate:\n\n1. Business Snapshot\n2. Current Workflow Problems\n3. Repetitive Tasks Identified\n4. AI Opportunities\n5. Automation Opportunities\n6. Recommended First System\n7. Suggested Tools\n8. Estimated Time Saved\n9. 30-Day Implementation Roadmap\n10. Recommended Next Step`; }
+
+window.toggle=id=>$(id).classList.toggle('hidden');
+window.editLead=id=>{const l=state.leads.find(x=>x.id===id); if(!l)return; ['leadId','leadName','leadStatus','leadPriority','leadDate','leadAction','leadContact','leadSource','leadLastContact','leadNotes'].forEach((k,i)=>$(k).value=[l.id,l.name,l.status,l.priority,l.nextFollowUp,l.nextAction,l.contact,l.source,l.lastContact,l.notes][i]||''); showSection('leads');};
+window.removeLead=id=>{state.leads=state.leads.filter(x=>x.id!==id); save(); paint();};
+window.editTask=id=>{const t=state.tasks.find(x=>x.id===id); if(!t)return; ['taskId','taskTitle','taskClient','taskDue','taskPriority','taskStatus','taskNotes'].forEach((k,i)=>$(k).value=[t.id,t.title,t.client,t.due,t.priority,t.status,t.notes][i]||''); showSection('tasks');};
+window.completeTask=id=>{const t=state.tasks.find(x=>x.id===id); if(t){t.status='Completed'; save(); paint();}};
+window.removeTask=id=>{state.tasks=state.tasks.filter(x=>x.id!==id); save(); paint();};
+window.toggleDone=id=>{const c=state.checklist.find(x=>x.id===id); if(c){c.done=!c.done; save(); paint();}};
+
+$('leadForm').onsubmit=e=>{e.preventDefault(); const obj={id:$('leadId').value||Date.now().toString(),name:$('leadName').value.trim(),status:$('leadStatus').value.trim()||'New',priority:$('leadPriority').value.trim()||'Medium',nextFollowUp:$('leadDate').value,nextAction:$('leadAction').value.trim(),contact:$('leadContact').value.trim(),source:$('leadSource').value.trim(),lastContact:$('leadLastContact').value,notes:$('leadNotes').value.trim()}; const i=state.leads.findIndex(x=>x.id===obj.id); if(i>-1)state.leads[i]=obj; else state.leads.push(obj); save(); $('leadForm').reset(); $('leadId').value=''; paint();};
+$('taskForm').onsubmit=e=>{e.preventDefault(); const t={id:$('taskId').value||Date.now().toString(),title:$('taskTitle').value.trim(),client:$('taskClient').value.trim(),due:$('taskDue').value,priority:$('taskPriority').value.trim()||'Medium',status:$('taskStatus').value.trim()||'Open',notes:$('taskNotes').value.trim()}; const i=state.tasks.findIndex(x=>x.id===t.id); if(i>-1)state.tasks[i]=t; else state.tasks.push(t); save(); $('taskForm').reset(); $('taskId').value=''; paint();};
+$('addChecklistBtn').onclick=()=>{const title=$('checklistTitle').value.trim(); if(!title)return; state.checklist.push({id:Date.now().toString(),title,due:today(),done:false}); $('checklistTitle').value=''; save(); paint();};
+$('leadReset').onclick=()=>{$('leadForm').reset();$('leadId').value='';}; $('taskReset').onclick=()=>{$('taskForm').reset();$('taskId').value='';};
+
+document.querySelectorAll('.tbtn').forEach(b=>b.onclick=()=>$('templateOut').textContent=templates[b.dataset.t]); $('copyTemplate').onclick=()=>copy($('templateOut').textContent); document.querySelectorAll('.copy-box').forEach(b=>b.onclick=()=>copy($(b.dataset.id).textContent));
+
+function paint(){renderDashboard();renderLeadFilters();renderLeads();renderTaskFilters();renderTasks();renderChecklist();renderTemplates();}
+initNav(); paint();
+</script>
+</body>
+</html>

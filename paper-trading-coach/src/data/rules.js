@@ -1,0 +1,2 @@
+export const quickRules=['QQQ only','Above 100 EMA only','5M trend, 1M entry','Wait for pullback','Wait for doji/reversal','Risk $5 max','Stop after 2 losses','Journal every trade'];
+export const groupedRules={Setup:['Use Heikin Ashi','Use 100 EMA','Trade 9:45-11:00 ET'],Trend:['5M above EMA','1M reclaim EMA before entry'],Entry:['2 red pullback candles','Wait for trigger candle close'],Risk:['Risk <= $5','Target >= 1:1','Max 3 trades/day'],Discipline:['Stop after 2 losses or -$15','No averaging down / adding losers'],Review:['Journal every trade','Discipline over profit']};

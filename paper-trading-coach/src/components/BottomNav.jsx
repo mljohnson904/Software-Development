@@ -1,0 +1,3 @@
+import { Home, ClipboardList, ChartCandlestick, BookOpen, BarChart3, Scale } from 'lucide-react';
+const items=[['dashboard','Dashboard',Home],['command','Command',ClipboardList],['charts','Charts',ChartCandlestick],['journal','Journal',BookOpen],['stats','Stats',BarChart3],['rules','Rules',Scale]];
+export default function BottomNav({page,setPage}){return <div className='fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 md:hidden grid grid-cols-6'>{items.map(([k,l,I])=><button key={k} onClick={()=>setPage(k)} className={`p-2 text-xs ${page===k?'text-sky-400':'text-slate-300'}`}><I className='w-4 h-4 mx-auto'/>{l}</button>)}</div>}

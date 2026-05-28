@@ -1,0 +1,1 @@
+export const calcStats=(trades=[])=>{const total=trades.length,w=trades.filter(t=>t.result==='Win').length,l=trades.filter(t=>t.result==='Loss').length;const pl=trades.reduce((a,b)=>a+Number(b.fakePL||0),0);const wr=total?Math.round(w/total*100):0;const rf=total?Math.round(trades.filter(t=>t.rulesFollowed==='Yes').length/total*100):0;return {total,w,l,pl,wr,rf};};

@@ -443,7 +443,7 @@
         </table>
       </div>
       <p class="muted">So a semester grade is 45% Quarter 1 + 45% Quarter 2 + 10% final exam. Use the calculator below to try numbers.</p>
-      <div class="warn small"><strong>Checked against the manual you uploaded.</strong> Confirmed: Major 60% / Minor 40% (p. 19), final exam 10% of the final course grade for non-EOCEP courses (p. 20), the scale (p. 18), 2 grades a week and 4 majors a quarter (p. 18), and the 4 / 8 / 12 / 18 grade checkpoints (p. 17, 28). <strong>From the district, not printed in the manual:</strong> the 45% / 45% / 10% semester split. <strong>Not stated anywhere:</strong> any rounding rule for quarter or semester grades (the manual rounds only GPAs, to the third decimal). TODO: ask your principal or the PowerSchool setup how grades round. The calculator shows one decimal and does not round to a whole number.</div>
+      <div class="warn small"><strong>Checked against the manual you uploaded.</strong> Confirmed: Major 60% / Minor 40% (p. 19), final exam 10% of the final course grade for non-EOCEP courses (p. 20), the scale (p. 18), 2 grades a week and 4 majors a quarter (p. 18), and the 4 / 8 / 12 / 18 grade checkpoints (p. 17, 28). <strong>From the district, not printed in the manual:</strong> the 45% / 45% / 10% semester split. <strong>Rounding:</strong> the manual has no rounding rule for quarter or semester grades (it rounds only GPAs, to the third decimal). You have seen PowerSchool round .5 and up to the next whole number, so the calculator does that by default, with a switch to turn it off. TODO: confirm with whoever manages PowerSchool whether it rounds at the quarter, the semester, or both.</div>
 
       <h3>Grading scale (p. 18, 29)</h3>
       <div class="table-wrap">
@@ -554,6 +554,7 @@
     <div class="card">
       <h2>Grade calculator</h2>
       <p class="muted">Uses the 60/40 category weights and the 45/45/10 semester split. Enter percentages from 0 to 100.</p>
+      <label class="row" style="margin-bottom:8px"><input type="checkbox" id="gcRound" checked> <span>Round to a whole number (.5 and up rounds up). This is what you have seen in PowerSchool. It is not written in the manual.</span></label>
       <h3>Quarter grade</h3>
       <div class="grid two">
         <div><label class="field" for="gcMajor">Major average (60%)</label><input type="text" id="gcMajor" inputmode="decimal" placeholder="e.g., 82"></div>
@@ -2370,13 +2371,20 @@ If a parent raises something outside your role (grades appeals, discipline, serv
     return isFinite(n) && n >= 0 ? n : NaN;
   }
   function letterFor(p) { return p >= 90 ? "A" : p >= 80 ? "B" : p >= 70 ? "C" : p >= 60 ? "D" : "F"; }
+  function roundOn() { return byId("gcRound").checked; }
+  // Round to a whole number with .5 rounding up. The 6-decimal step keeps values like 89.4999999 from rounding down.
+  function showGrade(g) {
+    if (!roundOn()) return g.toFixed(1) + " (" + letterFor(g) + ")";
+    var r = Math.round(Math.round(g * 1e6) / 1e6);
+    return r + " (" + letterFor(r) + "), from " + g.toFixed(2);
+  }
   function updateQuarterCalc() {
     var out = byId("gcQuarter");
     var maj = parsePct("gcMajor"), min = parsePct("gcMinor");
     if (maj === null || min === null) { out.textContent = "Enter both averages."; return; }
     if (isNaN(maj) || isNaN(min)) { out.textContent = "Enter numbers from 0 to 100."; return; }
     var g = maj * 0.6 + min * 0.4;
-    out.textContent = "Quarter grade: " + g.toFixed(1) + " (" + letterFor(g) + ")";
+    out.textContent = "Quarter grade: " + showGrade(g);
   }
   function updateSemesterCalc() {
     var out = byId("gcSemester"), need = byId("gcNeed");
@@ -2389,11 +2397,11 @@ If a parent raises something outside your role (grades appeals, discipline, serv
       out.textContent = "Enter the final exam score, or see what you need below.";
     } else {
       var g = base + fin * 0.1;
-      out.textContent = "Semester grade: " + g.toFixed(1) + " (" + letterFor(g) + ")";
+      out.textContent = "Semester grade: " + showGrade(g);
     }
-    var parts = [];
+    var parts = [], cut = roundOn() ? 0.5 : 0;
     [[90, "A"], [80, "B"], [70, "C"], [60, "D"]].forEach(function (t) {
-      var req = (t[0] - base) / 0.1;
+      var req = (t[0] - cut - base) / 0.1;
       if (req <= 0) parts.push(t[1] + ": already secured");
       else if (req > 100) parts.push(t[1] + ": not reachable");
       else parts.push(t[1] + ": " + req.toFixed(1));
@@ -2409,12 +2417,13 @@ If a parent raises something outside your role (grades appeals, discipline, serv
     if (isNaN(earned) || isNaN(poss) || isNaN(minor) || isNaN(target) || isNaN(pts)) { out.textContent = "Check the numbers. Percentages run from 0 to 100, and points cannot be negative."; return; }
     if (pts === null || pts === 0) pts = 50;
     if (earned > poss) { out.textContent = "Points earned cannot be more than points possible."; return; }
-    var needMajorPct = (target - minor * 0.4) / 0.6;
+    var needMajorPct = (target - (roundOn() ? 0.5 : 0) - minor * 0.4) / 0.6;
     var needPts = needMajorPct / 100 * (poss + pts) - earned;
     if (needPts <= 0) out.textContent = "Already on track: even a 0 on the next Major keeps the Major average at " + Math.max(needMajorPct, 0).toFixed(1) + "% or better.";
     else if (needPts > pts) out.textContent = "Not reachable with this Major alone: you would need " + needPts.toFixed(1) + " of " + pts + " points (" + (needPts / pts * 100).toFixed(0) + "%).";
     else out.textContent = "You need about " + needPts.toFixed(1) + " of " + pts + " points (" + (needPts / pts * 100).toFixed(0) + "%) on the next Major. The Major average must reach " + needMajorPct.toFixed(1) + "%.";
   }
+  byId("gcRound").addEventListener("change", function () { updateQuarterCalc(); updateSemesterCalc(); updateNextMajor(); });
   ["gcMajor", "gcMinor"].forEach(function (id) { byId(id).addEventListener("input", updateQuarterCalc); });
   ["gcQ1", "gcQ2", "gcFinal"].forEach(function (id) { byId(id).addEventListener("input", updateSemesterCalc); });
   ["gcNmEarned", "gcNmPossible", "gcNmMinor", "gcNmTarget", "gcNmPts"].forEach(function (id) { byId(id).addEventListener("input", updateNextMajor); });

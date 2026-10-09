@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>First-Year Teacher Toolkit</title>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --card: #ffffff;
+    --ink: #1f2933;
+    --muted: #5b6770;
+    --accent: #2f6f5e;
+    --accent-soft: #dcefe9;
+    --line: #d9d4c7;
+    --warn: #9a4f1f;
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161a1d;
+      --card: #20262b;
+      --ink: #e6e9ec;
+      --muted: #9aa5ae;
+      --accent: #6cc3ab;
+      --accent-soft: #1f3a34;
+      --line: #343d44;
+      --warn: #e0a070;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161a1d;
+    --card: #20262b;
+    --ink: #e6e9ec;
+    --muted: #9aa5ae;
+    --accent: #6cc3ab;
+    --accent-soft: #1f3a34;
+    --line: #343d44;
+    --warn: #e0a070;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header {
+    padding: 28px 16px 12px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 { margin: 0 0 4px; font-size: 1.8rem; }
+  header p { margin: 0; color: var(--muted); }
+  nav {
+    position: sticky; top: 0; z-index: 2;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; gap: 6px; overflow-x: auto;
+    padding: 8px 16px;
+  }
+  nav button {
+    flex: 0 0 auto;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    padding: 7px 12px;
+    border-radius: 999px;
+    font: inherit; font-size: 0.92rem;
+    cursor: pointer;
+  }
+  nav button[aria-selected="true"] {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  section.panel { display: none; }
+  section.panel.active { display: block; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .card h2 { margin: 0 0 8px; font-size: 1.2rem; }
+  .card h3 { margin: 16px 0 6px; font-size: 1rem; color: var(--accent); }
+  .muted { color: var(--muted); }
+  .tip {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 10px 0;
+  }
+  .warn {
+    border-left: 4px solid var(--warn);
+    padding: 6px 12px;
+    margin: 10px 0;
+  }
+  ul.checklist { list-style: none; padding: 0; margin: 0; }
+  ul.checklist li { margin: 0; border-bottom: 1px solid var(--line); }
+  ul.checklist li:last-child { border-bottom: none; }
+  ul.checklist label {
+    display: flex; gap: 10px; padding: 9px 0; cursor: pointer; align-items: flex-start;
+  }
+  ul.checklist input[type="checkbox"] { margin-top: 5px; width: 18px; height: 18px; flex: 0 0 auto; accent-color: var(--accent); }
+  ul.checklist input:checked + span { text-decoration: line-through; color: var(--muted); }
+  .progress { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; margin: 10px 0 4px; }
+  .progress > div { height: 100%; background: var(--accent); width: 0; transition: width .2s; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  button.action, a.action {
+    background: var(--accent); color: #fff; border: none;
+    padding: 9px 14px; border-radius: 8px; font: inherit; cursor: pointer;
+    text-decoration: none; display: inline-block;
+  }
+  button.ghost {
+    background: transparent; color: var(--ink); border: 1px solid var(--line);
+    padding: 8px 12px; border-radius: 8px; font: inherit; cursor: pointer;
+  }
+  label.field { display: block; font-weight: 600; margin: 12px 0 4px; font-size: 0.95rem; }
+  input[type="text"], input[type="date"], textarea, select {
+    width: 100%; font: inherit; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+  }
+  textarea { min-height: 80px; resize: vertical; }
+  .grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 700px) { .grid.two { grid-template-columns: 1fr 1fr; } }
+  pre.template {
+    white-space: pre-wrap; word-wrap: break-word;
+    background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; padding: 12px; font: 0.92rem/1.5 ui-monospace, Menlo, Consolas, monospace;
+    margin: 8px 0 0;
+  }
+  details { border-top: 1px solid var(--line); padding: 10px 0; }
+  details:first-of-type { border-top: none; }
+  summary { cursor: pointer; font-weight: 600; }
+  dl dt { font-weight: 600; margin-top: 10px; }
+  dl dd { margin: 2px 0 0 0; color: var(--muted); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  @media print {
+    nav, .no-print { display: none !important; }
+    body { background: #fff; color: #000; }
+    .card { border: 1px solid #999; break-inside: avoid; }
+    section.panel { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>First-Year Teacher Toolkit</h1>
+  <p>Practical checklists, templates, and scripts for your first year. Your progress saves in this browser only.</p>
+</header>
+
+<nav role="tablist" aria-label="Toolkit sections">
+  <div class="inner">
+    <button role="tab" aria-selected="true" aria-controls="p-start" data-tab="start">Start Here</button>
+    <button role="tab" aria-selected="false" aria-controls="p-checklist" data-tab="checklist">Checklists</button>
+    <button role="tab" aria-selected="false" aria-controls="p-lesson" data-tab="lesson">Lesson Planner</button>
+    <button role="tab" aria-selected="false" aria-controls="p-management" data-tab="management">Classroom Management</button>
+    <button role="tab" aria-selected="false" aria-controls="p-scripts" data-tab="scripts">Words to Use</button>
+    <button role="tab" aria-selected="false" aria-controls="p-survival" data-tab="survival">Survival Guide</button>
+    <button role="tab" aria-selected="false" aria-controls="p-glossary" data-tab="glossary">Jargon Decoder</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- START HERE -->
+  <section id="p-start" class="panel active" role="tabpanel">
+    <div class="card">
+      <h2>Welcome. You do not have to know everything yet.</h2>
+      <p>Nobody walks into year one fully prepared. Experienced teachers had the same first-year panic. What matters most is:</p>
+      <ol>
+        <li><strong>Build predictable routines</strong> so students know what to expect.</li>
+        <li><strong>Build relationships</strong> so students want to work with you.</li>
+        <li><strong>Plan one day at a time</strong>, then one week at a time.</li>
+        <li><strong>Ask for help early</strong>, before a problem grows.</li>
+      </ol>
+      <div class="tip"><strong>Give yourself permission:</strong> Your lessons will be rougher than you want. Your room will look unfinished. You will forget something. Those are normal and fixable.</div>
+    </div>
+
+    <div class="card">
+      <h2>Your first three priorities</h2>
+      <div class="grid two">
+        <div>
+          <h3>1. Know the basics</h3>
+          <ul>
+            <li>Bell schedule, lunch, and recess times</li>
+            <li>Where the copier, supplies, and fire exits are</li>
+            <li>Your login info for grades, email, and attendance</li>
+            <li>Who your mentor or go-to colleague is</li>
+          </ul>
+        </div>
+        <div>
+          <h3>2. Know your students</h3>
+          <ul>
+            <li>Check the class roster for students with IEPs or 504 plans</li>
+            <li>Learn names and how to pronounce them</li>
+            <li>Look for allergies or medical notes in the office system</li>
+            <li>Find out who to contact about each student's needs</li>
+          </ul>
+        </div>
+      </div>
+      <h3>3. Make the first week boring on purpose</h3>
+      <p class="muted">Routines are the most valuable thing you can teach in the first weeks. Teach how to enter, sharpen pencils, turn in work, ask for help, and leave. Practice until it is automatic.</p>
+    </div>
+
+    <div class="card">
+      <h2>Quick tips that save you real time</h2>
+      <ul>
+        <li><strong>Do not grade everything.</strong> Pick a few key assignments. Use quick checks (exit tickets, thumbs up, whiteboards) for daily feedback.</li>
+        <li><strong>Set a work cutoff time.</strong> Teaching expands to fill all available hours. Decide when your workday ends and protect it.</li>
+        <li><strong>Save everything you make.</strong> Create a shared folder by unit. Next year's you will be grateful.</li>
+        <li><strong>Document interactions.</strong> Write a short note whenever you contact a parent or have a serious behavior conversation. Include date, what happened, and what you said.</li>
+        <li><strong>Find a friendly, veteran teacher</strong> and ask them, "What do you wish someone had told you in year one?"</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CHECKLISTS -->
+  <section id="p-checklist" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Progress</h2>
+      <p class="muted" id="progressText">0 of 0 done</p>
+      <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+      <div class="row no-print" style="margin-top:8px">
+        <button class="ghost" id="resetChecks" type="button">Reset all checkboxes</button>
+      </div>
+    </div>
+    <div id="checklists"></div>
+  </section>
+
+  <!-- LESSON PLANNER -->
+  <section id="p-lesson" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Lesson Planner</h2>
+      <p class="muted">Fill in the fields, then copy the plan or print it. A simple structure beats a perfect one. Use the same format every day so you can plan faster.</p>
+      <div class="grid two">
+        <div>
+          <label class="field" for="lpTitle">Lesson title</label>
+          <input type="text" id="lpTitle" placeholder="e.g., Adding fractions with unlike denominators">
+        </div>
+        <div>
+          <label class="field" for="lpDate">Date</label>
+          <input type="date" id="lpDate">
+        </div>
+        <div>
+          <label class="field" for="lpClass">Class / period</label>
+          <input type="text" id="lpClass" placeholder="e.g., 6th grade math, period 3">
+        </div>
+        <div>
+          <label class="field" for="lpLength">Length (minutes)</label>
+          <input type="text" id="lpLength" placeholder="e.g., 50">
+        </div>
+      </div>
+      <label class="field" for="lpObjective">Objective: "Students will be able to..."</label>
+      <input type="text" id="lpObjective" placeholder="Students will be able to add two fractions with different denominators.">
+      <label class="field" for="lpSuccess">How will I know they got it? (success criteria)</label>
+      <textarea id="lpSuccess" placeholder="e.g., 4 out of 5 exit ticket problems correct"></textarea>
+      <label class="field" for="lpMaterials">Materials</label>
+      <textarea id="lpMaterials" placeholder="Slides, worksheet, whiteboards, manipulatives..."></textarea>
+
+      <div class="card" style="margin-top:14px; background: var(--bg)">
+        <h3 style="margin-top:0">Lesson flow (time each part)</h3>
+        <div class="grid two">
+          <div><label class="field" for="lpWarm">Warm-up / hook (min)</label><input type="text" id="lpWarm"></div>
+          <div><label class="field" for="lpTeach">Direct teaching / model (min)</label><input type="text" id="lpTeach"></div>
+          <div><label class="field" for="lpPractice">Guided practice together (min)</label><input type="text" id="lpPractice"></div>
+          <div><label class="field" for="lpIndep">Independent practice (min)</label><input type="text" id="lpIndep"></div>
+        </div>
+        <label class="field" for="lpClose">Closing / exit ticket</label>
+        <input type="text" id="lpClose" placeholder="One question students answer as they leave">
+      </div>
+
+      <label class="field" for="lpDiff">Support and extension</label>
+      <textarea id="lpDiff" placeholder="Who needs more support (IEP/504 accommodations, ELL supports)? What do early finishers do?"></textarea>
+      <label class="field" for="lpNotes">Notes for next time</label>
+      <textarea id="lpNotes" placeholder="What worked? What would you change?"></textarea>
+
+      <div class="row no-print" style="margin-top:14px">
+        <button class="action" type="button" id="lpCopy">Copy plan as text</button>
+        <button class="ghost" type="button" id="lpPrint">Print</button>
+        <button class="ghost" type="button" id="lpClear">Clear</button>
+        <span id="lpStatus" class="muted" role="status"></span>
+      </div>
+      <pre class="template" id="lpPreview" style="display:none"></pre>
+    </div>
+
+    <div class="card">
+      <h2>Weekly plan skeleton</h2>
+      <pre class="template">WEEK OF: ____________     UNIT/TOPIC: ____________________
+
+Monday   | Objective:                  | Assessment:
+Tuesday  | Objective:                  | Assessment:
+Wednesday| Objective:                  | Assessment:
+Thursday | Objective:                  | Assessment:
+Friday   | Objective:                  | Assessment:
+
+Grading due this week:
+Parent contacts to make (positive first!):
+Students to check in with:
+Things to prep / copy / print by Monday:
+Plan B if we fall behind:</pre>
+      <div class="tip"><strong>Tip:</strong> Plan Friday first, then Monday. Keep Friday light enough to absorb one lost day.</div>
+    </div>
+  </section>
+
+  <!-- CLASSROOM MANAGEMENT -->
+  <section id="p-management" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>The first-week plan</h2>
+      <p class="muted">Spend most of the first few days teaching procedures, not content.</p>
+      <div class="grid two">
+        <div>
+          <h3>Day 1: Arrive and settle</h3>
+          <ul>
+            <li>Stand at the door and greet every student</li>
+            <li>Show a bell-ringer or entry task on the board</li>
+            <li>Introduce yourself briefly and state two or three expectations</li>
+            <li>Practice entering and leaving until it is smooth</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Days 2 to 5: Teach the systems</h3>
+          <ul>
+            <li>Bathroom and water procedures</li>
+            <li>How to get help when you are stuck</li>
+            <li>Turning in and collecting work</li>
+            <li>Transitions, lining up, and clean-up</li>
+            <li>Signal for attention (and practice it)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Expectations: keep them few and clear</h2>
+      <p>Three to five expectations, stated positively. Post them. Teach them. Refer to them often.</p>
+      <div class="grid two">
+        <div class="tip"><strong>Good:</strong> "Respect people and property," "Come prepared," "Be ready to learn," "Help others"</div>
+        <div class="warn"><strong>Hard to enforce:</strong> "No talking," "Do not be late," "Be good," twelve rules on a poster</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>A simple response ladder</h2>
+      <p>Use the same steps every time. Students learn quickly that your responses are predictable and fair.</p>
+      <ol>
+        <li><strong>Quiet, private reminder</strong> (proximity, a look, a name next to the expectation)</li>
+        <li><strong>Choice statement:</strong> "You can start the work now, or you can talk with me at break. Which one?"</li>
+        <li><strong>Brief private conversation</strong> at a calm moment, not in front of peers</li>
+        <li><strong>Follow your school's written process</strong> (referral, parent contact, admin support)</li>
+      </ol>
+      <div class="warn"><strong>Do not:</strong> argue, threaten consequences you cannot deliver, or make a public example of a student. Keep it calm and brief.</div>
+    </div>
+
+    <div class="card">
+      <h2>Positive reinforcement that works</h2>
+      <ul>
+        <li><strong>Specific praise:</strong> "You checked your work before turning it in. That's a great habit." beats "Good job."</li>
+        <li><strong>Catch students doing the right thing</strong> and name them, especially the students who usually get noticed for the wrong things.</li>
+        <li><strong>Aim for more positive interactions than corrections.</strong> Many teachers find that a 4-to-1 ratio helps.</li>
+        <li><strong>Make a quick positive call home</strong> early in the year. It changes the relationship before a problem starts.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>When a lesson falls apart</h2>
+      <ul>
+        <li>Stop, breathe, and pause. Silence gets attention faster than volume.</li>
+        <li>Shorten the task or switch to a more active format (stand up, partner talk, whiteboards).</li>
+        <li>Give a clear, short reset: "Pencils down, eyes up. Here's what we're doing next."</li>
+        <li>Afterward, write down what happened and what to change. Do not beat yourself up.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SCRIPTS -->
+  <section id="p-scripts" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Scripts and templates</h2>
+      <p class="muted">Copy these and adjust them. Always check your school's communication policies before sending.</p>
+    </div>
+
+    <div class="card">
+      <h2>Parent emails</h2>
+      <details open>
+        <summary>First positive contact</summary>
+        <pre class="template">Subject: Getting to know [Student's first name]
+
+Hello [Parent/Guardian name],
+
+I'm [Your name], [Student's first name]'s [subject/homeroom] teacher this year. I wanted to reach out early to say I'm glad to have [Student] in class.
+
+[Specific positive detail, e.g., "Today [Student] helped a classmate understand the warm-up problem."]
+
+Please feel free to reach me at [email/phone/preferred contact]. I look forward to working together.
+
+Thank you,
+[Your name]</pre>
+      </details>
+      <details>
+        <summary>Concern about behavior or work</summary>
+        <pre class="template">Subject: Checking in about [Student's first name]
+
+Hello [Parent/Guardian name],
+
+I'm reaching out because I've noticed [specific, factual observation, e.g., "[Student] has missed three homework assignments this week"]. I know [Student] is capable of more, and I'd like to work with you on a plan.
+
+Could we find a time to talk this week? I'm available [times]. You can also reply here with any questions.
+
+Thank you,
+[Your name]</pre>
+      </details>
+      <details>
+        <summary>Reply to an upset parent (pause, then respond)</summary>
+        <pre class="template">Hello [Parent/Guardian name],
+
+Thank you for telling me your concerns. I want to understand what happened and make sure [Student] gets the support they need.
+
+I'd like to look at the details and talk with you. Would [day/time] or [alternative] work for a phone call or meeting? If it's easier, I can also call you after school today.
+
+Best,
+[Your name]</pre>
+      </details>
+      <div class="tip"><strong>Rule of thumb:</strong> Wait a few minutes (or until the next day) before replying to an angry email. Stick to facts, and loop in your administrator if the situation escalates.</div>
+    </div>
+
+    <div class="card">
+      <h2>Sentences for hard moments with students</h2>
+      <dl>
+        <dt>When a student refuses to work</dt>
+        <dd>"I can see something is making this hard right now. Can you tell me what it is, or would you like a minute first?"</dd>
+        <dt>When you need the student to stop something right away</dt>
+        <dd>"[Name], I need you to put the phone in the basket now. Thank you."</dd>
+        <dt>When you want to talk privately after class</dt>
+        <dd>"I'm not upset with you. I want to hear your side and figure out what's going on."</dd>
+        <dt>When you don't know the answer</dt>
+        <dd>"That's a great question. I don't know yet. Let me find out and I'll get back to you tomorrow."</dd>
+        <dt>When a student is off-topic</dt>
+        <dd>"I want to hear about that at lunch. Right now, let's get back to [the task]."</dd>
+        <dt>When you made a mistake</dt>
+        <dd>"I got that wrong. Here's the correct version. Thanks for catching it."</dd>
+      </dl>
+    </div>
+
+    <div class="card">
+      <h2>Asking colleagues and admin for help</h2>
+      <pre class="template">Hi [Name], do you have 10 minutes this week? I'm working on [specific issue, e.g., "a plan for students who finish early"] and would love your perspective. I'd especially value [something specific they know about]. Thank you!</pre>
+      <pre class="template">Hi [Admin name], I wanted to flag [situation] early so we can plan together. Here's what I've tried so far: [1-2 bullets]. What support can you offer, and what would you suggest next?</pre>
+    </div>
+  </section>
+
+  <!-- SURVIVAL -->
+  <section id="p-survival" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Time management</h2>
+      <ul>
+        <li><strong>Batch your grading.</strong> Put it in set blocks instead of trickling it in all week.</li>
+        <li><strong>Reuse what you can.</strong> Ask colleagues for their materials and share yours back.</li>
+        <li><strong>Use a simple task list.</strong> Three must-dos each day. Anything else is a bonus.</li>
+        <li><strong>Set an end-of-day shutdown routine:</strong> check tomorrow's plan, close tabs, leave.</li>
+        <li><strong>Protect at least one evening and one weekend day</strong> each week.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Mental health and burnout</h2>
+      <ul>
+        <li>Feeling overwhelmed in year one is common. Persistent exhaustion, dread, or hopelessness is worth talking about with someone you trust.</li>
+        <li>Find one colleague you can vent to, and one who will help you problem-solve.</li>
+        <li>Keep a "good things" list. Write down one student moment each day, even a small one.</li>
+        <li>If you are struggling significantly, contact your school's counselor, employee assistance program, or your doctor. Asking is a sign of strength.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Who to go to for what</h2>
+      <div class="grid two">
+        <div>
+          <h3>Classroom and lesson questions</h3>
+          <p class="muted">Mentor, grade-level or department team, instructional coach</p>
+        </div>
+        <div>
+          <h3>Student behavior or safety</h3>
+          <p class="muted">Your administrator, counselor, behavior specialist. Follow your school's reporting process immediately for any safety concern.</p>
+        </div>
+        <div>
+          <h3>Special education (IEP/504) questions</h3>
+          <p class="muted">Case manager or special education coordinator</p>
+        </div>
+        <div>
+          <h3>Tech, grades, or attendance systems</h3>
+          <p class="muted">Tech support, front office, or your school's data specialist</p>
+        </div>
+        <div>
+          <h3>Pay, contract, benefits, or leave</h3>
+          <p class="muted">HR or your union representative, if you have one</p>
+        </div>
+        <div>
+          <h3>Mandated reporting (abuse or neglect)</h3>
+          <p class="muted">Follow your state's law and your district policy. Report to the proper authority promptly. Do not investigate it yourself.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Documentation habits</h2>
+      <p>Keep a simple, dated log for anything important. Note the date, who was involved, what happened, what you did, and any follow-up. Store it somewhere consistent with your district's policy. Keep your notes factual and professional. Assume anything you write could be read by a parent or administrator.</p>
+    </div>
+
+    <div class="card">
+      <h2>Questions to ask in your first month</h2>
+      <ul>
+        <li>What are the expectations for lesson plans, and how formal should they be?</li>
+        <li>How do I submit grades, and what is the deadline each grading period?</li>
+        <li>What is our referral process for behavior?</li>
+        <li>How do I request a parent meeting or a counselor?</li>
+        <li>Are there required curriculum or pacing guides I need to follow?</li>
+        <li>What do I do if I have a student with a medical emergency?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="p-glossary" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Jargon decoder</h2>
+      <p class="muted">Schools use a lot of acronyms. Terms vary by state and district, so confirm locally.</p>
+      <dl>
+        <dt>IEP (Individualized Education Program)</dt>
+        <dd>A legal plan for students with disabilities that receive special education services. Follow its accommodations exactly.</dd>
+        <dt>504 Plan</dt>
+        <dd>A plan for students with a disability who need accommodations but not specialized instruction.</dd>
+        <dt>MTSS / RTI</dt>
+        <dd>Multi-Tiered System of Supports, or Response to Intervention. A framework for providing increasing levels of support based on need.</dd>
+        <dt>PLC (Professional Learning Community)</dt>
+        <dd>A team that meets regularly to plan, analyze student data, and improve instruction.</dd>
+        <dt>Formative assessment</dt>
+        <dd>Checks during learning (exit tickets, quick questions) used to adjust teaching. Usually not graded heavily.</dd>
+        <dt>Summative assessment</dt>
+        <dd>An end-of-unit or end-of-course evaluation that measures learning.</dd>
+        <dt>Pacing guide</dt>
+        <dd>A calendar showing when to cover each unit or standard.</dd>
+        <dt>Standards (CCSS, TEKS, state standards)</dt>
+        <dd>The learning goals your state or district expects students to meet. Your curriculum should align with them.</dd>
+        <dt>ELL / EL / MLL</dt>
+        <dd>English Learner or Multilingual Learner. Students developing English skills who may need language supports.</dd>
+        <dt>Accommodation vs. modification</dt>
+        <dd>An accommodation changes how a student accesses learning (extra time, a quiet space). A modification changes what is expected. Check each student's plan.</dd>
+        <dt>Bell-ringer / warm-up / do-now</dt>
+        <dd>A short task students begin as soon as they enter, usually to settle them and activate prior knowledge.</dd>
+        <dt>Exit ticket</dt>
+        <dd>A brief question students answer before leaving, giving you quick feedback on what they learned.</dd>
+        <dt>Scaffolding</dt>
+        <dd>Temporary supports (sentence starters, examples, graphic organizers) that you gradually remove as students gain skill.</dd>
+        <dt>Mandated reporter</dt>
+        <dd>A teacher required by law to report suspected child abuse or neglect to the designated authority.</dd>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Tabs ----------
+  var tabs = Array.prototype.slice.call(document.querySelectorAll("nav [data-tab]"));
+  function showTab(name) {
+    tabs.forEach(function (btn) {
+      var on = btn.dataset.tab === name;
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    document.querySelectorAll("section.panel").forEach(function (p) {
+      p.classList.toggle("active", p.id === "p-" + name);
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  tabs.forEach(function (btn) {
+    btn.addEventListener("click", function () { showTab(btn.dataset.tab); });
+  });
+
+  // ---------- Checklists ----------
+  var CHECKLISTS = [
+    {
+      title: "Before the first day",
+      items: [
+        "Get your classroom key, login credentials, and email working",
+        "Find the bell schedule, lunch times, and emergency procedures",
+        "Read the student roster and note IEP/504 accommodations",
+        "Learn where copier, supplies, and staff bathrooms are",
+        "Set up seating chart (you can change it later)",
+        "Post your name, expectations, and daily schedule",
+        "Plan the first three days in detail",
+        "Prepare an entry activity for students to start right away"
+      ]
+    },
+    {
+      title: "Weeks 1 to 2",
+      items: [
+        "Teach and practice entry, exit, and bathroom routines",
+        "Teach how to get help, turn in work, and clean up",
+        "Learn every student's name and how to pronounce it",
+        "Make at least one positive phone call or email home per class",
+        "Introduce your grading system and where grades are posted",
+        "Meet your mentor or go-to colleague for a check-in",
+        "Set up a simple way to track missing work",
+        "Ask your administrator about the behavior referral process"
+      ]
+    },
+    {
+      title: "Weeks 3 to 6",
+      items: [
+        "Review your first formative assessment data and adjust",
+        "Confirm each accommodation is being followed",
+        "Create a plan for students who finish early",
+        "Schedule a conference or check-in with a struggling student",
+        "Set up a shared folder for lessons and resources",
+        "Start a simple documentation log for important conversations",
+        "Ask a colleague to observe or share a lesson",
+        "Protect at least one non-school evening this week"
+      ]
+    },
+    {
+      title: "Midyear",
+      items: [
+        "Review grades and missing work with each class",
+        "Reflect: what routines work, and which need reteaching?",
+        "Check in with your mentor about your goals",
+        "Update your classroom library or materials if needed",
+        "Plan for the holidays or a break so momentum holds",
+        "Ask students for anonymous feedback on what helps them learn",
+        "Take a real break, even a short one, and rest"
+      ]
+    },
+    {
+      title: "End of year",
+      items: [
+        "Finish grades and confirm they are submitted on time",
+        "Clean out your room and return borrowed items",
+        "Save lesson plans, units, and notes for next year",
+        "Write a reflection: what will you keep, change, or drop?",
+        "Thank your mentor and colleagues who helped you",
+        "Celebrate your first year. You made it."
+      ]
+    }
+  ];
+
+  var STORE_KEY = "firstYearToolkit.checks.v1";
+  function loadChecks() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+  function saveChecks(state) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* storage blocked: keep working in memory */ }
+  }
+  var checkState = loadChecks();
+  var allBoxes = [];
+
+  var container = document.getElementById("checklists");
+  CHECKLISTS.forEach(function (list, li) {
+    var card = document.createElement("div");
+    card.className = "card";
+    var h = document.createElement("h2");
+    h.textContent = list.title;
+    card.appendChild(h);
+    var ul = document.createElement("ul");
+    ul.className = "checklist";
+    list.items.forEach(function (text, ii) {
+      var key = li + "-" + ii;
+      var li2 = document.createElement("li");
+      var label = document.createElement("label");
+      var box = document.createElement("input");
+      box.type = "checkbox";
+      box.dataset.key = key;
+      box.checked = !!checkState[key];
+      var span = document.createElement("span");
+      span.textContent = text;
+      label.appendChild(box);
+      label.appendChild(span);
+      li2.appendChild(label);
+      ul.appendChild(li2);
+      allBoxes.push(box);
+      box.addEventListener("change", function () {
+        checkState[key] = box.checked;
+        saveChecks(checkState);
+        updateProgress();
+      });
+    });
+    card.appendChild(ul);
+    container.appendChild(card);
+  });
+
+  function updateProgress() {
+    var done = allBoxes.filter(function (b) { return b.checked; }).length;
+    var total = allBoxes.length;
+    document.getElementById("progressText").textContent = done + " of " + total + " done";
+    document.getElementById("progressBar").style.width = total ? (done / total * 100) + "%" : "0";
+  }
+  document.getElementById("resetChecks").addEventListener("click", function () {
+    if (!confirm("Clear all checkboxes?")) return;
+    checkState = {};
+    saveChecks(checkState);
+    allBoxes.forEach(function (b) { b.checked = false; });
+    updateProgress();
+  });
+  updateProgress();
+
+  // ---------- Lesson planner ----------
+  var LP_FIELDS = ["lpTitle", "lpDate", "lpClass", "lpLength", "lpObjective", "lpSuccess",
+    "lpMaterials", "lpWarm", "lpTeach", "lpPractice", "lpIndep", "lpClose", "lpDiff", "lpNotes"];
+  var LP_STORE = "firstYearToolkit.lesson.v1";
+
+  function readLP() {
+    var out = {};
+    LP_FIELDS.forEach(function (id) { out[id] = document.getElementById(id).value; });
+    return out;
+  }
+  function writeLP(data) {
+    LP_FIELDS.forEach(function (id) {
+      if (data && data[id] != null) document.getElementById(id).value = data[id];
+    });
+  }
+  try { writeLP(JSON.parse(localStorage.getItem(LP_STORE))); } catch (e) { /* ignore */ }
+
+  var lpSaveTimer;
+  LP_FIELDS.forEach(function (id) {
+    document.getElementById(id).addEventListener("input", function () {
+      clearTimeout(lpSaveTimer);
+      lpSaveTimer = setTimeout(function () {
+        try { localStorage.setItem(LP_STORE, JSON.stringify(readLP())); } catch (e) { /* ignore */ }
+      }, 300);
+    });
+  });
+
+  function line(label, value) {
+    return label + ": " + (value && value.trim() ? value.trim() : "(not filled in)");
+  }
+  function buildPlan(d) {
+    return [
+      "LESSON PLAN: " + (d.lpTitle.trim() || "(untitled)"),
+      line("Date", d.lpDate),
+      line("Class", d.lpClass),
+      line("Length", d.lpLength ? d.lpLength + " min" : ""),
+      "",
+      line("Objective", d.lpObjective),
+      line("Success criteria", d.lpSuccess),
+      line("Materials", d.lpMaterials),
+      "",
+      "FLOW",
+      "  Warm-up / hook: " + (d.lpWarm || "-") + " min",
+      "  Direct teaching: " + (d.lpTeach || "-") + " min",
+      "  Guided practice: " + (d.lpPractice || "-") + " min",
+      "  Independent practice: " + (d.lpIndep || "-") + " min",
+      "  Closing / exit ticket: " + (d.lpClose || "(none)"),
+      "",
+      line("Support and extension", d.lpDiff),
+      line("Notes for next time", d.lpNotes)
+    ].join("\n");
+  }
+
+  var preview = document.getElementById("lpPreview");
+  var status = document.getElementById("lpStatus");
+  document.getElementById("lpCopy").addEventListener("click", function () {
+    var text = buildPlan(readLP());
+    preview.textContent = text;
+    preview.style.display = "block";
+    function done(ok) { status.textContent = ok ? "Copied." : "Copy failed. The plan is shown below; select and copy it."; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+    } else {
+      done(false);
+    }
+  });
+  document.getElementById("lpPrint").addEventListener("click", function () {
+    window.print();
+  });
+  document.getElementById("lpClear").addEventListener("click", function () {
+    if (!confirm("Clear this lesson plan?")) return;
+    LP_FIELDS.forEach(function (id) { document.getElementById(id).value = ""; });
+    try { localStorage.removeItem(LP_STORE); } catch (e) { /* ignore */ }
+    preview.style.display = "none";
+    status.textContent = "";
+  });
+})();
+</script>
+</body>
+</html>

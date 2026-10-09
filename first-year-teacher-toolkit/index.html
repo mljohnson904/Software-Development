@@ -15,6 +15,8 @@
     --line: #d9d4c7;
     --warn: #9a4f1f;
     --radius: 10px;
+    --on-accent: #ffffff;
+    --on-warn: #ffffff;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -26,6 +28,9 @@
       --accent-soft: #1f3a34;
       --line: #343d44;
       --warn: #e0a070;
+      --on-accent: #0e1a16;
+      --on-warn: #1a1105;
+      color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
@@ -37,6 +42,9 @@
     --accent-soft: #1f3a34;
     --line: #343d44;
     --warn: #e0a070;
+    --on-accent: #0e1a16;
+    --on-warn: #1a1105;
+    color-scheme: dark;
   }
   * { box-sizing: border-box; }
   body {
@@ -73,7 +81,7 @@
     cursor: pointer;
   }
   nav button[aria-selected="true"] {
-    background: var(--accent); color: #fff; border-color: var(--accent);
+    background: var(--accent); color: var(--on-accent); border-color: var(--accent);
   }
   main { max-width: 960px; margin: 0 auto; padding: 16px; }
   section.panel { display: none; }
@@ -111,7 +119,7 @@
   .progress > div { height: 100%; background: var(--accent); width: 0; transition: width .2s; }
   .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   button.action, a.action {
-    background: var(--accent); color: #fff; border: none;
+    background: var(--accent); color: var(--on-accent); border: none;
     padding: 9px 14px; border-radius: 8px; font: inherit; cursor: pointer;
     text-decoration: none; display: inline-block;
   }
@@ -148,10 +156,10 @@
     display: inline-block; font-size: 0.75rem; padding: 1px 8px; border-radius: 999px;
     border: 1px solid var(--line); color: var(--muted); white-space: nowrap;
   }
-  .badge.quarter { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .badge.quarter { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .badge.grades { background: var(--accent-soft); color: var(--ink); border-color: var(--accent); }
   .badge.half { border-color: var(--warn); color: var(--warn); }
-  .badge.exam { background: var(--warn); color: #fff; border-color: var(--warn); }
+  .badge.exam { background: var(--warn); color: var(--on-warn); border-color: var(--warn); }
   .table-wrap { overflow-x: auto; }
   table.data select { width: auto; padding: 4px 6px; }
   table.data tr.wk-current td { background: var(--accent-soft); }
@@ -161,11 +169,81 @@
   .stat { display: inline-block; min-width: 110px; padding: 8px 12px; margin: 0 8px 8px 0; border: 1px solid var(--line); border-radius: 8px; }
   .stat b { display: block; font-size: 1.3rem; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  /* ---- focus, touch targets, motion ---- */
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  button, select, input[type="text"], input[type="date"] { min-height: 44px; }
+  nav button { min-height: 44px; }
+  button.action, a.action { min-height: 44px; display: inline-flex; align-items: center; }
+  ul.checklist label { min-height: 44px; align-items: center; }
+  ul.checklist input[type="checkbox"] { margin-top: 0; width: 22px; height: 22px; }
+  label.hit { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; cursor: pointer; }
+  label.hit input { width: 22px; height: 22px; accent-color: var(--accent); }
+  label.row, label.semLabel { min-height: 44px; display: flex; align-items: center; gap: 8px; }
+  label.row input { width: 22px; height: 22px; accent-color: var(--accent); }
+  .semHost { margin: 6px 0 10px; }
+  .semLabel select { width: auto; }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+  /* ---- nav groups and scroll hints ---- */
+  nav { position: sticky; }
+  nav .grp { display: flex; gap: 6px; align-items: center; flex: 0 0 auto; padding-right: 10px; margin-right: 4px; border-right: 1px solid var(--line); }
+  nav .grp:last-child { border-right: none; }
+  nav .grp-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-right: 2px; }
+  nav::before, nav::after { content: ""; position: absolute; top: 0; bottom: 0; width: 28px; pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 3; }
+  nav::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+  nav::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+  nav.fade-l::before, nav.fade-r::after { opacity: 1; }
+  /* ---- dashboard ---- */
+  .dash-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 700px) { .dash-grid { grid-template-columns: 1fr 1fr; } }
+  .dash-item { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); }
+  .dash-item h3 { margin: 0 0 4px; font-size: 0.95rem; }
+  .dash-item p { margin: 4px 0; }
+  .dash-item ul { margin: 4px 0; padding-left: 20px; }
+  .badge.behind { border-color: var(--warn); color: var(--warn); font-weight: 600; }
+  .badge.unverified { border-color: var(--warn); color: var(--warn); font-weight: 600; margin-left: 6px; }
+  input.wkNote { margin-top: 6px; }
+  .print-only { display: none; }
+  /* ---- lesson planner ---- */
+  .lp-list { display: grid; gap: 6px; margin: 8px 0; }
+  button.lp-item { display: flex; justify-content: space-between; gap: 12px; text-align: left; width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font: inherit; cursor: pointer; }
+  button.lp-item.current { border-color: var(--accent); background: var(--accent-soft); }
+  .std-box { max-height: 220px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; margin-top: 8px; }
+  .std-row { display: flex; gap: 8px; align-items: center; min-height: 44px; cursor: pointer; border-bottom: 1px solid var(--line); }
+  .std-row:last-child { border-bottom: none; }
+  .std-row input { width: 22px; height: 22px; flex: 0 0 auto; accent-color: var(--accent); }
+  .std-row[hidden] { display: none; }
+  #lpStdChips { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; }
+  #lpTotal.over { color: var(--warn); font-weight: 600; }
+  #lpTotal.under { color: var(--muted); }
+  .link-edit { display: grid; gap: 6px; grid-template-columns: 1fr; margin-bottom: 8px; }
+  @media (min-width: 700px) { .link-edit { grid-template-columns: 1fr 2fr auto; align-items: center; } }
+  footer.site { max-width: 960px; margin: 0 auto; padding: 8px 16px 40px; }
+  footer.site details { border: 1px solid var(--line); border-radius: 10px; background: var(--card); padding: 10px 14px; }
+  footer.site textarea { min-height: 120px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem; }
+  textarea[hidden], button[hidden], div[hidden] { display: none; }
+  /* ---- print: only the open tab, no controls, readable in black and white ---- */
   @media print {
-    nav, .no-print { display: none !important; }
-    body { background: #fff; color: #000; }
-    .card { border: 1px solid #999; break-inside: avoid; }
-    section.panel { display: block !important; }
+    nav, header p, .no-print, button, .filters, footer, .semHost, .wkNote, .dash-item button { display: none !important; }
+    body { background: #fff; color: #000; font-size: 11pt; }
+    section.panel { display: none !important; }
+    section.panel.active { display: block !important; }
+    .card, .dash-item { background: #fff; border: 1px solid #000; box-shadow: none; break-inside: avoid; }
+    .table-wrap { overflow: visible; }
+    table.data { font-size: 10pt; }
+    table.data th, table.data td { border: 1px solid #000; color: #000; }
+    table.data th { background: #fff; font-weight: 700; }
+    table.data thead { display: table-header-group; }
+    table.data tr { break-inside: avoid; }
+    table.data tr.wk-current td { background: #fff; font-weight: 700; }
+    table.data tr.past { color: #000; }
+    table.data select { border: none; background: #fff; color: #000; appearance: none; }
+    .badge, .badge.quarter, .badge.exam, .badge.half, .badge.grades { background: #fff !important; color: #000 !important; border: 1px solid #000; }
+    .tip { background: #fff; border: 1px solid #000; }
+    .warn { border-left: 4px solid #000; }
+    .muted, .card h3, a { color: #000 !important; }
+    .print-only { display: block; }
+    #p-lesson .lp-form { display: none !important; }
+    #lpPrintOut { display: block; white-space: pre-wrap; font: 11pt/1.45 ui-monospace, Menlo, Consolas, monospace; }
   }
 </style>
 </head>
@@ -178,18 +256,26 @@
 
 <nav role="tablist" aria-label="Toolkit sections">
   <div class="inner">
-    <button role="tab" aria-selected="true" aria-controls="p-start" data-tab="start">Start Here</button>
-    <button role="tab" aria-selected="false" aria-controls="p-checklist" data-tab="checklist">Checklists</button>
-    <button role="tab" aria-selected="false" aria-controls="p-calendar" data-tab="calendar">Calendar &amp; Pacing</button>
-    <button role="tab" aria-selected="false" aria-controls="p-standards" data-tab="standards">Standards &amp; Grading</button>
-    <button role="tab" aria-selected="false" aria-controls="p-tracker" data-tab="tracker">Standards Tracker</button>
-    <button role="tab" aria-selected="false" aria-controls="p-policies" data-tab="policies">School Policies</button>
-    <button role="tab" aria-selected="false" aria-controls="p-lesson" data-tab="lesson">Lesson Planner</button>
-    <button role="tab" aria-selected="false" aria-controls="p-ideas" data-tab="ideas">Unit Activities</button>
-    <button role="tab" aria-selected="false" aria-controls="p-management" data-tab="management">Classroom Management</button>
-    <button role="tab" aria-selected="false" aria-controls="p-scripts" data-tab="scripts">Words to Use</button>
-    <button role="tab" aria-selected="false" aria-controls="p-survival" data-tab="survival">Survival Guide</button>
-    <button role="tab" aria-selected="false" aria-controls="p-glossary" data-tab="glossary">Jargon Decoder</button>
+    <div class="grp" role="presentation"><span class="grp-label" aria-hidden="true">Plan</span>
+      <button role="tab" aria-selected="true" tabindex="0" aria-controls="p-start" data-tab="start">Today</button>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-calendar" data-tab="calendar">Calendar &amp; Pacing</button>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-lesson" data-tab="lesson">Lesson Planner</button>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-ideas" data-tab="ideas">Unit Activities</button>
+    </div>
+    <div class="grp" role="presentation"><span class="grp-label" aria-hidden="true">Grade</span>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-standards" data-tab="standards">Standards &amp; Grading</button>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-tracker" data-tab="tracker">Standards Tracker</button>
+    </div>
+    <div class="grp" role="presentation"><span class="grp-label" aria-hidden="true">Manage</span>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-management" data-tab="management">Classroom Management</button>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-policies" data-tab="policies">School Policies</button>
+    </div>
+    <div class="grp" role="presentation"><span class="grp-label" aria-hidden="true">Support</span>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-checklist" data-tab="checklist">Checklists</button>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-scripts" data-tab="scripts">Words to Use</button>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-survival" data-tab="survival">Survival Guide</button>
+      <button role="tab" aria-selected="false" tabindex="-1" aria-controls="p-glossary" data-tab="glossary">Jargon Decoder</button>
+    </div>
   </div>
 </nav>
 
@@ -197,6 +283,14 @@
 
   <!-- START HERE -->
   <section id="p-start" class="panel active" role="tabpanel">
+    <div class="card" id="dash" aria-live="polite"></div>
+    <div class="card no-print" id="linksCard">
+      <h2>My links</h2>
+      <p class="muted small">Your own shortcuts. They save in this browser and are included in the backup. Each address must start with https://.</p>
+      <div class="row" id="linksRow"></div>
+      <div id="linksEdit" hidden></div>
+      <div class="row" style="margin-top:8px"><button class="ghost" type="button" id="linksEditBtn">Edit my links</button></div>
+    </div>
     <div class="card">
       <h2>Welcome. You do not have to be a financial expert yet.</h2>
       <p>You are teaching a skill, not a list of facts. The goal of this course is for students to make better money decisions when they are on their own. Your job is to build those decisions through practice, math, and honest conversation.</p>
@@ -281,15 +375,16 @@
     </div>
 
     <div class="card">
-      <h2>Your 20-week plan (Semester 1)</h2>
-      <p class="muted">From the Week Audit sheet of your APF 5131 mastery tracker. Week 1 is the week of Aug 3, and Week 20 is the week of Dec 14 (exam half days Dec 17–18). The tracker notes the fall holidays and Fall Break in these weeks, and the dates below line up with the district calendar. Spring weeks are not mapped here yet.</p>
+      <h2 id="weekPlanTitle">Your 20-week plan</h2>
+      <div class="semHost no-print"></div>
+      <p class="muted" id="weekIntro"></p>
       <div class="table-wrap">
         <table class="data" id="weekPlan">
           <thead><tr><th>Week</th><th>Dates</th><th>Focus</th><th>Grade entries</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
-      <div class="tip"><strong>Point values:</strong> Minor = 20 points, Major = 50 points. The final is a separate category, not a Major. Week 17 is a calendar buffer for Thanksgiving week and standards recovery.</div>
+      <div class="tip"><strong>Point values:</strong> Minor = 20 points, Major = 50 points. The final is a separate category, not a Major. <span id="weekTipExtra"></span></div>
     </div>
 
     <div class="card">
@@ -333,6 +428,7 @@
     <div class="card">
       <h2>District grading rules, 2026–27</h2>
       <p class="muted">From the Sumter School District Grading Manual, "Best Practices in Grading: A Guide for Teachers 2026–2027" (revised July 2026), Secondary Grading Procedures, grades 6–12. Page numbers are the manual's printed pages.</p>
+      <p class="row small"><label for="vfGrading"><strong>Last verified:</strong></label> <input type="date" id="vfGrading" style="width:auto"> <span class="muted" id="vfGradingTxt"></span></p>
 
       <h3>How the grade is built</h3>
       <div class="table-wrap">
@@ -341,12 +437,13 @@
           <tbody>
             <tr><td>Major assessments (summative)</td><td class="num">60%</td><td>Tests, essays, lab reports, presentations, projects, portfolios, formal performances (p. 19)</td></tr>
             <tr><td>Minor assessments (formative)</td><td class="num">40%</td><td>Quizzes, classwork, journals, exit slips. Homework may be recorded as a minor grade (p. 19–20)</td></tr>
-            <tr><td>Each quarter</td><td class="num">45%</td><td>Two quarters per semester (from your note)</td></tr>
+            <tr><td>Each quarter</td><td class="num">45%</td><td>Two quarters per semester (from your note) <span class="badge unverified">Not stated in the manual</span></td></tr>
             <tr><td>Final exam</td><td class="num">10%</td><td>For non-EOCEP courses, 10% of the final course grade (p. 20). EOCEP courses (Algebra 1, Biology 1, English 2, US History) use 20%.</td></tr>
           </tbody>
         </table>
       </div>
       <p class="muted">So a semester grade is 45% Quarter 1 + 45% Quarter 2 + 10% final exam. Use the calculator below to try numbers.</p>
+      <div class="warn small"><strong>Checked against the manual you uploaded.</strong> Confirmed: Major 60% / Minor 40% (p. 19), final exam 10% of the final course grade for non-EOCEP courses (p. 20), the scale (p. 18), 2 grades a week and 4 majors a quarter (p. 18), and the 4 / 8 / 12 / 18 grade checkpoints (p. 17, 28). <strong>Not stated anywhere in the manual:</strong> the 45% / 45% quarter split (it follows only if the two quarters count equally), and any rounding rule for quarter or semester grades (the manual rounds only GPAs, to the third decimal). TODO: ask your principal or the PowerSchool setup how quarters combine and how grades round. The calculator shows one decimal and does not round to a whole number.</div>
 
       <h3>Grading scale (p. 18, 29)</h3>
       <div class="table-wrap">
@@ -443,8 +540,15 @@
 
     <div class="card">
       <h2>Does your APF 5131 plan meet the minimums?</h2>
-      <p>Counting your Week Audit sheet, Weeks 1–9 have <strong>19 graded entries and 4 Majors</strong> (Weeks 3, 5, 6, and 8). Weeks 10–20 have <strong>19 entries and 4 Majors</strong> (Weeks 11, 14, 16, and 19), plus the final exam, which is a separate category. Week 17 has no required grade. That is at or above the manual's 18 grades and 4 majors per quarter.</p>
-      <div class="warn"><strong>Check the quarter boundary.</strong> Quarter 1 ended Tuesday, Oct 6, in the middle of Week 10. Make sure the right Week 10 grades land in the right quarter in PowerTeacherPro, and confirm the counts there.</div>
+      <div class="semHost no-print"></div>
+      <p class="muted" id="planCheckIntro"></p>
+      <div class="table-wrap">
+        <table class="data" id="planCheck">
+          <thead><tr><th>Quarter</th><th>Dates</th><th>Graded entries</th><th>Majors</th><th>Shared with the next quarter</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="planCheckNotes"></div>
     </div>
 
     <div class="card">
@@ -464,6 +568,16 @@
       </div>
       <p><strong id="gcSemester" role="status">Enter all three scores.</strong></p>
       <p class="muted" id="gcNeed"></p>
+      <h3>What do I need on the next Major?</h3>
+      <p class="muted small">Assumes the Major category is total points earned divided by total points possible, and your Minor average stays where it is. TODO: the manual does not say how PowerSchool averages the Major category, so check one real student against this.</p>
+      <div class="grid two">
+        <div><label class="field" for="gcNmEarned">Major points earned so far</label><input type="text" id="gcNmEarned" inputmode="decimal" placeholder="e.g., 90"></div>
+        <div><label class="field" for="gcNmPossible">Major points possible so far</label><input type="text" id="gcNmPossible" inputmode="decimal" placeholder="e.g., 100"></div>
+        <div><label class="field" for="gcNmMinor">Minor average now (%)</label><input type="text" id="gcNmMinor" inputmode="decimal" placeholder="e.g., 85"></div>
+        <div><label class="field" for="gcNmTarget">Target quarter grade (%)</label><input type="text" id="gcNmTarget" inputmode="decimal" placeholder="e.g., 80"></div>
+        <div><label class="field" for="gcNmPts">Points on the next Major</label><input type="text" id="gcNmPts" inputmode="decimal" placeholder="50"></div>
+      </div>
+      <p><strong id="gcNm" role="status">Enter your Major points so far, the Minor average, and the target quarter grade.</strong></p>
     </div>
 
     <div class="card">
@@ -499,7 +613,17 @@
     <div class="card">
       <h2>APF 5131 standards tracker</h2>
       <p class="muted">All 141 indicators from your mastery tracker. Starting statuses are copied from the file's "Live Semester Status" column. They are curriculum-history records, not proof of mastery. Your changes save in this browser only.</p>
+      <div class="semHost no-print"></div>
       <div id="trSummary"></div>
+      <p class="muted small" id="trBehindNote"></p>
+      <div class="filters no-print" style="margin-top:8px">
+        <label class="sr-only" for="trBulkWeek">Week</label>
+        <select id="trBulkWeek"></select>
+        <label class="sr-only" for="trBulkStatus">Set to</label>
+        <select id="trBulkStatus"><option value="Introduced">Introduced</option><option value="Practiced">Practiced</option></select>
+        <button class="ghost" id="trBulkGo" type="button">Mark Week indicators</button>
+      </div>
+      <p class="muted small" id="trBulkInfo"></p>
       <div class="row no-print">
         <button class="ghost" id="trReset" type="button">Reset to the file's starting statuses</button>
         <button class="ghost" id="trSpring" type="button">Spring reset: all Not Yet Taught</button>
@@ -542,6 +666,7 @@
       <h2>Sumter High School policies, 2026–27</h2>
       <p class="muted">Summarized from the SHS Teacher Handbook, the 2026–27 tardy policy, and the 2026–27 High School Code of Conduct. The Code of Conduct file is marked "Draft" and I read the first 16 of its 39 pages (Category I offenses and the start of Category II). Use the originals for exact wording.</p>
       <div class="tip"><strong>Privacy note:</strong> This toolkit lives in a public GitHub repository, so I left staff names and phone extensions out. Handbook pages 5–14 have the full directory. You can paste names into the notes fields on the Standards &amp; Grading tab, which stay in your browser only.</div>
+      <p class="row small"><label for="vfPolicies"><strong>Last verified:</strong></label> <input type="date" id="vfPolicies" style="width:auto"> <span class="muted" id="vfPoliciesTxt"></span></p>
     </div>
 
     <div class="card">
@@ -655,9 +780,28 @@
 
   <!-- LESSON PLANNER -->
   <section id="p-lesson" class="panel" role="tabpanel">
-    <div class="card">
+    <div class="card no-print">
+      <h2>Saved lessons</h2>
+      <p class="muted small" id="lpCount"></p>
+      <div class="lp-list" id="lpList"></div>
+      <div class="row">
+        <button class="action" type="button" id="lpNew">New lesson</button>
+        <button class="ghost" type="button" id="lpDup">Duplicate</button>
+        <button class="ghost" type="button" id="lpRenameBtn">Rename</button>
+        <button class="ghost" type="button" id="lpDelete">Delete</button>
+      </div>
+      <div id="lpRenameBox" class="row" hidden style="margin-top:8px">
+        <label class="sr-only" for="lpRename">New lesson title</label>
+        <input type="text" id="lpRename" style="max-width:340px" placeholder="Lesson title">
+        <button class="action" type="button" id="lpRenameSave">Save title</button>
+        <button class="ghost" type="button" id="lpRenameCancel">Cancel</button>
+      </div>
+      <p class="muted small">Click a lesson to open it. Changes save as you type, in this browser only.</p>
+    </div>
+
+    <div class="card lp-form">
       <h2>Lesson Planner</h2>
-      <p class="muted">Fill in the fields, then copy the plan or print it. Anchor each lesson in one real money decision. Use the same format every day so planning gets faster.</p>
+      <p class="muted">Fill in what you need, then copy the plan or print it. Empty fields are left out. The order follows the SSD Grade 9-12 Lesson Plan Template: Standard, Learning Intention, Success Criteria, Learning Experience, Assessment. Anchor each lesson in one real money decision.</p>
       <div class="grid two">
         <div>
           <label class="field" for="lpTitle">Lesson title</label>
@@ -668,39 +812,87 @@
           <input type="date" id="lpDate">
         </div>
         <div>
+          <label class="field" for="lpTeacher">Teacher name (optional)</label>
+          <input type="text" id="lpTeacher" autocomplete="off">
+        </div>
+        <div>
+          <label class="field" for="lpSubject">Subject area</label>
+          <input type="text" id="lpSubject" placeholder="Advanced Personal Finance (5131)">
+        </div>
+        <div>
           <label class="field" for="lpClass">Class / period</label>
           <input type="text" id="lpClass" placeholder="e.g., Adv. Personal Finance, period 2, grade 11">
         </div>
         <div>
           <label class="field" for="lpLength">Length (minutes)</label>
-          <input type="text" id="lpLength" placeholder="e.g., 50">
+          <input type="text" id="lpLength" inputmode="numeric" placeholder="90">
         </div>
       </div>
+
+      <h3>Standard</h3>
+      <div id="lpStdChips" aria-live="polite"></div>
+      <details id="lpStdBox">
+        <summary>Choose indicators from your tracker</summary>
+        <label class="field" for="lpStdSearch">Search indicators</label>
+        <input type="text" id="lpStdSearch" placeholder="Code or skill, for example K.3 or credit">
+        <div class="std-box" id="lpStdList"></div>
+      </details>
+
+      <h3>Learning Intention</h3>
+      <label class="field" for="lpTarget">Learning intention (the learning target students can read)</label>
+      <input type="text" id="lpTarget" placeholder="e.g., I can compare the total cost of two credit offers.">
       <label class="field" for="lpObjective">Objective: "Students will be able to..."</label>
       <input type="text" id="lpObjective" placeholder="Students will be able to compare total costs of two credit card offers using APR.">
-      <label class="field" for="lpContext">Real-world decision (the scenario students face)</label>
-      <textarea id="lpContext" placeholder="e.g., You just got your first job at $13/hour. Which is the better deal for a phone: $35 a month for 24 months, or $850 up front?"></textarea>
+
+      <h3>Success Criteria</h3>
       <label class="field" for="lpSuccess">How will I know they got it? (success criteria)</label>
       <textarea id="lpSuccess" placeholder="e.g., 4 of 5 students compute a monthly interest charge correctly and state a decision with one reason"></textarea>
+
+      <h3>Learning Experience</h3>
+      <label class="field" for="lpContext">Real-world decision (the scenario students face)</label>
+      <textarea id="lpContext" placeholder="e.g., You just got your first job at $13/hour. Which is the better deal for a phone: $35 a month for 24 months, or $850 up front?"></textarea>
       <label class="field" for="lpMaterials">Materials</label>
       <textarea id="lpMaterials" placeholder="Slides, handout, calculators, spreadsheet template, scenario cards..."></textarea>
 
       <div class="card" style="margin-top:14px; background: var(--bg)">
-        <h3 style="margin-top:0">Lesson flow (time each part)</h3>
+        <h3 style="margin-top:0">Lesson flow (minutes for each part)</h3>
         <div class="grid two">
-          <div><label class="field" for="lpWarm">Warm-up / hook (min)</label><input type="text" id="lpWarm"></div>
-          <div><label class="field" for="lpTeach">Model the math / concept (min)</label><input type="text" id="lpTeach"></div>
-          <div><label class="field" for="lpPractice">Guided practice together (min)</label><input type="text" id="lpPractice"></div>
-          <div><label class="field" for="lpIndep">Independent or partner scenario (min)</label><input type="text" id="lpIndep"></div>
+          <div><label class="field" for="lpWarm">Warm-up / hook (min)</label><input type="text" id="lpWarm" inputmode="numeric"></div>
+          <div><label class="field" for="lpTeach">Model the math / concept (min)</label><input type="text" id="lpTeach" inputmode="numeric"></div>
+          <div><label class="field" for="lpPractice">Guided practice together (min)</label><input type="text" id="lpPractice" inputmode="numeric"></div>
+          <div><label class="field" for="lpIndep">Independent or partner scenario (min)</label><input type="text" id="lpIndep" inputmode="numeric"></div>
+          <div><label class="field" for="lpCloseMin">Closing / exit ticket (min)</label><input type="text" id="lpCloseMin" inputmode="numeric"></div>
         </div>
+        <p id="lpTotal" role="status" class="small"></p>
         <label class="field" for="lpClose">Closing / exit ticket</label>
         <input type="text" id="lpClose" placeholder="e.g., Which offer would you choose, and what is the total cost?">
       </div>
 
-      <label class="field" for="lpDiff">Support and extension</label>
-      <textarea id="lpDiff" placeholder="IEP/504 supports (calculator, formula sheet, extended time). Extension: 'What if the interest rate doubled?'"></textarea>
-      <label class="field" for="lpNotes">Notes for next time</label>
-      <textarea id="lpNotes" placeholder="Which numbers confused students? Did the scenario feel real?"></textarea>
+      <details style="margin-top:10px">
+        <summary>Teaching notes: think-aloud, misconceptions, transitions</summary>
+        <label class="field" for="lpThink">Teacher model / think-aloud</label>
+        <textarea id="lpThink" placeholder="What you will say and write while you work the first example"></textarea>
+        <label class="field" for="lpMisc">Likely misconceptions</label>
+        <textarea id="lpMisc" placeholder="e.g., Students confuse APR with the monthly rate"></textarea>
+        <label class="field" for="lpTrans">Transitions (what to say between segments)</label>
+        <textarea id="lpTrans"></textarea>
+      </details>
+
+      <h3>Assessment</h3>
+      <label class="field" for="lpCFU">Check-for-understanding questions</label>
+      <textarea id="lpCFU" placeholder="Questions you will ask during the lesson"></textarea>
+      <label class="field" for="lpFormative">Formative assessment</label>
+      <textarea id="lpFormative" placeholder="What evidence you will collect, and what you will do with it"></textarea>
+
+      <details style="margin-top:10px">
+        <summary>Support, Schoology, and notes</summary>
+        <label class="field" for="lpDiff">Support and extension</label>
+        <textarea id="lpDiff" placeholder="IEP/504 supports (calculator, formula sheet, extended time). Extension: 'What if the interest rate doubled?'"></textarea>
+        <label class="field" for="lpSchoology">Schoology / printable version</label>
+        <textarea id="lpSchoology" placeholder="What gets posted in Schoology, and what gets printed"></textarea>
+        <label class="field" for="lpNotes">Notes for next time</label>
+        <textarea id="lpNotes" placeholder="Which numbers confused students? Did the scenario feel real?"></textarea>
+      </details>
 
       <div class="row no-print" style="margin-top:14px">
         <button class="action" type="button" id="lpCopy">Copy plan as text</button>
@@ -710,6 +902,7 @@
       </div>
       <pre class="template" id="lpPreview" style="display:none"></pre>
     </div>
+    <div class="print-only" id="lpPrintOut"></div>
 
     <div class="card">
       <h2>Weekly plan skeleton</h2>
@@ -1101,24 +1294,179 @@ If a parent raises something outside your role (grades appeals, discipline, serv
 
 </main>
 
+<footer class="site no-print" id="backup">
+  <details>
+    <summary>Backup and restore</summary>
+    <p class="muted small">Everything you enter lives in this browser only. Export a backup now and then, and before you clear your browser data or switch computers.</p>
+    <p class="warn small" id="bkReminder" hidden></p>
+    <p class="small" id="bkStatus"></p>
+    <div class="row">
+      <button class="action" type="button" id="bkExport">Export backup file</button>
+      <button class="ghost" type="button" id="bkImportBtn">Import backup file</button>
+      <button class="ghost" type="button" id="bkCopy">Copy backup as text</button>
+      <button class="ghost" type="button" id="bkPasteBtn">Paste backup text</button>
+      <input type="file" id="bkFile" accept="application/json,.json" hidden aria-label="Choose a backup file">
+    </div>
+    <p class="small" id="bkMsg" role="status"></p>
+    <label class="sr-only" for="bkText">Backup text</label>
+    <textarea id="bkText" readonly hidden></textarea>
+    <label class="sr-only" for="bkPaste">Paste backup text here</label>
+    <textarea id="bkPaste" hidden placeholder="Paste backup text here"></textarea>
+    <div class="row"><button class="action" type="button" id="bkPasteGo" hidden>Import pasted text</button></div>
+  </details>
+</footer>
+
 <script>
 (function () {
   "use strict";
 
-  // ---------- Tabs ----------
-  var tabs = Array.prototype.slice.call(document.querySelectorAll("nav [data-tab]"));
-  function showTab(name) {
+  // ---------- Storage: every read/write is wrapped, and an in-memory copy keeps the page working if storage is blocked ----------
+  var KEYS = {
+    checks: "financeToolkit.checks.v1",
+    tracker: "financeToolkit.tracker.v1",
+    standards: "financeToolkit.standards.v1",
+    lesson: "financeToolkit.lesson.v1",       // legacy single plan, kept untouched after migration
+    lessons: "financeToolkit.lessons.v1",     // new: list of saved lessons
+    semester: "financeToolkit.semester.v1",
+    weekNotes: "financeToolkit.weeknotes.v1",
+    links: "financeToolkit.links.v1",
+    verified: "financeToolkit.verified.v1",
+    ui: "financeToolkit.ui.v1"
+  };
+  var META_KEY = "financeToolkit.meta.v1";
+  var BACKUP_KEYS = ["checks", "tracker", "standards", "lesson", "lessons", "semester", "weekNotes", "links", "verified"];
+  var BACKUP_VERSION = 1;
+  var mem = {};
+  function sget(k) {
+    try { var v = localStorage.getItem(k); if (v !== null) return v; } catch (e) { /* blocked */ }
+    return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null;
+  }
+  function sset(k, v) {
+    mem[k] = v;
+    try { localStorage.setItem(k, v); } catch (e) { /* blocked: keep working in memory */ }
+  }
+  function sdel(k) {
+    delete mem[k];
+    try { localStorage.removeItem(k); } catch (e) { /* blocked */ }
+  }
+  function jget(k, fallback) {
+    try {
+      var raw = sget(k);
+      if (raw === null) return fallback;
+      var v = JSON.parse(raw);
+      return v == null ? fallback : v;
+    } catch (e) { return fallback; }
+  }
+  function jset(k, v) {
+    try { sset(k, JSON.stringify(v)); } catch (e) { /* ignore */ }
+    if (k !== META_KEY && k !== KEYS.ui) touchMeta("lastChanged");
+  }
+  function touchMeta(field) {
+    var m = jget(META_KEY, {});
+    m[field] = new Date().toISOString();
+    jset(META_KEY, m);
+  }
+  function byId(id) { return document.getElementById(id); }
+
+  // ---------- Date helpers ----------
+  function ymd(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function dkey(d) {
+    return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+  }
+  function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+  function dateRange(a, b) {
+    var out = [], d = ymd(a), end = ymd(b);
+    while (d <= end) { out.push(dkey(d)); d = addDays(d, 1); }
+    return out;
+  }
+  function fmt(d, withYear) {
+    var o = { weekday: "short", month: "short", day: "numeric" };
+    if (withYear) o.year = "numeric";
+    return d.toLocaleDateString("en-US", o);
+  }
+  function fmtShort(d) { return d.toLocaleDateString("en-US", { month: "short", day: "numeric" }); }
+  function mk(tag, text, cls) {
+    var e = document.createElement(tag);
+    if (text != null) e.textContent = text;
+    if (cls) e.className = cls;
+    return e;
+  }
+  function startOfToday() { var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+
+  // ---------- Tabs: roving tabindex, arrow keys, hash links, remembered tab ----------
+  var tabs = Array.prototype.slice.call(document.querySelectorAll("nav [role=tab]"));
+  var TAB_SET = {};
+  var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var curTab = "start";
+  tabs.forEach(function (btn) {
+    var name = btn.dataset.tab;
+    TAB_SET[name] = true;
+    btn.id = "tab-" + name;
+    var panel = byId("p-" + name);
+    if (panel) {
+      panel.setAttribute("aria-labelledby", btn.id);
+      panel.tabIndex = -1;
+    }
+  });
+  function hashFor(name) { return name === "start" ? "today" : name; }
+  function tabFromHash() {
+    var h = "";
+    try { h = (location.hash || "").replace(/^#/, ""); } catch (e) { h = ""; }
+    if (h === "today") h = "start";
+    return TAB_SET[h] ? h : null;
+  }
+  function showTab(name, o) {
+    o = o || {};
+    if (!TAB_SET[name]) name = "start";
+    curTab = name;
     tabs.forEach(function (btn) {
       var on = btn.dataset.tab === name;
       btn.setAttribute("aria-selected", on ? "true" : "false");
+      btn.tabIndex = on ? 0 : -1;
+      if (on && o.reveal !== false) { try { btn.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (e) { /* ignore */ } }
     });
     document.querySelectorAll("section.panel").forEach(function (p) {
       p.classList.toggle("active", p.id === "p-" + name);
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    jset(KEYS.ui, { tab: name });
+    if (o.hash !== false) {
+      try { if (tabFromHash() !== name) location.hash = "#" + hashFor(name); } catch (e) { /* ignore */ }
+    }
+    if (o.scroll !== false) window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    if (o.focus) {
+      var panel = byId("p-" + name);
+      var h = panel && panel.querySelector("h2");
+      if (h) { h.tabIndex = -1; try { h.focus({ preventScroll: true }); } catch (e) { h.focus(); } }
+    }
+    updateNavFade();
   }
   tabs.forEach(function (btn) {
-    btn.addEventListener("click", function () { showTab(btn.dataset.tab); });
+    btn.addEventListener("click", function () { showTab(btn.dataset.tab, { focus: true }); });
+  });
+  var navEl = document.querySelector("nav[role=tablist]");
+  navEl.addEventListener("keydown", function (ev) {
+    var i = tabs.indexOf(document.activeElement);
+    if (i < 0) return;
+    var n = -1;
+    if (ev.key === "ArrowRight") n = (i + 1) % tabs.length;
+    else if (ev.key === "ArrowLeft") n = (i - 1 + tabs.length) % tabs.length;
+    else if (ev.key === "Home") n = 0;
+    else if (ev.key === "End") n = tabs.length - 1;
+    if (n < 0) return;
+    ev.preventDefault();
+    tabs[n].focus();
+    showTab(tabs[n].dataset.tab, { scroll: false });
+  });
+  var navInner = navEl.querySelector(".inner");
+  function updateNavFade() {
+    navEl.classList.toggle("fade-l", navInner.scrollLeft > 2);
+    navEl.classList.toggle("fade-r", navInner.scrollLeft + navInner.clientWidth < navInner.scrollWidth - 2);
+  }
+  navInner.addEventListener("scroll", updateNavFade);
+  window.addEventListener("resize", updateNavFade);
+  window.addEventListener("hashchange", function () {
+    var t = tabFromHash();
+    if (t && t !== curTab) showTab(t, { hash: false });
   });
 
   // ---------- Checklists ----------
@@ -1189,18 +1537,9 @@ If a parent raises something outside your role (grades appeals, discipline, serv
     }
   ];
 
-  var STORE_KEY = "financeToolkit.checks.v1";
-  function loadChecks() {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
-    catch (e) { return {}; }
-  }
-  function saveChecks(state) {
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* storage blocked: keep working in memory */ }
-  }
-  var checkState = loadChecks();
+  var checkState = {};
   var allBoxes = [];
-
-  var container = document.getElementById("checklists");
+  var container = byId("checklists");
   CHECKLISTS.forEach(function (list, li) {
     var card = document.createElement("div");
     card.className = "card";
@@ -1216,7 +1555,6 @@ If a parent raises something outside your role (grades appeals, discipline, serv
       var box = document.createElement("input");
       box.type = "checkbox";
       box.dataset.key = key;
-      box.checked = !!checkState[key];
       var span = document.createElement("span");
       span.textContent = text;
       label.appendChild(box);
@@ -1226,52 +1564,31 @@ If a parent raises something outside your role (grades appeals, discipline, serv
       allBoxes.push(box);
       box.addEventListener("change", function () {
         checkState[key] = box.checked;
-        saveChecks(checkState);
+        jset(KEYS.checks, checkState);
         updateProgress();
       });
     });
     card.appendChild(ul);
     container.appendChild(card);
   });
-
   function updateProgress() {
     var done = allBoxes.filter(function (b) { return b.checked; }).length;
     var total = allBoxes.length;
-    document.getElementById("progressText").textContent = done + " of " + total + " done";
-    document.getElementById("progressBar").style.width = total ? (done / total * 100) + "%" : "0";
+    byId("progressText").textContent = done + " of " + total + " done";
+    byId("progressBar").style.width = total ? (done / total * 100) + "%" : "0";
   }
-  document.getElementById("resetChecks").addEventListener("click", function () {
+  function renderChecks() {
+    allBoxes.forEach(function (b) { b.checked = !!checkState[b.dataset.key]; });
+    updateProgress();
+  }
+  byId("resetChecks").addEventListener("click", function () {
     if (!confirm("Clear all checkboxes?")) return;
     checkState = {};
-    saveChecks(checkState);
-    allBoxes.forEach(function (b) { b.checked = false; });
-    updateProgress();
+    jset(KEYS.checks, checkState);
+    renderChecks();
   });
-  updateProgress();
 
   // ---------- Calendar & pacing (Sumter SD modified year-round, 2026-27) ----------
-  function ymd(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
-  function dkey(d) {
-    return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
-  }
-  function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
-  function dateRange(a, b) {
-    var out = [], d = ymd(a), end = ymd(b);
-    while (d <= end) { out.push(dkey(d)); d = addDays(d, 1); }
-    return out;
-  }
-  function fmt(d, withYear) {
-    var o = { weekday: "short", month: "short", day: "numeric" };
-    if (withYear) o.year = "numeric";
-    return d.toLocaleDateString("en-US", o);
-  }
-  function mk(tag, text, cls) {
-    var e = document.createElement(tag);
-    if (text != null) e.textContent = text;
-    if (cls) e.className = cls;
-    return e;
-  }
-
   // No-school weekdays for students (holidays, breaks, teacher workdays)
   var NO_SCHOOL = [].concat(
     ["2026-09-07", "2026-10-12", "2026-11-03", "2026-11-11"],
@@ -1289,7 +1606,6 @@ If a parent raises something outside your role (grades appeals, discipline, serv
     { id: "q3", name: "Quarter 3", start: "2027-01-05", end: "2027-03-10" },
     { id: "q4", name: "Quarter 4", start: "2027-03-11", end: "2027-05-21" }
   ];
-
   var EVENTS = [
     { d: "2026-08-03", t: "workday", w: "Teacher workday (no students)" },
     { d: "2026-08-04", t: "quarter", w: "First day of school" },
@@ -1356,41 +1672,159 @@ If a parent raises something outside your role (grades appeals, discipline, serv
   var qCounts = {};
   QUARTERS.forEach(function (q) { qCounts[q.id] = countDays(q.start, q.end); });
 
-  function startOfToday() { var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+  function quarterOf(d) {
+    var found = null;
+    QUARTERS.forEach(function (x) { if (d >= ymd(x.start) && d <= ymd(x.end)) found = x; });
+    return found;
+  }
+  // A school day is a weekday inside a quarter that is not on the no-school list.
+  function isSchoolDay(d) {
+    var dow = d.getDay();
+    return dow !== 0 && dow !== 6 && !!quarterOf(d) && NO_SCHOOL.indexOf(dkey(d)) === -1;
+  }
+  function schoolDaysBetween(from, to) { // from inclusive, to exclusive
+    var n = 0, d = from;
+    while (d < to) { if (isSchoolDay(d)) n++; d = addDays(d, 1); }
+    return n;
+  }
+  function eventsOn(d) {
+    return EVENTS.filter(function (ev) { return ymd(ev.d) <= d && d <= ymd(ev.e || ev.d); });
+  }
+  function upcomingEvents(n, today) {
+    return EVENTS.filter(function (ev) { return ymd(ev.e || ev.d) >= today; }).slice(0, n);
+  }
+  function eventLi(ev) {
+    var li = document.createElement("li");
+    var when = ev.e ? fmt(ymd(ev.d)) + " to " + fmt(ymd(ev.e)) : fmt(ymd(ev.d));
+    li.appendChild(mk("strong", when + ": "));
+    li.appendChild(document.createTextNode(ev.w));
+    return li;
+  }
+
+  // ---------- Semester: Fall 2026 / Spring 2027 ----------
+  var SEMS = {
+    fall: { label: "Fall 2026", name: "Semester 1", start: "2026-08-03" },
+    spring: { label: "Spring 2027", name: "Semester 2", start: "2027-01-04" }
+  };
+  var SPRING_AUTO_FROM = "2026-12-19"; // the day after the last Fall school day (Dec 18)
+  // Notes that only apply to one semester. The Fall notes were moved here word for word from the WEEKS table.
+  var SEM_NOTES = {
+    fall: {
+      11: "Fall Break Monday; four-day week.",
+      14: "Fall Election Day Tuesday/no school.",
+      15: "Fall Veterans Day Wednesday/no school.",
+      17: "Fall Thanksgiving; Spring Holiday/buffer deployment."
+    },
+    spring: {} // TODO: the Spring buffer-week and Major placement decisions are not in your tracker file. Use the notes box on each week.
+  };
+  var semSel = "fall";
+  function autoSem(d) { return d >= ymd(SPRING_AUTO_FROM) ? "spring" : "fall"; }
+  function loadSem() {
+    var auto = autoSem(startOfToday());
+    var s = jget(KEYS.semester, null);
+    // A saved choice is remembered until the real semester changes, then the page follows the calendar again.
+    semSel = (s && SEMS[s.sel] && s.autoAt === auto) ? s.sel : auto;
+  }
+  function setSem(v) {
+    if (!SEMS[v]) return;
+    semSel = v;
+    jset(KEYS.semester, { sel: v, autoAt: autoSem(startOfToday()) });
+    renderTimeViews();
+    renderTrSummary();
+    renderTrList();
+  }
+  function weekStart(w, sem) { return addDays(ymd(SEMS[sem || semSel].start), (w - 1) * 7); }
+  // 0 = before Week 1, 1..20 = in the plan, 21 = after Week 20
+  function weekPos(d, sem) {
+    var days = Math.floor((d - ymd(SEMS[sem || semSel].start)) / 86400000);
+    if (days < 0) return 0;
+    var w = Math.floor(days / 7) + 1;
+    return w <= WEEKS.length ? w : WEEKS.length + 1;
+  }
+  function weekNumber(d, sem) { var p = weekPos(d, sem); return p >= 1 && p <= WEEKS.length ? p : 0; }
+  function weekRow(w) { return WEEKS[w - 1]; }
+  // What the district calendar data says about one plan week.
+  function weekInfo(w, sem) {
+    var start = weekStart(w, sem), info = { days: 0, quarters: [], off: [], half: [], exam: [] };
+    for (var i = 0; i < 5; i++) {
+      var d = addDays(start, i), k = dkey(d);
+      if (isSchoolDay(d)) {
+        info.days++;
+        var q = quarterOf(d);
+        if (info.quarters.indexOf(q.id) === -1) info.quarters.push(q.id);
+        if (EXAM_DAYS.indexOf(k) !== -1) info.exam.push(d);
+        else if (HALF_DAYS.indexOf(k) !== -1) info.half.push(d);
+      } else if (NO_SCHOOL.indexOf(k) !== -1) {
+        info.off.push(d);
+      }
+    }
+    return info;
+  }
+  function entriesOf(row) {
+    var out = [];
+    [row[3], row[4]].forEach(function (cell) {
+      String(cell || "").split(";").forEach(function (part) {
+        part = part.trim();
+        if (part && part !== "—") out.push(part);
+      });
+    });
+    return out;
+  }
+  function countEntries(row) {
+    var m = (row[3] + ";" + row[4]).match(/(Minor|Major) \d+/g) || [];
+    return { total: m.length, majors: m.filter(function (x) { return x.indexOf("Major") === 0; }).length };
+  }
+
+  var weekNotes = {};
+  function loadWeekNotes() { weekNotes = jget(KEYS.weekNotes, {}); if (typeof weekNotes !== "object" || Array.isArray(weekNotes)) weekNotes = {}; }
+  function saveWeekNotes() { jset(KEYS.weekNotes, weekNotes); }
+
+  function renderSemHosts() {
+    document.querySelectorAll(".semHost").forEach(function (host, i) {
+      host.textContent = "";
+      var label = mk("label", "Semester ", "semLabel");
+      var sel = document.createElement("select");
+      sel.id = "semSel" + i;
+      sel.setAttribute("aria-label", "Semester");
+      Object.keys(SEMS).forEach(function (k) {
+        var o = document.createElement("option");
+        o.value = k; o.textContent = SEMS[k].label;
+        if (k === semSel) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", function () { setSem(sel.value); });
+      label.appendChild(sel);
+      host.appendChild(label);
+    });
+  }
+
+  function statusLine(today) {
+    var q = quarterOf(today);
+    var evs = eventsOn(today);
+    var note = "";
+    if (q) {
+      var left = Math.round((ymd(q.end) - today) / 86400000);
+      var msg = "Today is " + fmt(today, true) + ". You are in " + q.name + " (" + fmt(ymd(q.start)) + " to " + fmt(ymd(q.end)) + "), which ends in " + left + " calendar day" + (left === 1 ? "" : "s") + ".";
+      return msg;
+    }
+    if (today < ymd(QUARTERS[0].start)) return "Today is " + fmt(today, true) + ". The first day of school is " + fmt(ymd(QUARTERS[0].start)) + ".";
+    if (today > ymd(QUARTERS[3].end)) return "Today is " + fmt(today, true) + ". The 2026–27 school year has ended.";
+    return "Today is " + fmt(today, true) + ". Students are on a break or between quarters." + note;
+  }
 
   function renderNow() {
     var today = startOfToday();
-    var nowEl = document.getElementById("calNow");
-    var q = null;
-    QUARTERS.forEach(function (x) { if (today >= ymd(x.start) && today <= ymd(x.end)) q = x; });
-    var msg;
-    if (q) {
-      var left = Math.round((ymd(q.end) - today) / 86400000);
-      msg = "Today is " + fmt(today, true) + ". You are in " + q.name + " (" + fmt(ymd(q.start)) + " to " + fmt(ymd(q.end)) + "), which ends in " + left + " calendar day" + (left === 1 ? "" : "s") + ".";
-    } else if (today < ymd("2026-08-04")) {
-      msg = "Today is " + fmt(today, true) + ". The first day of school is " + fmt(ymd("2026-08-04")) + ".";
-    } else if (today > ymd("2027-05-21")) {
-      msg = "Today is " + fmt(today, true) + ". The 2026–27 school year has ended.";
-    } else {
-      msg = "Today is " + fmt(today, true) + ". Students are on a break or between quarters.";
-    }
+    var msg = statusLine(today);
     var wk = weekNumber(today);
-    if (wk) msg += " That is week " + wk + " of the 20-week plan.";
-    nowEl.textContent = msg;
-
-    var nextEl = document.getElementById("calNext");
+    if (wk) msg += " That is week " + wk + " of the 20-week plan (" + SEMS[semSel].label + ").";
+    byId("calNow").textContent = msg;
+    var nextEl = byId("calNext");
     nextEl.textContent = "";
-    var upcoming = EVENTS.filter(function (ev) { return ymd(ev.e || ev.d) >= today; }).slice(0, 5);
+    var upcoming = upcomingEvents(5, today);
     if (!upcoming.length) return;
     nextEl.appendChild(mk("h3", "Coming up"));
     var ul = document.createElement("ul");
-    upcoming.forEach(function (ev) {
-      var li = document.createElement("li");
-      var when = ev.e ? fmt(ymd(ev.d)) + " to " + fmt(ymd(ev.e)) : fmt(ymd(ev.d));
-      li.appendChild(mk("strong", when + ": "));
-      li.appendChild(document.createTextNode(ev.w));
-      ul.appendChild(li);
-    });
+    upcoming.forEach(function (ev) { ul.appendChild(eventLi(ev)); });
     nextEl.appendChild(ul);
   }
 
@@ -1415,35 +1849,68 @@ If a parent raises something outside your role (grades appeals, discipline, serv
     row("Whole year", "Aug 4 to May 21", sumCounts([qCounts.q1, qCounts.q2, qCounts.q3, qCounts.q4]), true);
   }
 
-  // ----- 20-week plan (Semester 1), from the APF 5131 mastery tracker's Week Audit sheet -----
-  // Each row: [week, focus, domains, grade entry 1, grade entry 2, notes]
-  var WEEKS = [[1, "Course Launch, Safety, Privacy & Financial Decision Foundations", "A; C; F; H; B intro", "Minor 1 — Safety, Privacy & Responsible Technology — 20", "Minor 2 — Financial Choices & Course Readiness — 20", "CTSO introduced; formal closure W9."], [2, "Career Choice & Planning", "E; F; G", "Minor 1 — Career Fit & Evidence Comparison — 20", "Minor 2 — Career Pathway Decision & Plan — 20", "G.6 geographic cost-of-living calculation closes W13; detailed aid reserved W19."], [3, "Getting the Job", "C; D; E", "Minor 1 — Interview & STAR Evidence — 20", "Major 1 — Career Application Portfolio — 50", "No employment-application component; application skill assessed W6."], [4, "Workplace Expectations, Responsibilities & Customer Service", "D; E; A/C support", "Minor 1 — Workplace Expectations & Human Relations — 20", "Minor 2 — Responsibilities & Customer Service Lab — 20", "Friday integrated challenge is practice/revision only."], [5, "Pay, Benefits & Working Conditions", "E; G", "Minor 1 — Paycheck Evidence Check — 20", "Major 2 — Total Compensation Decision — 50; Minor 2 — Employment Decision Challenge — 20", "Insurance/retirement only introduced as compensation components."], [6, "Taxes & Different Ways of Getting Paid", "G; M", "Minor 1 — Job Application Completion Evidence — 20", "Major 3 — Income & Tax Filing Case — 50", "M.3/M.5/M.6/M.8 strongest; M.1/M.2/M.4/M.7 formally repaired W10."], [7, "Budgeting & Financial Records", "F; H", "Minor 1 — Budget Build & Deficit Repair — 20", "Minor 2 — Weekly Budget Rescue Application — 20", "H.3 and stronger H.5/H.7 evidence close W9."], [8, "Banking & Payment Systems", "I", "Minor 1 — Account/Register/Reconciliation Check — 20", "Major 4 — Bank Choice & Account Management Simulation — 50", "Fall packet issued; no structural change."], [9, "Saving, Interest, Records & Financial Goals", "B; H; I; O", "Minor 1 — Savings Product Comparison — 20", "Minor 2 — Savings Strategy & Records Application — 20", "Closes spending-log/records/goal-funding gaps and CTSO connection."], [10, "Tax Gap Repair + Credit Launch", "F; K; M", "Minor 1 — Tax Concepts Gap Check — 20", "Minor 2 — Credit Offer Decision Lab — 20", "Q1/Q2 transition; no Major."], [11, "Credit Reports, Scores & Debt Solutions", "K", "Minor 1 — Credit Report Audit Check — 20", "Major 5 — Credit Report & Debt Case — 50", "Fall Break Monday; four-day week."], [12, "Consumer Protection, Contracts & Cybersecurity", "C; F; K; L", "Minor 1 — Contract/Fraud Evidence Check — 20", "Minor 2 — Consumer Self-Defense Case — 20", "Higher-level consumer response; avoids repeating basic phishing."], [13, "Independent Living & Housing I", "F; G; N", "Minor 1 — Geographic Cost-of-Living & Rental Comparison — 20", "Minor 2 — Independent-Living Housing Choice — 20", "No stand-alone Transportation unit/Major."], [14, "Housing II: Mortgages & Major-Purchase Financing", "K/L application; N", "Minor 1 — Mortgage & Amortization Check — 20", "Major 6 — Housing & Major-Purchase Decision — 50", "Fall Election Day Tuesday/no school."], [15, "Insurance & Risk Management", "P", "Minor 1 — Risk & Policy Comparison Check — 20", "Minor 2 — Insurance Coverage Case — 20", "Fall Veterans Day Wednesday/no school."], [16, "Investing Fundamentals & Portfolio Choices", "O", "Minor 1 — Investment Source/Risk Analysis — 20", "Major 7 — Investment Portfolio Defense — 50", "Week 9 growth math is retrieval; no single required allocation."], [17, "Calendar Buffer / Holiday / Standards Recovery", "—", "No required grade", "—", "Fall Thanksgiving; Spring Holiday/buffer deployment."], [18, "Retirement, Social Security & Life-Stage Planning", "G; O", "Minor 1 — Retirement Account Comparison — 20", "Minor 2 — Retirement Plan Recommendation — 20", "Current rules verified through official sources; Social Security is one source."], [19, "Education & Training Finance", "J", "Minor 1 — Pathway Net-Cost Comparison — 20", "Major 8 — Post-Secondary Net-Cost Decision — 50", "Full cost → net price; loans finance cost but do not reduce price."], [20, "Integrated Financial Life Capstone + SLO/Final", "Cumulative", "Minor 1 — Integrated Capstone Evidence Check — 20", "54-item APF Course 5131 SLO/Post-Test — Final Exam", "Final is separate category, not a Major; no separate 100-point cumulative final."]];
-  var WEEK1_START = "2026-08-03";
+  // ----- 20-week plan, from the APF 5131 mastery tracker's Week Audit sheet -----
+  // Each row: [week, focus, domains, grade entry 1, grade entry 2, notes that apply to either semester]
+  // Semester-specific notes live in SEM_NOTES above.
+  var WEEKS = [[1, "Course Launch, Safety, Privacy & Financial Decision Foundations", "A; C; F; H; B intro", "Minor 1 — Safety, Privacy & Responsible Technology — 20", "Minor 2 — Financial Choices & Course Readiness — 20", "CTSO introduced; formal closure W9."], [2, "Career Choice & Planning", "E; F; G", "Minor 1 — Career Fit & Evidence Comparison — 20", "Minor 2 — Career Pathway Decision & Plan — 20", "G.6 geographic cost-of-living calculation closes W13; detailed aid reserved W19."], [3, "Getting the Job", "C; D; E", "Minor 1 — Interview & STAR Evidence — 20", "Major 1 — Career Application Portfolio — 50", "No employment-application component; application skill assessed W6."], [4, "Workplace Expectations, Responsibilities & Customer Service", "D; E; A/C support", "Minor 1 — Workplace Expectations & Human Relations — 20", "Minor 2 — Responsibilities & Customer Service Lab — 20", "Friday integrated challenge is practice/revision only."], [5, "Pay, Benefits & Working Conditions", "E; G", "Minor 1 — Paycheck Evidence Check — 20", "Major 2 — Total Compensation Decision — 50; Minor 2 — Employment Decision Challenge — 20", "Insurance/retirement only introduced as compensation components."], [6, "Taxes & Different Ways of Getting Paid", "G; M", "Minor 1 — Job Application Completion Evidence — 20", "Major 3 — Income & Tax Filing Case — 50", "M.3/M.5/M.6/M.8 strongest; M.1/M.2/M.4/M.7 formally repaired W10."], [7, "Budgeting & Financial Records", "F; H", "Minor 1 — Budget Build & Deficit Repair — 20", "Minor 2 — Weekly Budget Rescue Application — 20", "H.3 and stronger H.5/H.7 evidence close W9."], [8, "Banking & Payment Systems", "I", "Minor 1 — Account/Register/Reconciliation Check — 20", "Major 4 — Bank Choice & Account Management Simulation — 50", "Fall packet issued; no structural change."], [9, "Saving, Interest, Records & Financial Goals", "B; H; I; O", "Minor 1 — Savings Product Comparison — 20", "Minor 2 — Savings Strategy & Records Application — 20", "Closes spending-log/records/goal-funding gaps and CTSO connection."], [10, "Tax Gap Repair + Credit Launch", "F; K; M", "Minor 1 — Tax Concepts Gap Check — 20", "Minor 2 — Credit Offer Decision Lab — 20", "Q1/Q2 transition; no Major."], [11, "Credit Reports, Scores & Debt Solutions", "K", "Minor 1 — Credit Report Audit Check — 20", "Major 5 — Credit Report & Debt Case — 50", ""], [12, "Consumer Protection, Contracts & Cybersecurity", "C; F; K; L", "Minor 1 — Contract/Fraud Evidence Check — 20", "Minor 2 — Consumer Self-Defense Case — 20", "Higher-level consumer response; avoids repeating basic phishing."], [13, "Independent Living & Housing I", "F; G; N", "Minor 1 — Geographic Cost-of-Living & Rental Comparison — 20", "Minor 2 — Independent-Living Housing Choice — 20", "No stand-alone Transportation unit/Major."], [14, "Housing II: Mortgages & Major-Purchase Financing", "K/L application; N", "Minor 1 — Mortgage & Amortization Check — 20", "Major 6 — Housing & Major-Purchase Decision — 50", ""], [15, "Insurance & Risk Management", "P", "Minor 1 — Risk & Policy Comparison Check — 20", "Minor 2 — Insurance Coverage Case — 20", ""], [16, "Investing Fundamentals & Portfolio Choices", "O", "Minor 1 — Investment Source/Risk Analysis — 20", "Major 7 — Investment Portfolio Defense — 50", "Week 9 growth math is retrieval; no single required allocation."], [17, "Calendar Buffer / Holiday / Standards Recovery", "—", "No required grade", "—", ""], [18, "Retirement, Social Security & Life-Stage Planning", "G; O", "Minor 1 — Retirement Account Comparison — 20", "Minor 2 — Retirement Plan Recommendation — 20", "Current rules verified through official sources; Social Security is one source."], [19, "Education & Training Finance", "J", "Minor 1 — Pathway Net-Cost Comparison — 20", "Major 8 — Post-Secondary Net-Cost Decision — 50", "Full cost → net price; loans finance cost but do not reduce price."], [20, "Integrated Financial Life Capstone + SLO/Final", "Cumulative", "Minor 1 — Integrated Capstone Evidence Check — 20", "54-item APF Course 5131 SLO/Post-Test — Final Exam", "Final is separate category, not a Major; no separate 100-point cumulative final."]];
+  // WEEKS data above: the four Fall-only notes were moved to SEM_NOTES.fall.
 
-  function weekStart(w) { return addDays(ymd(WEEK1_START), (w - 1) * 7); }
-  function weekNumber(d) {
-    var days = Math.floor((d - ymd(WEEK1_START)) / 86400000);
-    if (days < 0) return 0;
-    var w = Math.floor(days / 7) + 1;
-    return w <= WEEKS.length ? w : 0;
+  function weekRange(w) { return fmtShort(weekStart(w)) + " to " + fmtShort(addDays(weekStart(w), 4)); }
+  function calendarLine(w) {
+    var info = weekInfo(w), parts = [];
+    parts.push(info.days === 0 ? "No school days this week" : "School days: " + info.days);
+    if (info.off.length) parts.push("no school " + info.off.map(function (d) { return fmt(d); }).join(", "));
+    if (info.half.length) parts.push("½ day " + info.half.map(function (d) { return fmt(d); }).join(", "));
+    if (info.exam.length) parts.push("exam ½ day " + info.exam.map(function (d) { return fmt(d); }).join(", "));
+    return parts.join(" · ");
   }
 
   function renderWeekPlan() {
+    var sem = SEMS[semSel];
+    byId("weekPlanTitle").textContent = "Your 20-week plan (" + sem.name + ", " + sem.label + ")";
+    var intro = byId("weekIntro"), extra = byId("weekTipExtra");
+    if (semSel === "fall") {
+      intro.textContent = "From the Week Audit sheet of your APF 5131 mastery tracker. Week 1 is the week of Aug 3, and Week 20 is the week of Dec 14 (exam half days Dec 17–18). The tracker notes the fall holidays and Fall Break in these weeks, and the dates below line up with the district calendar. Switch to Spring 2027 to see the same plan on the spring dates.";
+      extra.textContent = "Week 17 is a calendar buffer for Thanksgiving week and standards recovery.";
+    } else {
+      intro.textContent = "The same 20 weeks and assessments as Fall, on the Spring 2027 dates. Week 1 is the week of Jan 4 (Jan 4 is a teacher workday, and students return Jan 5). Week 20 is the week of May 17 (exam half days May 20–21). The \"School days\" line under each week is worked out from the district calendar data in this file. Which weeks to cut or move in the spring is not in your tracker file, so use the notes box on each week.";
+      var w13 = weekInfo(13), w17 = weekInfo(17);
+      extra.textContent = "Week 17 is a calendar buffer in the plan (no required grade). In Spring it has " + w17.days + " school days. The Spring Holiday (Mar 26 to Apr 2) leaves Week 13 with " + w13.days + " school days. TODO: decide where Week 13's content moves.";
+    }
     var body = document.querySelector("#weekPlan tbody");
     body.textContent = "";
     var cur = weekNumber(startOfToday());
-    var short = { month: "short", day: "numeric" };
+    var noteStore = weekNotes[semSel] || {};
     WEEKS.forEach(function (r) {
-      var tr = document.createElement("tr");
-      if (r[0] === cur) tr.className = "wk-current";
-      var start = weekStart(r[0]);
-      var end = addDays(start, 4);
-      tr.appendChild(mk("td", "W" + r[0] + (r[0] === cur ? " (now)" : "")));
-      tr.appendChild(mk("td", start.toLocaleDateString("en-US", short) + " to " + end.toLocaleDateString("en-US", short)));
+      var w = r[0], tr = document.createElement("tr");
+      if (w === cur) tr.className = "wk-current";
+      tr.appendChild(mk("td", "W" + w + (w === cur ? " (now)" : "")));
+      tr.appendChild(mk("td", weekRange(w)));
       var focus = document.createElement("td");
       focus.appendChild(mk("strong", r[1]));
       if (r[2] && r[2] !== "—") focus.appendChild(mk("div", "Domains: " + r[2], "muted small"));
       if (r[5]) focus.appendChild(mk("div", r[5], "muted small"));
+      var semNote = SEM_NOTES[semSel][w];
+      if (semNote) focus.appendChild(mk("div", semNote, "muted small"));
+      var info = weekInfo(w);
+      focus.appendChild(mk("div", calendarLine(w), "muted small"));
+      if (info.days === 0 && countEntries(r).total) focus.appendChild(mk("div", "TODO: this week has no school days but the plan grades " + countEntries(r).total + " entries. Decide where they move.", "warn small"));
+      var noteLabel = mk("label", "My note for week " + w + " (" + sem.label + ")", "sr-only");
+      var note = document.createElement("input");
+      note.type = "text";
+      note.id = "wkNote-" + semSel + "-" + w;
+      noteLabel.htmlFor = note.id;
+      note.className = "wkNote no-print";
+      note.placeholder = "My note for this week";
+      note.value = noteStore[w] || "";
+      note.addEventListener("input", function () {
+        if (!weekNotes[semSel]) weekNotes[semSel] = {};
+        weekNotes[semSel][w] = note.value;
+        saveWeekNotes();
+      });
+      focus.appendChild(noteLabel);
+      focus.appendChild(note);
+      if (noteStore[w]) focus.appendChild(mk("div", "Note: " + noteStore[w], "small print-only"));
       tr.appendChild(focus);
       var g = document.createElement("td");
       [r[3], r[4]].forEach(function (x) { if (x) g.appendChild(mk("div", x, "small")); });
@@ -1452,157 +1919,68 @@ If a parent raises something outside your role (grades appeals, discipline, serv
     });
   }
 
-  // ----- Standards tracker (APF 5131) -----
-  // Each row: [indicator, skill, first teach, spiral/practice, planned assessment week, assessment evidence, starting status]
-  var IND = [["A.1", "Review school safety policies", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.2", "Review classroom safety rules", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.3", "Review classroom equipment safety", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.4", "Identify office/work accident causes", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.5", "Demonstrate office/work safety skills", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["B.1", "Identify CTSO purpose and goals", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.2", "Explain CTSO connection to course/cluster", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.3", "Explain CTSO member benefits and responsibilities", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.4", "Identify CTSO leadership/service/competition opportunities", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.5", "Explain lifelong benefits of CTSO participation", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["C.1", "Use occupation-specific technology", "W2", "W2; W3", "W2", "Career Fit & Evidence Comparison", "Assessed"], ["C.2", "Use proper digital communication/netiquette", "W3", "W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["C.3", "Identify technology abuse/unethical use", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.4", "Explain consequences of illegal/unethical technology use", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.5", "Apply copyright/fair use/licensing ethics", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.6", "Safeguard confidential business information", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.7", "Identify cyber threats and prevention methods", "W1", "W1; W12", "W12", "Consumer Self-Defense Case", "Practiced"], ["D.1", "Creativity and innovation", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.2", "Critical thinking and problem solving", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.3", "Initiative and self-direction", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.4", "Integrity", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.5", "Work ethic", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.6", "Conflict resolution", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.7", "Listening and speaking", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.8", "Respect for diversity", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.9", "Customer-service orientation", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.10", "Teamwork", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["E.1", "Big-picture thinking", "W1", "W1; W2; W20", "W20", "Integrated Capstone Evidence Check", "Practiced"], ["E.2", "Career/life management and goal setting", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.3", "Continuous learning/adaptability", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.4", "Time/resource management", "W1", "W1; W2; W20", "W20", "Integrated Capstone Evidence Check", "Practiced"], ["E.5", "Information literacy", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.6", "Information security", "W1", "W1; W3; W12", "W12", "Consumer Self-Defense Case", "Practiced"], ["E.7", "Information technology", "W1", "W1; W3; W12", "W12", "Consumer Self-Defense Case", "Practiced"], ["E.8", "Job-specific tools/technology", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.9", "Job-specific mathematics", "W5", "W5; W6; W7; W10; W13; W16", "W5/W6", "Pay/Benefits Major + Income/Tax Case", "Introduced"], ["E.10", "Workplace professionalism", "W3", "W3; W4; W20", "W3/W4", "Career Portfolio / Workplace Minors", "Assessed"], ["E.11", "Reading/writing", "W3", "W3; W4; W20", "W3/W4", "Career Portfolio / Workplace Minors", "Assessed"], ["E.12", "Workplace safety", "W1", "W1; W4", "W1", "Safety, Privacy & Responsible Technology", "Assessed"], ["F.1", "Take responsibility for personal financial decisions", "W1", "W1; W7; W20", "W1", "Financial Choices & Course Readiness", "Assessed"], ["F.2", "Use SMART decision-making for financial choices", "W1", "W1; W7; W20", "W1", "Financial Choices & Course Readiness", "Assessed"], ["F.3", "Make informed purchasing decisions", "W1", "W1; W12; W13; W14; W20", "W12/W13", "Consumer Self-Defense + Independent-Living Housing Choice", "Practiced"], ["F.4", "Explain debt impact on financial health", "W10", "W10; W11; W20", "W11", "Credit Report & Debt Case", "Not Yet Taught"], ["F.5", "Explain budgeting importance", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["F.6", "Analyze marketing influence on spending", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense", "Not Yet Taught"], ["F.7", "Safeguard financial information from attacks/fraud", "W12", "W12; W20", "W12", "Consumer Self-Defense Case", "Not Yet Taught"], ["G.1", "Complete/analyze career inventory", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.2", "Compare career growth/wage trends", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.3", "Understand sources of income and benefits", "W5", "W5; W6; W18", "W5", "Pay, Benefits & Working Conditions Major", "Introduced"], ["G.4", "Research careers, education, skills, income, regional cost of living", "W2", "W2; W13; W19; W20", "W13/W19", "Geographic Cost-of-Living Comparison + Postsecondary Decision", "Assessed"], ["G.5", "Analyze education options and earning power", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.6", "Calculate cost of living for career/location", "W13", "W13; W20", "W13", "Geographic Cost-of-Living & Rental Comparison", "Assessed"], ["G.7", "Develop career plan", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.8", "Compute gross pay, deductions, net pay", "W5", "W5; W6; W7", "W6", "Income & Tax Filing Case", "Introduced"], ["G.9", "Evaluate taxes/transfers/benefits and disposable income", "W5", "W5; W6; W18; W20", "W5/W6/W20", "Pay/Benefits evidence + Tax Case + cumulative disposable-income application", "Introduced"], ["G.10", "Identify employer and individual retirement plans", "W5", "W5; W18", "W18", "Retirement Account Comparison/Plan", "Introduced"], ["H.1", "Contrast needs and wants", "W1", "W1; W7", "W1", "Financial Choices & Course Readiness", "Assessed"], ["H.2", "Identify budget components", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["H.3", "Create spending log", "W9", "W9; W20", "W9", "Spending Log, Records & Goal Tracking evidence", "Not Yet Taught"], ["H.4", "Explain budgeting for emergencies", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["H.5", "Identify financial-record tools", "W7", "W7; W9; W20", "W9", "Spending Log, Records & Goal Tracking evidence", "Not Yet Taught"], ["H.6", "Evaluate budget surplus/deficit", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["H.7", "Develop budget from career/lifestyle with SMART goals", "W7", "W7; W9; W20", "W9/W20", "Savings Strategy & Records Application + Integrated Capstone", "Not Yet Taught"], ["I.1", "Differentiate financial institutions", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.2", "Compare bank account types/services/costs", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.3", "Explain deposit insurance protections", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.4", "Explain technology impact on banking", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.5", "Differentiate electronic transaction types/regulations", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.6", "Compare modern payment services", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.7", "Assess banking fees/incentives", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.8", "Compare savings options", "W9", "W9; W16", "W9", "Savings Product Comparison/Strategy", "Not Yet Taught"], ["I.9", "Calculate simple/compound interest", "W9", "W9; W16", "W9", "Savings Product Comparison/Strategy", "Not Yet Taught"], ["I.10", "Differentiate debit and credit cards", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.11", "Explain unbanked/underbanked risks", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.12", "Identify requirements/forms to open accounts", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.13", "Maintain check register", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.14", "Reconcile checking account", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["J.1", "Compare postsecondary/training costs", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.2", "Identify financial-aid sources", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.3", "Explain financial-aid application process", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.4", "Compare education funding options and net cost", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.5", "Analyze FAFSA and related aid processes", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.6", "Evaluate student-loan types and repayment", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.7", "Describe education investment options such as 529/Coverdell", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["K.1", "Identify credit/debt types and sources", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["K.2", "Evaluate credit costs/benefits: rates, terms, fees", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["K.3", "Calculate cost of credit", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["K.4", "Explain 5 Cs and relation to creditworthiness", "W11", "W11; W20", "W11", "Credit Report & Debt Case", "Not Yet Taught"], ["K.5", "Evaluate credit-card features", "W10", "W10; W11; W13; W20", "W10", "Borrowing-Cost Check + Credit Offer Decision Lab", "Not Yet Taught"], ["K.6", "Identify major credit bureaus", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.7", "Evaluate factors in credit scores", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.8", "Explain how to contest incorrect billing", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.9", "Create plan for credit problems", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.10", "Explain consumer credit rights/responsibilities", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.11", "Differentiate bankruptcy types/causes/avoidance", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.12", "Calculate borrowing capacity", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["L.1", "Analyze advertising/marketing influence on demand", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.2", "Identify consumer-protection laws/organizations", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.3", "Analyze factors affecting final prices", "W12", "W12; W13; W14; W20", "W12/W13", "Consumer Self-Defense + Housing/Independent-Living cost comparison", "Not Yet Taught"], ["L.4", "Explain identity theft/compromise methods", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.5", "Safeguard financial information from attacks/fraud", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.6", "Identify components/legal obligations of simple contracts", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["M.1", "Compare taxable and nontaxable income", "W10", "W10; W20", "W10", "Tax Concepts Gap Check", "Not Yet Taught"], ["M.2", "Evaluate earned and unearned income", "W10", "W10; W20", "W10", "Tax Concepts Gap Check", "Not Yet Taught"], ["M.3", "Differentiate mandatory and voluntary withholdings", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["M.4", "Summarize local/state/federal taxes and purposes", "W6", "W6; W10; W20", "W10", "Week 6 tax application + Tax Concepts Gap Check", "Not Yet Taught"], ["M.5", "Compute local taxes on goods/services", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["M.6", "Explain W-2, 1099, W-4 purposes", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["M.7", "Compare standard and itemized deductions", "W10", "W10; W20", "W10", "Tax Concepts Gap Check", "Not Yet Taught"], ["M.8", "Compute/file state and federal income taxes", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["N.1", "Compare renting vs buying property", "W13", "W13; W14; W20", "W13/W14", "Independent-Living Housing Choice + Housing Major", "Not Yet Taught"], ["N.2", "Calculate utilities/services/maintenance/other housing costs", "W13", "W13; W14; W20", "W13/W14", "Rental cost evidence + Housing Major", "Not Yet Taught"], ["N.3", "Compare fixed vs adjustable-rate mortgages", "W14", "W14; W20", "W14", "Mortgage & Amortization Check + Housing Major", "Not Yet Taught"], ["N.4", "Analyze renting process and lease-related costs", "W13", "W13; W14; W20", "W13", "Lease Process & Independent-Living Housing Choice", "Not Yet Taught"], ["N.5", "Compare leasing and buying", "W13", "W13; W14; W20", "W13/W14", "Rent-vs-buy evidence + Housing Major", "Not Yet Taught"], ["N.6", "Calculate cost of ownership/amortization", "W14", "W14; W20", "W14", "Mortgage & Amortization Check + Housing Major", "Not Yet Taught"], ["N.7", "Identify fair-market-value sources", "W13", "W13; W14; W20", "W14", "Fair-value evidence in Housing Major", "Not Yet Taught"], ["N.8", "Identify laws affecting home financing", "W14", "W14; W20", "W14", "Housing protection/disclosure evidence", "Not Yet Taught"], ["N.9", "Complete a mortgage application", "W14", "W14; W20", "W14", "Fictional mortgage-application evidence", "Not Yet Taught"], ["O.1", "Calculate growth using Rule of 72", "W9", "W9; W16; W18; W20", "W9/W16", "Interest/Rule of 72 practice + Investment evidence", "Not Yet Taught"], ["O.2", "Explain risk-return relationship", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.3", "Analyze stock market/trading app history, function, risks", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.4", "Evaluate investment alternatives", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.5", "Evaluate investment-information sources", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.6", "Explain SEC role", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.7", "Create/manage diversified portfolio", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.8", "Describe buying/selling investments and fees", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.9", "Analyze investment tax implications", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.10", "Explain changing financial-planning needs by life stage", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.11", "Explain estate-planning purpose", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.12", "Analyze Social Security in retirement planning", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.13", "Compare retirement investment types", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.14", "Identify illegal investment practices", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.15", "Defend saving/investing for wealth and goals", "W9", "W9; W16; W18; W20", "W9/W16/W18", "Savings Strategy + Portfolio Defense + Retirement Recommendation", "Not Yet Taught"], ["P.1", "Define insurance principles and terminology", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.2", "Explain risk-management methods", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.3", "Explain auto-policy terms/features", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.4", "Analyze factors affecting premiums", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.5", "Explain health-insurance features/costs", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.6", "Compare life-insurance products", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.7", "Investigate homeowners/renters/disability/liability insurance", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"]];
-  var DOMAIN_NAMES = {
-    A: "Safety", B: "CTSO / FBLA", C: "Technology and ethics", D: "Employability skills",
-    E: "Workplace readiness", F: "Financial responsibility", G: "Careers, income, and benefits",
-    H: "Budgeting", I: "Banking, saving, and interest", J: "Paying for education",
-    K: "Credit and debt", L: "Consumer protection", M: "Taxes", N: "Housing",
-    O: "Investing and retirement", P: "Insurance"
-  };
-  var STATUSES = ["Not Yet Taught", "Introduced", "Practiced", "Assessed"];
-  var TR_STORE = "financeToolkit.tracker.v1";
-  var trState = {};
-  try { trState = JSON.parse(localStorage.getItem(TR_STORE)) || {}; } catch (e) { trState = {}; }
-  function saveTr() { try { localStorage.setItem(TR_STORE, JSON.stringify(trState)); } catch (e) { /* ignore */ } }
-  function trStatus(row) { var s = trState[row[0]]; return s && s.s ? s.s : row[6]; }
-  function trReteach(row) { var s = trState[row[0]]; return !!(s && s.r); }
-
-  function renderTrSummary() {
-    var counts = { "Not Yet Taught": 0, "Introduced": 0, "Practiced": 0, "Assessed": 0 };
-    var reteach = 0;
-    var dom = {};
-    Object.keys(DOMAIN_NAMES).forEach(function (k) {
-      dom[k] = { total: 0, "Not Yet Taught": 0, "Introduced": 0, "Practiced": 0, "Assessed": 0, reteach: 0 };
+  // ----- Does the plan meet the per-quarter minimums? Worked out from WEEKS and QUARTERS -----
+  var MIN_GRADES_Q = 18, MIN_MAJORS_Q = 4; // manual p. 18 and 28, as already shown on this page
+  function quarterPlanStats(sem) {
+    var qs = sem === "fall" ? ["q1", "q2"] : ["q3", "q4"], stats = {}, noSchool = [];
+    qs.forEach(function (id) { stats[id] = { sure: 0, sureM: 0, flex: 0, flexM: 0, flexWeeks: [] }; });
+    WEEKS.forEach(function (r) {
+      var info = weekInfo(r[0], sem), c = countEntries(r);
+      if (!c.total) return;
+      if (!info.quarters.length) { noSchool.push({ w: r[0], total: c.total }); return; }
+      if (info.quarters.length === 1) {
+        stats[info.quarters[0]].sure += c.total;
+        stats[info.quarters[0]].sureM += c.majors;
+      } else {
+        info.quarters.forEach(function (id) {
+          if (!stats[id]) return;
+          stats[id].flex += c.total; stats[id].flexM += c.majors; stats[id].flexWeeks.push(r[0]);
+        });
+      }
     });
-    IND.forEach(function (row) {
-      var st = trStatus(row), d = row[0].charAt(0);
-      counts[st]++;
-      dom[d].total++; dom[d][st]++;
-      if (trReteach(row)) { reteach++; dom[d].reteach++; }
-    });
-    var box = document.getElementById("trSummary");
-    box.textContent = "";
-    function stat(label, n) {
-      var d = mk("div", null, "stat");
-      d.appendChild(mk("b", String(n)));
-      d.appendChild(document.createTextNode(label));
-      box.appendChild(d);
-    }
-    stat("Total indicators", IND.length);
-    STATUSES.forEach(function (s) { stat(s, counts[s]); });
-    stat("Reteach flagged", reteach);
-    stat("Assessed (not mastery)", Math.round(counts.Assessed / IND.length * 100) + "%");
-
-    var body = document.querySelector("#trDomains tbody");
-    body.textContent = "";
-    Object.keys(DOMAIN_NAMES).forEach(function (k) {
-      var d = dom[k], tr = document.createElement("tr");
-      tr.appendChild(mk("td", k));
-      tr.appendChild(mk("td", DOMAIN_NAMES[k]));
-      [d.total, d["Not Yet Taught"], d.Introduced, d.Practiced, d.Assessed, d.reteach].forEach(function (n) {
-        tr.appendChild(mk("td", String(n), "num"));
-      });
-      body.appendChild(tr);
-    });
+    return { qs: qs, stats: stats, noSchool: noSchool };
   }
-
-  function renderTrList() {
-    var dSel = document.getElementById("trDomain").value;
-    var sSel = document.getElementById("trStatus").value;
-    var q = document.getElementById("trSearch").value.trim().toLowerCase();
-    var body = document.querySelector("#trList tbody");
+  function marginText(sure, flex, min, what) {
+    if (sure >= min) return what + ": " + sure + " (margin " + (sure - min >= 0 ? "+" : "") + (sure - min) + ")";
+    if (sure + flex >= min) return what + ": " + sure + ", needs " + (min - sure) + " more from the shared week";
+    return what + ": " + sure + ", short by " + (min - sure - flex) + " even if the shared week counts here";
+  }
+  function renderPlanCheck() {
+    var res = quarterPlanStats(semSel);
+    byId("planCheckIntro").textContent = "Counted from the Week Audit entries and the " + SEMS[semSel].label + " quarter dates. The manual asks for at least " + MIN_GRADES_Q + " grades and " + MIN_MAJORS_Q + " majors per quarter (p. 18, 28). The final exam is a separate category and is not counted.";
+    var body = document.querySelector("#planCheck tbody");
     body.textContent = "";
-    var shown = 0;
-    IND.forEach(function (row) {
-      if (dSel && row[0].charAt(0) !== dSel) return;
-      var st = trStatus(row);
-      if (sSel === "__reteach") { if (!trReteach(row)) return; }
-      else if (sSel && st !== sSel) return;
-      if (q && (row[1] + " " + row[5] + " " + row[0]).toLowerCase().indexOf(q) === -1) return;
-      shown++;
+    res.qs.forEach(function (id) {
+      var q = QUARTERS.filter(function (x) { return x.id === id; })[0], s = res.stats[id];
       var tr = document.createElement("tr");
-      tr.appendChild(mk("td", row[0]));
-      var skill = document.createElement("td");
-      skill.appendChild(document.createTextNode(row[1]));
-      skill.appendChild(mk("div", "Evidence: " + row[5], "muted small"));
-      tr.appendChild(skill);
-      tr.appendChild(mk("td", "Teach " + row[2] + ", assess " + row[4], "small"));
-      var tdS = document.createElement("td");
-      var sel = document.createElement("select");
-      sel.setAttribute("aria-label", "Status for " + row[0]);
-      STATUSES.forEach(function (s) {
-        var o = document.createElement("option");
-        o.value = s; o.textContent = s;
-        if (s === st) o.selected = true;
-        sel.appendChild(o);
-      });
-      sel.addEventListener("change", function () {
-        var cur = trState[row[0]] || {};
-        cur.s = sel.value;
-        trState[row[0]] = cur;
-        saveTr();
-        renderTrSummary();
-      });
-      tdS.appendChild(sel);
-      tr.appendChild(tdS);
-      var tdR = document.createElement("td");
-      var cb = document.createElement("input");
-      cb.type = "checkbox";
-      cb.checked = trReteach(row);
-      cb.setAttribute("aria-label", "Reteach needed for " + row[0]);
-      cb.addEventListener("change", function () {
-        var cur = trState[row[0]] || {};
-        cur.r = cb.checked;
-        trState[row[0]] = cur;
-        saveTr();
-        renderTrSummary();
-      });
-      tdR.appendChild(cb);
-      tr.appendChild(tdR);
+      tr.appendChild(mk("td", q.name));
+      tr.appendChild(mk("td", fmtShort(ymd(q.start)) + " to " + fmtShort(ymd(q.end))));
+      tr.appendChild(mk("td", marginText(s.sure, s.flex, MIN_GRADES_Q, "Grades")));
+      tr.appendChild(mk("td", marginText(s.sureM, s.flexM, MIN_MAJORS_Q, "Majors")));
+      tr.appendChild(mk("td", s.flexWeeks.length ? "Week " + s.flexWeeks.join(", ") + " (" + s.flex + " grades, " + s.flexM + " majors)" : "None"));
       body.appendChild(tr);
     });
-    document.getElementById("trCount").textContent = "Showing " + shown + " of " + IND.length + " indicators.";
+    var notes = byId("planCheckNotes");
+    notes.textContent = "";
+    var shared = [];
+    res.qs.forEach(function (id) { res.stats[id].flexWeeks.forEach(function (w) { if (shared.indexOf(w) === -1) shared.push(w); }); });
+    if (shared.length) {
+      var d = mk("div", null, "warn");
+      d.appendChild(mk("strong", "Check the quarter boundary. "));
+      d.appendChild(document.createTextNode("Week " + shared.join(", ") + " has school days in two quarters. Its grades can land in either quarter, so they are shown as shared. Enter them in PowerTeacherPro in the quarter you intend and confirm the counts there."));
+      notes.appendChild(d);
+    }
+    res.noSchool.forEach(function (x) {
+      var d = mk("div", null, "warn");
+      d.appendChild(mk("strong", "Week " + x.w + " has no school days. "));
+      d.appendChild(document.createTextNode("The plan puts " + x.total + " graded entries there, and they are not counted in any quarter. TODO: decide where those entries move."));
+      notes.appendChild(d);
+    });
   }
-
-  function renderTracker() {
-    var dSel = document.getElementById("trDomain");
-    var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "All domains"; dSel.appendChild(o0);
-    Object.keys(DOMAIN_NAMES).forEach(function (k) {
-      var o = document.createElement("option"); o.value = k; o.textContent = k + ": " + DOMAIN_NAMES[k]; dSel.appendChild(o);
-    });
-    var sSel = document.getElementById("trStatus");
-    var s0 = document.createElement("option"); s0.value = ""; s0.textContent = "All statuses"; sSel.appendChild(s0);
-    STATUSES.forEach(function (s) { var o = document.createElement("option"); o.value = s; o.textContent = s; sSel.appendChild(o); });
-    var sr = document.createElement("option"); sr.value = "__reteach"; sr.textContent = "Reteach flagged"; sSel.appendChild(sr);
-    dSel.addEventListener("change", renderTrList);
-    sSel.addEventListener("change", renderTrList);
-    document.getElementById("trSearch").addEventListener("input", renderTrList);
-    document.getElementById("trReset").addEventListener("click", function () {
-      if (!confirm("Reset every indicator to the starting statuses from your tracker file and clear reteach flags?")) return;
-      trState = {};
-      saveTr();
-      renderTrSummary();
-      renderTrList();
-    });
-    document.getElementById("trSpring").addEventListener("click", function () {
-      if (!confirm("Set every indicator to Not Yet Taught and clear reteach flags, for a new cohort?")) return;
-      trState = {};
-      IND.forEach(function (row) { trState[row[0]] = { s: "Not Yet Taught", r: false }; });
-      saveTr();
-      renderTrSummary();
-      renderTrList();
-    });
-    renderTrSummary();
-    renderTrList();
-  }
-
 
   function renderEvents() {
     var today = startOfToday();
-    var hidePast = document.getElementById("calHidePast").checked;
+    var hidePast = byId("calHidePast").checked;
     var body = document.querySelector("#calEvents tbody");
     body.textContent = "";
     EVENTS.forEach(function (ev) {
@@ -1625,45 +2003,375 @@ If a parent raises something outside your role (grades appeals, discipline, serv
       body.appendChild(tr2);
     }
   }
-  document.getElementById("calHidePast").addEventListener("change", renderEvents);
+  byId("calHidePast").addEventListener("change", renderEvents);
 
-  renderNow();
-  renderCounts();
-  renderWeekPlan();
-  renderTracker();
-  renderEvents();
+
+  // ----- Standards tracker (APF 5131) -----
+  // Each row: [indicator, skill, first teach, spiral/practice, planned assessment week, assessment evidence, starting status]
+  var IND = [["A.1", "Review school safety policies", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.2", "Review classroom safety rules", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.3", "Review classroom equipment safety", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.4", "Identify office/work accident causes", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.5", "Demonstrate office/work safety skills", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["B.1", "Identify CTSO purpose and goals", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.2", "Explain CTSO connection to course/cluster", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.3", "Explain CTSO member benefits and responsibilities", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.4", "Identify CTSO leadership/service/competition opportunities", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.5", "Explain lifelong benefits of CTSO participation", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["C.1", "Use occupation-specific technology", "W2", "W2; W3", "W2", "Career Fit & Evidence Comparison", "Assessed"], ["C.2", "Use proper digital communication/netiquette", "W3", "W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["C.3", "Identify technology abuse/unethical use", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.4", "Explain consequences of illegal/unethical technology use", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.5", "Apply copyright/fair use/licensing ethics", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.6", "Safeguard confidential business information", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.7", "Identify cyber threats and prevention methods", "W1", "W1; W12", "W12", "Consumer Self-Defense Case", "Practiced"], ["D.1", "Creativity and innovation", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.2", "Critical thinking and problem solving", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.3", "Initiative and self-direction", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.4", "Integrity", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.5", "Work ethic", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.6", "Conflict resolution", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.7", "Listening and speaking", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.8", "Respect for diversity", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.9", "Customer-service orientation", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.10", "Teamwork", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["E.1", "Big-picture thinking", "W1", "W1; W2; W20", "W20", "Integrated Capstone Evidence Check", "Practiced"], ["E.2", "Career/life management and goal setting", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.3", "Continuous learning/adaptability", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.4", "Time/resource management", "W1", "W1; W2; W20", "W20", "Integrated Capstone Evidence Check", "Practiced"], ["E.5", "Information literacy", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.6", "Information security", "W1", "W1; W3; W12", "W12", "Consumer Self-Defense Case", "Practiced"], ["E.7", "Information technology", "W1", "W1; W3; W12", "W12", "Consumer Self-Defense Case", "Practiced"], ["E.8", "Job-specific tools/technology", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.9", "Job-specific mathematics", "W5", "W5; W6; W7; W10; W13; W16", "W5/W6", "Pay/Benefits Major + Income/Tax Case", "Introduced"], ["E.10", "Workplace professionalism", "W3", "W3; W4; W20", "W3/W4", "Career Portfolio / Workplace Minors", "Assessed"], ["E.11", "Reading/writing", "W3", "W3; W4; W20", "W3/W4", "Career Portfolio / Workplace Minors", "Assessed"], ["E.12", "Workplace safety", "W1", "W1; W4", "W1", "Safety, Privacy & Responsible Technology", "Assessed"], ["F.1", "Take responsibility for personal financial decisions", "W1", "W1; W7; W20", "W1", "Financial Choices & Course Readiness", "Assessed"], ["F.2", "Use SMART decision-making for financial choices", "W1", "W1; W7; W20", "W1", "Financial Choices & Course Readiness", "Assessed"], ["F.3", "Make informed purchasing decisions", "W1", "W1; W12; W13; W14; W20", "W12/W13", "Consumer Self-Defense + Independent-Living Housing Choice", "Practiced"], ["F.4", "Explain debt impact on financial health", "W10", "W10; W11; W20", "W11", "Credit Report & Debt Case", "Not Yet Taught"], ["F.5", "Explain budgeting importance", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["F.6", "Analyze marketing influence on spending", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense", "Not Yet Taught"], ["F.7", "Safeguard financial information from attacks/fraud", "W12", "W12; W20", "W12", "Consumer Self-Defense Case", "Not Yet Taught"], ["G.1", "Complete/analyze career inventory", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.2", "Compare career growth/wage trends", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.3", "Understand sources of income and benefits", "W5", "W5; W6; W18", "W5", "Pay, Benefits & Working Conditions Major", "Introduced"], ["G.4", "Research careers, education, skills, income, regional cost of living", "W2", "W2; W13; W19; W20", "W13/W19", "Geographic Cost-of-Living Comparison + Postsecondary Decision", "Assessed"], ["G.5", "Analyze education options and earning power", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.6", "Calculate cost of living for career/location", "W13", "W13; W20", "W13", "Geographic Cost-of-Living & Rental Comparison", "Assessed"], ["G.7", "Develop career plan", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.8", "Compute gross pay, deductions, net pay", "W5", "W5; W6; W7", "W6", "Income & Tax Filing Case", "Introduced"], ["G.9", "Evaluate taxes/transfers/benefits and disposable income", "W5", "W5; W6; W18; W20", "W5/W6/W20", "Pay/Benefits evidence + Tax Case + cumulative disposable-income application", "Introduced"], ["G.10", "Identify employer and individual retirement plans", "W5", "W5; W18", "W18", "Retirement Account Comparison/Plan", "Introduced"], ["H.1", "Contrast needs and wants", "W1", "W1; W7", "W1", "Financial Choices & Course Readiness", "Assessed"], ["H.2", "Identify budget components", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["H.3", "Create spending log", "W9", "W9; W20", "W9", "Spending Log, Records & Goal Tracking evidence", "Not Yet Taught"], ["H.4", "Explain budgeting for emergencies", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["H.5", "Identify financial-record tools", "W7", "W7; W9; W20", "W9", "Spending Log, Records & Goal Tracking evidence", "Not Yet Taught"], ["H.6", "Evaluate budget surplus/deficit", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["H.7", "Develop budget from career/lifestyle with SMART goals", "W7", "W7; W9; W20", "W9/W20", "Savings Strategy & Records Application + Integrated Capstone", "Not Yet Taught"], ["I.1", "Differentiate financial institutions", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.2", "Compare bank account types/services/costs", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.3", "Explain deposit insurance protections", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.4", "Explain technology impact on banking", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.5", "Differentiate electronic transaction types/regulations", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.6", "Compare modern payment services", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.7", "Assess banking fees/incentives", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.8", "Compare savings options", "W9", "W9; W16", "W9", "Savings Product Comparison/Strategy", "Not Yet Taught"], ["I.9", "Calculate simple/compound interest", "W9", "W9; W16", "W9", "Savings Product Comparison/Strategy", "Not Yet Taught"], ["I.10", "Differentiate debit and credit cards", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.11", "Explain unbanked/underbanked risks", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.12", "Identify requirements/forms to open accounts", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.13", "Maintain check register", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.14", "Reconcile checking account", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["J.1", "Compare postsecondary/training costs", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.2", "Identify financial-aid sources", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.3", "Explain financial-aid application process", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.4", "Compare education funding options and net cost", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.5", "Analyze FAFSA and related aid processes", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.6", "Evaluate student-loan types and repayment", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.7", "Describe education investment options such as 529/Coverdell", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["K.1", "Identify credit/debt types and sources", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["K.2", "Evaluate credit costs/benefits: rates, terms, fees", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["K.3", "Calculate cost of credit", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["K.4", "Explain 5 Cs and relation to creditworthiness", "W11", "W11; W20", "W11", "Credit Report & Debt Case", "Not Yet Taught"], ["K.5", "Evaluate credit-card features", "W10", "W10; W11; W13; W20", "W10", "Borrowing-Cost Check + Credit Offer Decision Lab", "Not Yet Taught"], ["K.6", "Identify major credit bureaus", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.7", "Evaluate factors in credit scores", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.8", "Explain how to contest incorrect billing", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.9", "Create plan for credit problems", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.10", "Explain consumer credit rights/responsibilities", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.11", "Differentiate bankruptcy types/causes/avoidance", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.12", "Calculate borrowing capacity", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["L.1", "Analyze advertising/marketing influence on demand", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.2", "Identify consumer-protection laws/organizations", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.3", "Analyze factors affecting final prices", "W12", "W12; W13; W14; W20", "W12/W13", "Consumer Self-Defense + Housing/Independent-Living cost comparison", "Not Yet Taught"], ["L.4", "Explain identity theft/compromise methods", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.5", "Safeguard financial information from attacks/fraud", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.6", "Identify components/legal obligations of simple contracts", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["M.1", "Compare taxable and nontaxable income", "W10", "W10; W20", "W10", "Tax Concepts Gap Check", "Not Yet Taught"], ["M.2", "Evaluate earned and unearned income", "W10", "W10; W20", "W10", "Tax Concepts Gap Check", "Not Yet Taught"], ["M.3", "Differentiate mandatory and voluntary withholdings", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["M.4", "Summarize local/state/federal taxes and purposes", "W6", "W6; W10; W20", "W10", "Week 6 tax application + Tax Concepts Gap Check", "Not Yet Taught"], ["M.5", "Compute local taxes on goods/services", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["M.6", "Explain W-2, 1099, W-4 purposes", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["M.7", "Compare standard and itemized deductions", "W10", "W10; W20", "W10", "Tax Concepts Gap Check", "Not Yet Taught"], ["M.8", "Compute/file state and federal income taxes", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["N.1", "Compare renting vs buying property", "W13", "W13; W14; W20", "W13/W14", "Independent-Living Housing Choice + Housing Major", "Not Yet Taught"], ["N.2", "Calculate utilities/services/maintenance/other housing costs", "W13", "W13; W14; W20", "W13/W14", "Rental cost evidence + Housing Major", "Not Yet Taught"], ["N.3", "Compare fixed vs adjustable-rate mortgages", "W14", "W14; W20", "W14", "Mortgage & Amortization Check + Housing Major", "Not Yet Taught"], ["N.4", "Analyze renting process and lease-related costs", "W13", "W13; W14; W20", "W13", "Lease Process & Independent-Living Housing Choice", "Not Yet Taught"], ["N.5", "Compare leasing and buying", "W13", "W13; W14; W20", "W13/W14", "Rent-vs-buy evidence + Housing Major", "Not Yet Taught"], ["N.6", "Calculate cost of ownership/amortization", "W14", "W14; W20", "W14", "Mortgage & Amortization Check + Housing Major", "Not Yet Taught"], ["N.7", "Identify fair-market-value sources", "W13", "W13; W14; W20", "W14", "Fair-value evidence in Housing Major", "Not Yet Taught"], ["N.8", "Identify laws affecting home financing", "W14", "W14; W20", "W14", "Housing protection/disclosure evidence", "Not Yet Taught"], ["N.9", "Complete a mortgage application", "W14", "W14; W20", "W14", "Fictional mortgage-application evidence", "Not Yet Taught"], ["O.1", "Calculate growth using Rule of 72", "W9", "W9; W16; W18; W20", "W9/W16", "Interest/Rule of 72 practice + Investment evidence", "Not Yet Taught"], ["O.2", "Explain risk-return relationship", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.3", "Analyze stock market/trading app history, function, risks", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.4", "Evaluate investment alternatives", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.5", "Evaluate investment-information sources", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.6", "Explain SEC role", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.7", "Create/manage diversified portfolio", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.8", "Describe buying/selling investments and fees", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.9", "Analyze investment tax implications", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.10", "Explain changing financial-planning needs by life stage", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.11", "Explain estate-planning purpose", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.12", "Analyze Social Security in retirement planning", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.13", "Compare retirement investment types", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.14", "Identify illegal investment practices", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.15", "Defend saving/investing for wealth and goals", "W9", "W9; W16; W18; W20", "W9/W16/W18", "Savings Strategy + Portfolio Defense + Retirement Recommendation", "Not Yet Taught"], ["P.1", "Define insurance principles and terminology", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.2", "Explain risk-management methods", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.3", "Explain auto-policy terms/features", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.4", "Analyze factors affecting premiums", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.5", "Explain health-insurance features/costs", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.6", "Compare life-insurance products", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.7", "Investigate homeowners/renters/disability/liability insurance", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"]];
+  var DOMAIN_NAMES = {
+    A: "Safety", B: "CTSO / FBLA", C: "Technology and ethics", D: "Employability skills",
+    E: "Workplace readiness", F: "Financial responsibility", G: "Careers, income, and benefits",
+    H: "Budgeting", I: "Banking, saving, and interest", J: "Paying for education",
+    K: "Credit and debt", L: "Consumer protection", M: "Taxes", N: "Housing",
+    O: "Investing and retirement", P: "Insurance"
+  };
+  var STATUSES = ["Not Yet Taught", "Introduced", "Practiced", "Assessed"];
+  var trState = {};
+  function saveTr() { jset(KEYS.tracker, trState); }
+  function trStatus(row) { var s = trState[row[0]]; return s && s.s ? s.s : row[6]; }
+  function trReteach(row) { var s = trState[row[0]]; return !!(s && s.r); }
+  function firstWeek(row) { return parseInt(String(row[2]).replace(/\D/g, ""), 10) || 0; }
+  // Current position in the selected semester: 0 before Week 1, 1 to 20, 21 after Week 20.
+  function trCurWeek() { return weekPos(startOfToday()); }
+  // Behind = first-teach week has passed and the status is still Not Yet Taught. Never changes any status.
+  function isBehind(row) { return trStatus(row) === "Not Yet Taught" && firstWeek(row) < trCurWeek(); }
+  function behindCount() { return IND.filter(isBehind).length; }
+
+  function renderTrSummary() {
+    var counts = { "Not Yet Taught": 0, "Introduced": 0, "Practiced": 0, "Assessed": 0 };
+    var reteach = 0, behind = 0;
+    var dom = {};
+    Object.keys(DOMAIN_NAMES).forEach(function (k) {
+      dom[k] = { total: 0, "Not Yet Taught": 0, "Introduced": 0, "Practiced": 0, "Assessed": 0, reteach: 0 };
+    });
+    IND.forEach(function (row) {
+      var st = trStatus(row), d = row[0].charAt(0);
+      counts[st]++;
+      dom[d].total++; dom[d][st]++;
+      if (trReteach(row)) { reteach++; dom[d].reteach++; }
+      if (isBehind(row)) behind++;
+    });
+    var box = byId("trSummary");
+    box.textContent = "";
+    function stat(label, n) {
+      var d = mk("div", null, "stat");
+      d.appendChild(mk("b", String(n)));
+      d.appendChild(document.createTextNode(label));
+      box.appendChild(d);
+    }
+    stat("Total indicators", IND.length);
+    STATUSES.forEach(function (s) { stat(s, counts[s]); });
+    stat("Reteach flagged", reteach);
+    stat("Behind schedule", behind);
+    stat("Assessed (not mastery)", Math.round(counts.Assessed / IND.length * 100) + "%");
+    var cur = trCurWeek();
+    byId("trBehindNote").textContent = cur === 0
+      ? "Behind schedule is measured against " + SEMS[semSel].label + ", which has not started yet, so nothing is flagged."
+      : cur > WEEKS.length
+        ? "Behind schedule is measured against " + SEMS[semSel].label + ", whose 20 weeks are over, so every indicator still Not Yet Taught is flagged."
+        : "Behind schedule means the first-teach week is before Week " + cur + " of " + SEMS[semSel].label + " and the status is still Not Yet Taught. The flag never changes a status. You do that.";
+
+    var body = document.querySelector("#trDomains tbody");
+    body.textContent = "";
+    Object.keys(DOMAIN_NAMES).forEach(function (k) {
+      var d = dom[k], tr = document.createElement("tr");
+      tr.appendChild(mk("td", k));
+      tr.appendChild(mk("td", DOMAIN_NAMES[k]));
+      [d.total, d["Not Yet Taught"], d.Introduced, d.Practiced, d.Assessed, d.reteach].forEach(function (n) {
+        tr.appendChild(mk("td", String(n), "num"));
+      });
+      body.appendChild(tr);
+    });
+    updateBulkLabel();
+  }
+
+  function renderTrList() {
+    var dSel = byId("trDomain").value;
+    var sSel = byId("trStatus").value;
+    var q = byId("trSearch").value.trim().toLowerCase();
+    var body = document.querySelector("#trList tbody");
+    body.textContent = "";
+    var shown = 0;
+    IND.forEach(function (row) {
+      if (dSel && row[0].charAt(0) !== dSel) return;
+      var st = trStatus(row);
+      if (sSel === "__reteach") { if (!trReteach(row)) return; }
+      else if (sSel === "__behind") { if (!isBehind(row)) return; }
+      else if (sSel && st !== sSel) return;
+      if (q && (row[1] + " " + row[5] + " " + row[0]).toLowerCase().indexOf(q) === -1) return;
+      shown++;
+      var tr = document.createElement("tr");
+      var tdCode = mk("td", row[0]);
+      if (isBehind(row)) { tdCode.appendChild(document.createElement("br")); tdCode.appendChild(mk("span", "Behind", "badge behind")); }
+      tr.appendChild(tdCode);
+      var skill = document.createElement("td");
+      skill.appendChild(document.createTextNode(row[1]));
+      skill.appendChild(mk("div", "Evidence: " + row[5], "muted small"));
+      tr.appendChild(skill);
+      tr.appendChild(mk("td", "Teach " + row[2] + ", assess " + row[4], "small"));
+      var tdS = document.createElement("td");
+      var sel = document.createElement("select");
+      sel.setAttribute("aria-label", "Status for " + row[0]);
+      STATUSES.forEach(function (s) {
+        var o = document.createElement("option");
+        o.value = s; o.textContent = s;
+        if (s === st) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", function () {
+        var cur = trState[row[0]] || {};
+        cur.s = sel.value;
+        trState[row[0]] = cur;
+        saveTr();
+        renderTrSummary();
+        renderTrList();
+        renderDash();
+      });
+      tdS.appendChild(sel);
+      tr.appendChild(tdS);
+      var tdR = document.createElement("td");
+      var lab = mk("label", null, "hit");
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = trReteach(row);
+      cb.setAttribute("aria-label", "Reteach needed for " + row[0]);
+      cb.addEventListener("change", function () {
+        var cur = trState[row[0]] || {};
+        cur.r = cb.checked;
+        trState[row[0]] = cur;
+        saveTr();
+        renderTrSummary();
+      });
+      lab.appendChild(cb);
+      tdR.appendChild(lab);
+      tr.appendChild(tdR);
+      body.appendChild(tr);
+    });
+    byId("trCount").textContent = "Showing " + shown + " of " + IND.length + " indicators.";
+  }
+
+  function bulkRows() {
+    var w = parseInt(byId("trBulkWeek").value, 10);
+    return IND.filter(function (row) { return firstWeek(row) === w && trStatus(row) === "Not Yet Taught"; });
+  }
+  function updateBulkLabel() {
+    var w = byId("trBulkWeek").value, s = byId("trBulkStatus").value;
+    byId("trBulkGo").textContent = "Mark Week " + w + " indicators as " + s;
+    byId("trBulkInfo").textContent = bulkRows().length + " indicator" + (bulkRows().length === 1 ? "" : "s") + " first taught in Week " + w + " are still Not Yet Taught.";
+  }
+
+  function initTracker() {
+    var dSel = byId("trDomain");
+    var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "All domains"; dSel.appendChild(o0);
+    Object.keys(DOMAIN_NAMES).forEach(function (k) {
+      var o = document.createElement("option"); o.value = k; o.textContent = k + ": " + DOMAIN_NAMES[k]; dSel.appendChild(o);
+    });
+    var sSel = byId("trStatus");
+    var s0 = document.createElement("option"); s0.value = ""; s0.textContent = "All statuses"; sSel.appendChild(s0);
+    STATUSES.forEach(function (s) { var o = document.createElement("option"); o.value = s; o.textContent = s; sSel.appendChild(o); });
+    var sr = document.createElement("option"); sr.value = "__reteach"; sr.textContent = "Reteach flagged"; sSel.appendChild(sr);
+    var sb = document.createElement("option"); sb.value = "__behind"; sb.textContent = "Behind schedule"; sSel.appendChild(sb);
+    var bw = byId("trBulkWeek");
+    for (var w = 1; w <= WEEKS.length; w++) { var ow = document.createElement("option"); ow.value = String(w); ow.textContent = "Week " + w; bw.appendChild(ow); }
+    dSel.addEventListener("change", renderTrList);
+    sSel.addEventListener("change", renderTrList);
+    byId("trSearch").addEventListener("input", renderTrList);
+    bw.addEventListener("change", updateBulkLabel);
+    byId("trBulkStatus").addEventListener("change", updateBulkLabel);
+    byId("trBulkGo").addEventListener("click", function () {
+      var rows = bulkRows(), w = bw.value, s = byId("trBulkStatus").value;
+      if (!rows.length) { byId("trBulkInfo").textContent = "Nothing to change: no Week " + w + " indicators are Not Yet Taught."; return; }
+      if (!confirm("Set " + rows.length + " indicator" + (rows.length === 1 ? "" : "s") + " first taught in Week " + w + " from Not Yet Taught to " + s + "? Indicators that already have another status are left alone.")) return;
+      rows.forEach(function (row) {
+        var cur = trState[row[0]] || {};
+        cur.s = s;
+        trState[row[0]] = cur;
+      });
+      saveTr();
+      renderTrSummary();
+      renderTrList();
+      renderDash();
+    });
+    byId("trReset").addEventListener("click", function () {
+      if (!confirm("Reset every indicator to the starting statuses from your tracker file and clear reteach flags?")) return;
+      trState = {};
+      saveTr();
+      renderTrSummary();
+      renderTrList();
+      renderDash();
+    });
+    byId("trSpring").addEventListener("click", function () {
+      if (!confirm("Set every indicator to Not Yet Taught and clear reteach flags, for a new cohort?")) return;
+      trState = {};
+      IND.forEach(function (row) { trState[row[0]] = { s: "Not Yet Taught", r: false }; });
+      saveTr();
+      renderTrSummary();
+      renderTrList();
+      renderDash();
+    });
+  }
+
+  // ---------- Today dashboard ----------
+  function dashItem(title) {
+    var d = mk("div", null, "dash-item");
+    d.appendChild(mk("h3", title));
+    return d;
+  }
+  function renderDash() {
+    var el = byId("dash");
+    el.textContent = "";
+    var today = startOfToday(), sem = SEMS[semSel];
+    el.appendChild(mk("h2", "Today: " + fmt(today, true)));
+
+    var r = backupReminderText();
+    if (r) { var b = mk("div", r, "warn small"); el.appendChild(b); }
+
+    var grid = mk("div", null, "dash-grid");
+    el.appendChild(grid);
+
+    // Quarter and today's school status
+    var q = dashItem("Quarter");
+    var quarter = quarterOf(today), evs = eventsOn(today);
+    if (quarter) {
+      var left = Math.round((ymd(quarter.end) - today) / 86400000);
+      q.appendChild(mk("p", quarter.name + ": " + left + " calendar day" + (left === 1 ? "" : "s") + " left (ends " + fmt(ymd(quarter.end)) + ")."));
+    } else if (today < ymd(QUARTERS[0].start)) {
+      var dd = Math.round((ymd(QUARTERS[0].start) - today) / 86400000);
+      q.appendChild(mk("p", "School starts " + fmt(ymd(QUARTERS[0].start)) + " (" + dd + " calendar day" + (dd === 1 ? "" : "s") + " away)."));
+    } else if (today > ymd(QUARTERS[3].end)) {
+      q.appendChild(mk("p", "The 2026–27 school year has ended."));
+    } else {
+      var nq = QUARTERS.filter(function (x) { return ymd(x.start) > today; })[0];
+      q.appendChild(mk("p", "Students are on a break or between quarters." + (nq ? " " + nq.name + " starts " + fmt(ymd(nq.start)) + "." : "")));
+    }
+    if (quarter) {
+      var dow = today.getDay();
+      if (dow === 0 || dow === 6) q.appendChild(mk("p", "Weekend.", "muted small"));
+      else if (!isSchoolDay(today)) q.appendChild(mk("p", "No school for students today.", "muted small"));
+    }
+    evs.forEach(function (ev) { q.appendChild(mk("p", ev.w, "muted small")); });
+    grid.appendChild(q);
+
+    // Week and focus
+    var wk = dashItem("Week plan (" + sem.label + ")");
+    var pos = weekPos(today);
+    if (pos === 0) {
+      var days = Math.round((ymd(sem.start) - today) / 86400000);
+      wk.appendChild(mk("p", sem.label + " Week 1 starts " + fmt(ymd(sem.start)) + " (" + days + " calendar day" + (days === 1 ? "" : "s") + " away)."));
+    } else if (pos > WEEKS.length) {
+      wk.appendChild(mk("p", "The 20 weeks of " + sem.label + " are over."));
+      if (semSel === "fall") wk.appendChild(mk("p", "Switch to Spring 2027 on the Calendar & Pacing tab to see the next 20 weeks.", "muted small"));
+    } else {
+      var row = weekRow(pos);
+      wk.appendChild(mk("p", "Week " + pos + " of " + WEEKS.length + ": " + row[1]));
+      wk.appendChild(mk("p", calendarLine(pos), "muted small"));
+      var semNote = SEM_NOTES[semSel][pos];
+      if (semNote) wk.appendChild(mk("p", semNote, "muted small"));
+      if (weekInfo(pos).days === 0) wk.appendChild(mk("p", "No school days this week.", "muted small"));
+    }
+    grid.appendChild(wk);
+
+    // This week's graded entries
+    var gr = dashItem("Graded this week");
+    if (pos >= 1 && pos <= WEEKS.length) {
+      var list = entriesOf(weekRow(pos));
+      if (!list.length) gr.appendChild(mk("p", "No graded entries in the plan this week."));
+      else { var ul = document.createElement("ul"); list.forEach(function (x) { ul.appendChild(mk("li", x)); }); gr.appendChild(ul); }
+    } else gr.appendChild(mk("p", "Nothing planned for today's date.", "muted"));
+    grid.appendChild(gr);
+
+    // Next Major
+    var nm = dashItem("Next Major");
+    var found = null;
+    if (pos <= WEEKS.length) {
+      for (var w = Math.max(pos, 1); w <= WEEKS.length && !found; w++) {
+        entriesOf(weekRow(w)).forEach(function (x) { if (!found && x.indexOf("Major") === 0) found = { w: w, text: x }; });
+      }
+    }
+    if (found) {
+      nm.appendChild(mk("p", found.text));
+      var when;
+      if (found.w === pos) when = "This week (Week " + found.w + ").";
+      else {
+        var sd = schoolDaysBetween(today, weekStart(found.w));
+        when = "Week " + found.w + ", starting " + fmt(weekStart(found.w)) + ": " + sd + " school day" + (sd === 1 ? "" : "s") + " until that week" + (isSchoolDay(today) ? " (counting today)." : ".");
+      }
+      nm.appendChild(mk("p", when, "muted small"));
+    } else nm.appendChild(mk("p", "No more Majors in the " + sem.label + " plan."));
+    grid.appendChild(nm);
+
+    // Coming up
+    var cu = dashItem("Coming up");
+    var up = upcomingEvents(5, today);
+    if (!up.length) cu.appendChild(mk("p", "No dates left on the calendar."));
+    else { var ul2 = document.createElement("ul"); up.forEach(function (ev) { ul2.appendChild(eventLi(ev)); }); cu.appendChild(ul2); }
+    grid.appendChild(cu);
+
+    // Behind
+    var bh = dashItem("Standards behind schedule");
+    var n = behindCount();
+    bh.appendChild(mk("p", n + " indicator" + (n === 1 ? "" : "s") + (n === 1 ? " is" : " are") + " behind (" + sem.label + ")."));
+    var go = mk("button", "Review in the tracker", "ghost no-print");
+    go.type = "button";
+    go.addEventListener("click", function () {
+      byId("trStatus").value = "__behind";
+      renderTrList();
+      showTab("tracker", { focus: true });
+    });
+    bh.appendChild(go);
+    grid.appendChild(bh);
+  }
+
+  function renderTimeViews() {
+    renderSemHosts();
+    renderNow();
+    renderWeekPlan();
+    renderPlanCheck();
+    renderDash();
+  }
 
   // ---------- Standards & grading notes ----------
   var SP_FIELDS = ["spCourse", "spScale", "spWeights", "spCount", "spExam", "spEntry", "spLate", "spStandards"];
-  var SP_STORE = "financeToolkit.standards.v1";
-  try {
-    var spSaved = JSON.parse(localStorage.getItem(SP_STORE));
-    SP_FIELDS.forEach(function (id) {
-      if (spSaved && spSaved[id] != null) document.getElementById(id).value = spSaved[id];
-    });
-  } catch (e) { /* ignore */ }
+  function loadStandards() {
+    var saved = jget(KEYS.standards, null);
+    SP_FIELDS.forEach(function (id) { byId(id).value = saved && saved[id] != null ? saved[id] : ""; });
+  }
   var spTimer;
   SP_FIELDS.forEach(function (id) {
-    document.getElementById(id).addEventListener("input", function () {
+    byId(id).addEventListener("input", function () {
       clearTimeout(spTimer);
       spTimer = setTimeout(function () {
         var out = {};
-        SP_FIELDS.forEach(function (f) { out[f] = document.getElementById(f).value; });
-        try { localStorage.setItem(SP_STORE, JSON.stringify(out)); } catch (e) { /* ignore */ }
+        SP_FIELDS.forEach(function (f) { out[f] = byId(f).value; });
+        jset(KEYS.standards, out);
       }, 300);
+    });
+  });
+
+  // Last verified dates (editable)
+  var verified = {};
+  function loadVerified() { verified = jget(KEYS.verified, {}); if (typeof verified !== "object" || Array.isArray(verified)) verified = {}; renderVerified(); }
+  function renderVerified() {
+    [["vfGrading", "grading"], ["vfPolicies", "policies"]].forEach(function (p) {
+      byId(p[0]).value = verified[p[1]] || "";
+      byId(p[0] + "Txt").textContent = verified[p[1]] ? "" : "Not verified yet. Enter the date you last checked this against the official document.";
+    });
+  }
+  [["vfGrading", "grading"], ["vfPolicies", "policies"]].forEach(function (p) {
+    byId(p[0]).addEventListener("change", function () {
+      verified[p[1]] = byId(p[0]).value;
+      jset(KEYS.verified, verified);
+      renderVerified();
     });
   });
 
   // ---------- Grade calculator (60/40 categories, 45/45/10 semester) ----------
   function parsePct(id) {
-    var v = document.getElementById(id).value.trim();
+    var v = byId(id).value.trim();
     if (v === "") return null;
     var n = parseFloat(v);
     return isFinite(n) && n >= 0 && n <= 100 ? n : NaN;
   }
+  function parseNum(id) {
+    var v = byId(id).value.trim();
+    if (v === "") return null;
+    var n = parseFloat(v);
+    return isFinite(n) && n >= 0 ? n : NaN;
+  }
   function letterFor(p) { return p >= 90 ? "A" : p >= 80 ? "B" : p >= 70 ? "C" : p >= 60 ? "D" : "F"; }
   function updateQuarterCalc() {
-    var out = document.getElementById("gcQuarter");
+    var out = byId("gcQuarter");
     var maj = parsePct("gcMajor"), min = parsePct("gcMinor");
     if (maj === null || min === null) { out.textContent = "Enter both averages."; return; }
     if (isNaN(maj) || isNaN(min)) { out.textContent = "Enter numbers from 0 to 100."; return; }
@@ -1671,7 +2379,7 @@ If a parent raises something outside your role (grades appeals, discipline, serv
     out.textContent = "Quarter grade: " + g.toFixed(1) + " (" + letterFor(g) + ")";
   }
   function updateSemesterCalc() {
-    var out = document.getElementById("gcSemester"), need = document.getElementById("gcNeed");
+    var out = byId("gcSemester"), need = byId("gcNeed");
     var q1 = parsePct("gcQ1"), q2 = parsePct("gcQ2"), fin = parsePct("gcFinal");
     need.textContent = "";
     if (q1 === null || q2 === null) { out.textContent = "Enter both quarter grades."; return; }
@@ -1692,87 +2400,552 @@ If a parent raises something outside your role (grades appeals, discipline, serv
     });
     need.textContent = "Final exam score needed for each letter (" + parts.join("; ") + ").";
   }
-  ["gcMajor", "gcMinor"].forEach(function (id) { document.getElementById(id).addEventListener("input", updateQuarterCalc); });
-  ["gcQ1", "gcQ2", "gcFinal"].forEach(function (id) { document.getElementById(id).addEventListener("input", updateSemesterCalc); });
+  // What is needed on the next Major to reach a target quarter grade.
+  // Assumes the Major category is total points earned / total points possible, and the Minor average stays where it is.
+  function updateNextMajor() {
+    var out = byId("gcNm");
+    var earned = parseNum("gcNmEarned"), poss = parseNum("gcNmPossible"), minor = parsePct("gcNmMinor"), target = parsePct("gcNmTarget"), pts = parseNum("gcNmPts");
+    if (earned === null || poss === null || minor === null || target === null) { out.textContent = "Enter your Major points so far, the Minor average, and the target quarter grade."; return; }
+    if (isNaN(earned) || isNaN(poss) || isNaN(minor) || isNaN(target) || isNaN(pts)) { out.textContent = "Check the numbers. Percentages run from 0 to 100, and points cannot be negative."; return; }
+    if (pts === null || pts === 0) pts = 50;
+    if (earned > poss) { out.textContent = "Points earned cannot be more than points possible."; return; }
+    var needMajorPct = (target - minor * 0.4) / 0.6;
+    var needPts = needMajorPct / 100 * (poss + pts) - earned;
+    if (needPts <= 0) out.textContent = "Already on track: even a 0 on the next Major keeps the Major average at " + Math.max(needMajorPct, 0).toFixed(1) + "% or better.";
+    else if (needPts > pts) out.textContent = "Not reachable with this Major alone: you would need " + needPts.toFixed(1) + " of " + pts + " points (" + (needPts / pts * 100).toFixed(0) + "%).";
+    else out.textContent = "You need about " + needPts.toFixed(1) + " of " + pts + " points (" + (needPts / pts * 100).toFixed(0) + "%) on the next Major. The Major average must reach " + needMajorPct.toFixed(1) + "%.";
+  }
+  ["gcMajor", "gcMinor"].forEach(function (id) { byId(id).addEventListener("input", updateQuarterCalc); });
+  ["gcQ1", "gcQ2", "gcFinal"].forEach(function (id) { byId(id).addEventListener("input", updateSemesterCalc); });
+  ["gcNmEarned", "gcNmPossible", "gcNmMinor", "gcNmTarget", "gcNmPts"].forEach(function (id) { byId(id).addEventListener("input", updateNextMajor); });
 
-  // ---------- Lesson planner ----------
-  var LP_FIELDS = ["lpTitle", "lpDate", "lpClass", "lpLength", "lpObjective", "lpContext", "lpSuccess",
-    "lpMaterials", "lpWarm", "lpTeach", "lpPractice", "lpIndep", "lpClose", "lpDiff", "lpNotes"];
-  var LP_STORE = "financeToolkit.lesson.v1";
 
+  // ---------- Lesson planner: saved lessons list ----------
+  var LP_FIELDS = ["lpTitle", "lpDate", "lpTeacher", "lpSubject", "lpClass", "lpLength", "lpTarget", "lpObjective", "lpContext", "lpSuccess", "lpMaterials",
+    "lpWarm", "lpTeach", "lpPractice", "lpIndep", "lpCloseMin", "lpClose", "lpThink", "lpCFU", "lpMisc", "lpTrans",
+    "lpFormative", "lpSchoology", "lpDiff", "lpNotes"];
+  var LP_MIN_FIELDS = ["lpWarm", "lpTeach", "lpPractice", "lpIndep", "lpCloseMin"];
+  var lessons = { v: 1, currentId: null, items: [] };
+  var lpStd = [];
+  var lpLoading = false;
+
+  function newId() { return "l" + Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36); }
+  function blankLesson() { var d = {}; LP_FIELDS.forEach(function (f) { d[f] = ""; }); d.lpLength = "90"; d.lpSubject = "Advanced Personal Finance (5131)"; d.lpStd = []; return d; }
+  function lessonItem(data) { return { id: newId(), created: new Date().toISOString(), updated: new Date().toISOString(), data: data }; }
+  function currentLesson() {
+    for (var i = 0; i < lessons.items.length; i++) if (lessons.items[i].id === lessons.currentId) return lessons.items[i];
+    return null;
+  }
+  function validLessons(o) {
+    return !!(o && typeof o === "object" && Array.isArray(o.items) && o.items.every(function (it) { return it && typeof it === "object" && it.id && it.data && typeof it.data === "object"; }));
+  }
+  function loadLessons() {
+    var saved = jget(KEYS.lessons, null);
+    if (validLessons(saved) && saved.items.length) {
+      lessons = saved;
+      if (!currentLesson()) lessons.currentId = lessons.items[0].id;
+    } else {
+      lessons = { v: 1, currentId: null, items: [] };
+      // Migrate the old single plan into the list as the first entry. The old key is left in place.
+      var legacy = jget(KEYS.lesson, null);
+      var has = legacy && typeof legacy === "object" && LP_FIELDS.some(function (f) { return legacy[f] && String(legacy[f]).trim(); });
+      if (has) {
+        var d = blankLesson();
+        LP_FIELDS.forEach(function (f) { if (legacy[f] != null) d[f] = String(legacy[f]); });
+        d.lpLength = legacy.lpLength != null ? String(legacy.lpLength) : "";
+        lessons.items.push(lessonItem(d));
+        lessons.currentId = lessons.items[0].id;
+        jset(KEYS.lessons, lessons);
+      } else {
+        lessons.items.push(lessonItem(blankLesson()));
+        lessons.currentId = lessons.items[0].id;
+      }
+    }
+    writeLP(currentLesson().data);
+    renderLessonList();
+  }
   function readLP() {
     var out = {};
-    LP_FIELDS.forEach(function (id) { out[id] = document.getElementById(id).value; });
+    LP_FIELDS.forEach(function (id) { out[id] = byId(id).value; });
+    out.lpStd = lpStd.slice();
     return out;
   }
   function writeLP(data) {
-    LP_FIELDS.forEach(function (id) {
-      if (data && data[id] != null) document.getElementById(id).value = data[id];
-    });
+    lpLoading = true;
+    LP_FIELDS.forEach(function (id) { byId(id).value = data && data[id] != null ? data[id] : ""; });
+    setStd(Array.isArray(data && data.lpStd) ? data.lpStd : []);
+    lpLoading = false;
+    updateMinutes();
+    updatePrintOut();
   }
-  try { writeLP(JSON.parse(localStorage.getItem(LP_STORE))); } catch (e) { /* ignore */ }
-
-  var lpSaveTimer;
-  LP_FIELDS.forEach(function (id) {
-    document.getElementById(id).addEventListener("input", function () {
-      clearTimeout(lpSaveTimer);
-      lpSaveTimer = setTimeout(function () {
-        try { localStorage.setItem(LP_STORE, JSON.stringify(readLP())); } catch (e) { /* ignore */ }
-      }, 300);
+  function saveCurrentLesson() {
+    var it = currentLesson();
+    if (!it) return;
+    it.data = readLP();
+    it.updated = new Date().toISOString();
+    jset(KEYS.lessons, lessons);
+    renderLessonList();
+    updatePrintOut();
+  }
+  function lessonTitle(it) { return (it.data.lpTitle && it.data.lpTitle.trim()) || "Untitled lesson"; }
+  function lessonWhen(it) {
+    var d = it.data.lpDate;
+    if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) return fmt(ymd(d), true);
+    return "No date set";
+  }
+  function renderLessonList() {
+    var box = byId("lpList");
+    box.textContent = "";
+    lessons.items.forEach(function (it) {
+      var btn = mk("button", null, "lp-item" + (it.id === lessons.currentId ? " current" : ""));
+      btn.type = "button";
+      if (it.id === lessons.currentId) btn.setAttribute("aria-current", "true");
+      btn.appendChild(mk("strong", lessonTitle(it)));
+      btn.appendChild(mk("span", lessonWhen(it), "muted small"));
+      btn.addEventListener("click", function () { openLesson(it.id); });
+      box.appendChild(btn);
     });
+    byId("lpCount").textContent = lessons.items.length + " saved lesson" + (lessons.items.length === 1 ? "" : "s");
+  }
+  function openLesson(id) {
+    if (id === lessons.currentId) return;
+    saveCurrentLesson();
+    lessons.currentId = id;
+    writeLP(currentLesson().data);
+    jset(KEYS.lessons, lessons);
+    renderLessonList();
+    byId("lpStatus").textContent = "";
+    byId("lpPreview").style.display = "none";
+  }
+  byId("lpNew").addEventListener("click", function () {
+    saveCurrentLesson();
+    var it = lessonItem(blankLesson());
+    lessons.items.push(it);
+    lessons.currentId = it.id;
+    writeLP(it.data);
+    jset(KEYS.lessons, lessons);
+    renderLessonList();
+    byId("lpTitle").focus();
+    byId("lpStatus").textContent = "New lesson started.";
+  });
+  byId("lpDup").addEventListener("click", function () {
+    saveCurrentLesson();
+    var src = currentLesson(), d = JSON.parse(JSON.stringify(src.data));
+    d.lpTitle = lessonTitle(src) + " (copy)";
+    var it = lessonItem(d);
+    lessons.items.push(it);
+    lessons.currentId = it.id;
+    writeLP(it.data);
+    jset(KEYS.lessons, lessons);
+    renderLessonList();
+    byId("lpStatus").textContent = "Duplicated. You are editing the copy.";
+  });
+  byId("lpRenameBtn").addEventListener("click", function () {
+    var box = byId("lpRenameBox");
+    box.hidden = false;
+    byId("lpRename").value = currentLesson().data.lpTitle || "";
+    byId("lpRename").focus();
+  });
+  function finishRename(save) {
+    if (save) {
+      byId("lpTitle").value = byId("lpRename").value;
+      saveCurrentLesson();
+    }
+    byId("lpRenameBox").hidden = true;
+  }
+  byId("lpRenameSave").addEventListener("click", function () { finishRename(true); });
+  byId("lpRenameCancel").addEventListener("click", function () { finishRename(false); });
+  byId("lpRename").addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter") { ev.preventDefault(); finishRename(true); }
+    else if (ev.key === "Escape") finishRename(false);
+  });
+  byId("lpDelete").addEventListener("click", function () {
+    var it = currentLesson();
+    if (!confirm("Delete the lesson \"" + lessonTitle(it) + "\"? This cannot be undone.")) return;
+    var i = lessons.items.indexOf(it);
+    lessons.items.splice(i, 1);
+    if (!lessons.items.length) lessons.items.push(lessonItem(blankLesson()));
+    lessons.currentId = lessons.items[Math.min(i, lessons.items.length - 1)].id;
+    writeLP(currentLesson().data);
+    jset(KEYS.lessons, lessons);
+    renderLessonList();
+    byId("lpStatus").textContent = "Lesson deleted.";
   });
 
-  function line(label, value) {
-    return label + ": " + (value && value.trim() ? value.trim() : "(not filled in)");
+  // Standards picker
+  function buildStdPicker() {
+    var list = byId("lpStdList");
+    IND.forEach(function (row) {
+      var lab = mk("label", null, "std-row");
+      lab.dataset.code = row[0];
+      var cb = document.createElement("input");
+      cb.type = "checkbox"; cb.value = row[0];
+      cb.addEventListener("change", function () {
+        var i = lpStd.indexOf(row[0]);
+        if (cb.checked && i < 0) lpStd.push(row[0]);
+        if (!cb.checked && i >= 0) lpStd.splice(i, 1);
+        renderStdChips();
+        lpChanged();
+      });
+      lab.appendChild(cb);
+      lab.appendChild(mk("span", row[0] + "  " + row[1]));
+      lab.dataset.search = (row[0] + " " + row[1] + " " + row[5]).toLowerCase();
+      list.appendChild(lab);
+    });
+    byId("lpStdSearch").addEventListener("input", function () {
+      var q = byId("lpStdSearch").value.trim().toLowerCase();
+      list.querySelectorAll(".std-row").forEach(function (lab) { lab.hidden = !!q && lab.dataset.search.indexOf(q) === -1; });
+    });
   }
-  function buildPlan(d) {
-    return [
-      "LESSON PLAN: " + (d.lpTitle.trim() || "(untitled)"),
-      line("Date", d.lpDate),
-      line("Class", d.lpClass),
-      line("Length", d.lpLength ? d.lpLength + " min" : ""),
-      "",
-      line("Objective", d.lpObjective),
-      line("Real-world decision", d.lpContext),
-      line("Success criteria", d.lpSuccess),
-      line("Materials", d.lpMaterials),
-      "",
-      "FLOW",
-      "  Warm-up / hook: " + (d.lpWarm || "-") + " min",
-      "  Model the math / concept: " + (d.lpTeach || "-") + " min",
-      "  Guided practice: " + (d.lpPractice || "-") + " min",
-      "  Independent or partner scenario: " + (d.lpIndep || "-") + " min",
-      "  Closing / exit ticket: " + (d.lpClose || "(none)"),
-      "",
-      line("Support and extension", d.lpDiff),
-      line("Notes for next time", d.lpNotes)
-    ].join("\n");
+  function setStd(arr) {
+    lpStd = arr.filter(function (c) { return IND.some(function (r) { return r[0] === c; }); });
+    byId("lpStdList").querySelectorAll("input").forEach(function (cb) { cb.checked = lpStd.indexOf(cb.value) >= 0; });
+    renderStdChips();
+  }
+  function renderStdChips() {
+    var box = byId("lpStdChips");
+    box.textContent = "";
+    if (!lpStd.length) { box.appendChild(mk("span", "No standards chosen yet.", "muted small")); return; }
+    lpStd.forEach(function (c) { box.appendChild(mk("span", c, "badge")); });
   }
 
-  var preview = document.getElementById("lpPreview");
-  var status = document.getElementById("lpStatus");
-  document.getElementById("lpCopy").addEventListener("click", function () {
+  // Minutes
+  function numOf(id) { var n = parseFloat(byId(id).value); return isFinite(n) && n > 0 ? n : 0; }
+  function updateMinutes() {
+    var total = 0;
+    LP_MIN_FIELDS.forEach(function (id) { total += numOf(id); });
+    var len = numOf("lpLength") || 90;
+    var el = byId("lpTotal");
+    var diff = len - total;
+    var msg = "Planned: " + total + " of " + len + " min.";
+    el.classList.remove("over", "under");
+    if (total === 0) msg += " Add minutes to each part of the flow.";
+    else if (diff < 0) { msg += " Over by " + (-diff) + " min. Trim a segment."; el.classList.add("over"); }
+    else if (diff > 0) { msg += " " + diff + " min unplanned. Add time or leave it as a buffer."; el.classList.add("under"); }
+    else msg += " The segments fill the lesson.";
+    el.textContent = msg;
+  }
+
+  // Lesson text (copy and print). Fields run in lesson order, and empty ones are left out.
+  function lpLine(label, value) {
+    value = value == null ? "" : String(value).trim();
+    if (!value) return null;
+    if (value.indexOf("\n") >= 0) return label + ":\n" + value.split("\n").map(function (l) { return "  " + l; }).join("\n");
+    return label + ": " + value;
+  }
+  // Order follows the SSD Grade 9-12 Lesson Plan Template: header (teacher, week of, subject area), then
+  // Standard, Learning Intention, Success Criteria, Learning Experience, Assessment.
+  function mondayOf(iso) {
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
+    var d = ymd(iso), back = (d.getDay() + 6) % 7;
+    return fmt(addDays(d, -back), true);
+  }
+  function buildPlan(d) {
+    var out = [], push = function (x) { if (x) out.push(x); };
+    function section(title, lines) {
+      var kept = lines.filter(function (x) { return x; });
+      if (!kept.length) return;
+      out.push("");
+      out.push(title);
+      kept.forEach(function (l) { out.push(l); });
+    }
+    out.push("LESSON PLAN: " + (d.lpTitle && d.lpTitle.trim() ? d.lpTitle.trim() : "(untitled)"));
+    push(lpLine("Teacher name", d.lpTeacher));
+    push(lpLine("Week of", mondayOf(d.lpDate)));
+    push(lpLine("Subject area", d.lpSubject));
+    push(lpLine("Date", d.lpDate));
+    push(lpLine("Class", d.lpClass));
+    push(lpLine("Length", d.lpLength && String(d.lpLength).trim() ? d.lpLength + " min" : ""));
+    if (d.lpStd && d.lpStd.length) {
+      out.push("");
+      out.push("STANDARD");
+      d.lpStd.forEach(function (c) {
+        var row = IND.filter(function (r) { return r[0] === c; })[0];
+        out.push("  " + c + (row ? "  " + row[1] : ""));
+      });
+    }
+    section("LEARNING INTENTION", [lpLine("Learning intention", d.lpTarget), lpLine("Objective", d.lpObjective)]);
+    section("SUCCESS CRITERIA", [lpLine("Success criteria", d.lpSuccess)]);
+    var flow = [];
+    function seg(label, minKey, text) {
+      var m = d[minKey] && String(d[minKey]).trim(), t = text && String(text).trim();
+      if (!m && !t) return;
+      flow.push("  " + label + (m ? " (" + m + " min)" : "") + (t ? ": " + t : ""));
+    }
+    seg("Warm-up / hook", "lpWarm", "");
+    seg("Model the math / concept", "lpTeach", "");
+    seg("Guided practice", "lpPractice", "");
+    seg("Independent or partner scenario", "lpIndep", "");
+    seg("Closing / exit ticket", "lpCloseMin", d.lpClose);
+    var total = 0;
+    LP_MIN_FIELDS.forEach(function (k) { var n = parseFloat(d[k]); if (isFinite(n) && n > 0) total += n; });
+    section("LEARNING EXPERIENCE", [
+      lpLine("Real-world decision", d.lpContext),
+      lpLine("Materials", d.lpMaterials),
+      flow.length ? "Flow:\n" + flow.join("\n") + (total ? "\n  Total planned: " + total + " of " + (parseFloat(d.lpLength) || 90) + " min" : "") : "",
+      lpLine("Teacher model / think-aloud", d.lpThink),
+      lpLine("Likely misconceptions", d.lpMisc),
+      lpLine("Transitions", d.lpTrans)
+    ]);
+    section("ASSESSMENT", [lpLine("Check for understanding", d.lpCFU), lpLine("Formative assessment", d.lpFormative)]);
+    section("ALSO", [lpLine("Support and extension", d.lpDiff), lpLine("Schoology / printable version", d.lpSchoology), lpLine("Notes for next time", d.lpNotes)]);
+    return out.join("\n").replace(/\n{3,}/g, "\n\n").replace(/\n+$/, "");
+  }
+  function updatePrintOut() { byId("lpPrintOut").textContent = buildPlan(readLP()); }
+
+  var lpSaveTimer;
+  function lpChanged() {
+    if (lpLoading) return;
+    updateMinutes();
+    clearTimeout(lpSaveTimer);
+    lpSaveTimer = setTimeout(saveCurrentLesson, 300);
+  }
+  LP_FIELDS.forEach(function (id) { byId(id).addEventListener("input", lpChanged); });
+
+  var preview = byId("lpPreview");
+  var lpStatus = byId("lpStatus");
+  byId("lpCopy").addEventListener("click", function () {
     var text = buildPlan(readLP());
     preview.textContent = text;
     preview.style.display = "block";
-    function done(ok) { status.textContent = ok ? "Copied." : "Copy failed. The plan is shown below; select and copy it."; }
+    function done(ok) { lpStatus.textContent = ok ? "Copied." : "Copy failed. The plan is shown below; select and copy it."; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
     } else {
       done(false);
     }
   });
-  document.getElementById("lpPrint").addEventListener("click", function () {
-    window.print();
+  byId("lpPrint").addEventListener("click", function () {
+    updatePrintOut();
+    try { window.print(); } catch (e) { lpStatus.textContent = "Printing is blocked here. Use Copy plan as text instead."; }
   });
-  document.getElementById("lpClear").addEventListener("click", function () {
-    if (!confirm("Clear this lesson plan?")) return;
-    LP_FIELDS.forEach(function (id) { document.getElementById(id).value = ""; });
-    try { localStorage.removeItem(LP_STORE); } catch (e) { /* ignore */ }
+  byId("lpClear").addEventListener("click", function () {
+    if (!confirm("Clear this lesson plan? The lesson stays in your list, but its fields are emptied.")) return;
+    writeLP(blankLesson());
+    saveCurrentLesson();
     preview.style.display = "none";
-    status.textContent = "";
+    lpStatus.textContent = "";
   });
+
+  // ---------- My links ----------
+  var DEFAULT_LINKS = [{ label: "Schoology", url: "" }, { label: "PowerSchool", url: "" }, { label: "Google Drive course folder", url: "" }, { label: "District calendar", url: "" }];
+  var links = { v: 1, items: DEFAULT_LINKS.slice() };
+  function validLinks(o) { return !!(o && typeof o === "object" && Array.isArray(o.items) && o.items.every(function (x) { return x && typeof x.label === "string" && typeof x.url === "string"; })); }
+  function loadLinks() {
+    var saved = jget(KEYS.links, null);
+    links = validLinks(saved) ? saved : { v: 1, items: DEFAULT_LINKS.map(function (x) { return { label: x.label, url: x.url }; }) };
+    renderLinks();
+  }
+  function renderLinks() {
+    var row = byId("linksRow");
+    row.textContent = "";
+    links.items.forEach(function (it) {
+      if (/^https:\/\//i.test(it.url)) {
+        var a = mk("a", it.label, "action");
+        a.href = it.url; a.target = "_blank"; a.rel = "noopener";
+        row.appendChild(a);
+      } else {
+        var b = mk("button", it.label + " (add link)", "ghost");
+        b.type = "button";
+        b.addEventListener("click", function () { openLinksEditor(); });
+        row.appendChild(b);
+      }
+    });
+  }
+  function openLinksEditor() {
+    var ed = byId("linksEdit");
+    ed.hidden = false;
+    ed.textContent = "";
+    var rows = links.items.map(function (x) { return { label: x.label, url: x.url }; });
+    function draw() {
+      ed.textContent = "";
+      var msg = mk("p", "", "small");
+      msg.setAttribute("role", "status");
+      rows.forEach(function (r, i) {
+        var line = mk("div", null, "link-edit");
+        var l1 = mk("label", "Name", "sr-only"); l1.htmlFor = "lkLabel" + i;
+        var in1 = document.createElement("input"); in1.type = "text"; in1.id = "lkLabel" + i; in1.value = r.label; in1.placeholder = "Name";
+        in1.addEventListener("input", function () { r.label = in1.value; });
+        var l2 = mk("label", "Address for " + (r.label || "link"), "sr-only"); l2.htmlFor = "lkUrl" + i;
+        var in2 = document.createElement("input"); in2.type = "text"; in2.id = "lkUrl" + i; in2.value = r.url; in2.placeholder = "https://";
+        in2.setAttribute("inputmode", "url");
+        in2.addEventListener("input", function () { r.url = in2.value.trim(); });
+        var rm = mk("button", "Remove", "ghost"); rm.type = "button";
+        rm.addEventListener("click", function () { rows.splice(i, 1); draw(); });
+        [l1, in1, l2, in2, rm].forEach(function (n) { line.appendChild(n); });
+        ed.appendChild(line);
+      });
+      var bar = mk("div", null, "row");
+      var add = mk("button", "Add a link", "ghost"); add.type = "button";
+      add.addEventListener("click", function () { if (rows.length < 10) { rows.push({ label: "", url: "" }); draw(); } });
+      var save = mk("button", "Save links", "action"); save.type = "button";
+      save.addEventListener("click", function () {
+        var bad = rows.filter(function (r) { return r.url && !/^https:\/\/\S+$/i.test(r.url); });
+        if (bad.length) { msg.textContent = "Every link must start with https:// (for example https://schoology.com). Fix or clear: " + bad.map(function (r) { return r.label || "(unnamed)"; }).join(", ") + "."; return; }
+        var clean = rows.filter(function (r) { return r.label.trim() || r.url; }).map(function (r) { return { label: r.label.trim() || "Link", url: r.url }; });
+        links = { v: 1, items: clean };
+        jset(KEYS.links, links);
+        renderLinks();
+        ed.hidden = true;
+      });
+      var cancel = mk("button", "Cancel", "ghost"); cancel.type = "button";
+      cancel.addEventListener("click", function () { ed.hidden = true; });
+      [add, save, cancel].forEach(function (n) { bar.appendChild(n); });
+      ed.appendChild(bar);
+      ed.appendChild(msg);
+    }
+    draw();
+  }
+  byId("linksEditBtn").addEventListener("click", openLinksEditor);
+
+  // ---------- Backup, restore, and copy/paste fallback ----------
+  function backupAgeDays() {
+    var m = jget(META_KEY, {}), base = m.lastExport || m.firstSeen;
+    if (!base) return 0;
+    return Math.floor((Date.now() - new Date(base).getTime()) / 86400000);
+  }
+  function backupReminderText() {
+    var m = jget(META_KEY, {}), age = backupAgeDays();
+    if (age < 30) return "";
+    return m.lastExport
+      ? "It has been " + age + " days since your last backup. Open Backup at the bottom of the page and export a copy."
+      : "You have not made a backup yet, and you started using this page " + age + " days ago. Open Backup at the bottom of the page and export a copy.";
+  }
+  function renderBackupStatus() {
+    var m = jget(META_KEY, {});
+    function when(iso) { return iso ? new Date(iso).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) : "never"; }
+    byId("bkStatus").textContent = "Last exported: " + when(m.lastExport) + ". Last change saved: " + when(m.lastChanged) + ".";
+    var r = backupReminderText(), el = byId("bkReminder");
+    el.textContent = r; el.hidden = !r;
+  }
+  function buildBackup() {
+    var stores = {};
+    BACKUP_KEYS.forEach(function (k) {
+      var raw = sget(KEYS[k]);
+      if (raw === null) return;
+      try { stores[KEYS[k]] = JSON.parse(raw); } catch (e) { /* skip unreadable */ }
+    });
+    return { app: "financeToolkit", backupVersion: BACKUP_VERSION, exportedAt: new Date().toISOString(), stores: stores };
+  }
+  function isObj(x) { return x && typeof x === "object" && !Array.isArray(x); }
+  // Returns an error message, or "" if the backup has the right shape.
+  function validateBackup(b) {
+    if (!isObj(b)) return "This is not a backup file (it is not a JSON object).";
+    if (b.app !== "financeToolkit") return "This file was not made by this toolkit.";
+    if (typeof b.backupVersion !== "number" || b.backupVersion > BACKUP_VERSION) return "This backup comes from a newer version of the toolkit.";
+    if (!isObj(b.stores)) return "The backup has no saved data section.";
+    var known = {};
+    BACKUP_KEYS.forEach(function (k) { known[KEYS[k]] = k; });
+    var names = Object.keys(b.stores);
+    for (var i = 0; i < names.length; i++) {
+      var kn = known[names[i]], v = b.stores[names[i]];
+      if (!kn) return "The backup contains data this toolkit does not recognize: " + names[i];
+      if (kn === "lessons") { if (!validLessons(v)) return "The saved lessons section is damaged."; }
+      else if (kn === "links") { if (!validLinks(v)) return "The links section is damaged."; }
+      else if (!isObj(v)) return "The " + kn + " section is damaged.";
+    }
+    return "";
+  }
+  function applyBackup(b) {
+    BACKUP_KEYS.forEach(function (k) {
+      if (Object.prototype.hasOwnProperty.call(b.stores, KEYS[k])) jset(KEYS[k], b.stores[KEYS[k]]);
+      else { sdel(KEYS[k]); }
+    });
+    touchMeta("lastChanged");
+    loadAll();
+    renderAll();
+  }
+  function importText(text, statusEl) {
+    var b;
+    try { b = JSON.parse(text); } catch (e) { statusEl.textContent = "That is not valid backup text. Nothing was changed."; return; }
+    var err = validateBackup(b);
+    if (err) { statusEl.textContent = err + " Nothing was changed."; return; }
+    var n = Object.keys(b.stores).length;
+    if (!confirm("Replace everything saved in this browser with this backup (" + n + " sections, exported " + (b.exportedAt ? new Date(b.exportedAt).toLocaleString("en-US") : "date unknown") + ")? Sections that are not in the backup will be cleared.")) { statusEl.textContent = "Cancelled. Nothing was changed."; return; }
+    applyBackup(b);
+    statusEl.textContent = "Backup restored.";
+  }
+  function markExported() { touchMeta("lastExport"); renderBackupStatus(); renderDash(); }
+  byId("bkExport").addEventListener("click", function () {
+    var st = byId("bkMsg");
+    try {
+      var data = JSON.stringify(buildBackup(), null, 2);
+      var blob = new Blob([data], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = "financeToolkit-backup-v" + BACKUP_VERSION + "-" + dkey(new Date()) + ".json";
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { a.remove(); URL.revokeObjectURL(url); }, 1000);
+      st.textContent = "Backup file created. Check your Downloads folder. If nothing downloaded, use Copy backup as text.";
+      markExported();
+    } catch (e) {
+      st.textContent = "Downloads are blocked here. Use Copy backup as text instead.";
+    }
+  });
+  byId("bkCopy").addEventListener("click", function () {
+    var st = byId("bkMsg"), box = byId("bkText"), text = JSON.stringify(buildBackup(), null, 2);
+    box.value = text; box.hidden = false;
+    function ok() { st.textContent = "Backup text copied. Paste it into a Google Doc or an email to yourself."; markExported(); }
+    function fail() { box.focus(); box.select(); st.textContent = "Copy was blocked. The text is selected below. Press Ctrl+C to copy it."; markExported(); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, fail);
+    else fail();
+  });
+  byId("bkImportBtn").addEventListener("click", function () { byId("bkFile").click(); });
+  byId("bkFile").addEventListener("change", function () {
+    var f = byId("bkFile").files && byId("bkFile").files[0], st = byId("bkMsg");
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () { importText(String(rd.result), st); byId("bkFile").value = ""; };
+    rd.onerror = function () { st.textContent = "That file could not be read. Nothing was changed."; };
+    rd.readAsText(f);
+  });
+  byId("bkPasteBtn").addEventListener("click", function () {
+    var box = byId("bkPaste");
+    box.hidden = false; byId("bkPasteGo").hidden = false; box.focus();
+  });
+  byId("bkPasteGo").addEventListener("click", function () {
+    var st = byId("bkMsg"), text = byId("bkPaste").value.trim();
+    if (!text) { st.textContent = "Paste your backup text into the box first."; return; }
+    importText(text, st);
+  });
+
+  // ---------- Load everything from storage, then draw it ----------
+  function loadAll() {
+    var c = jget(KEYS.checks, {});
+    checkState = isObj(c) ? c : {};
+    var t = jget(KEYS.tracker, {});
+    trState = isObj(t) ? t : {};
+    loadSem();
+    loadWeekNotes();
+    loadStandards();
+    loadVerified();
+    loadLessons();
+    loadLinks();
+  }
+  function renderAll() {
+    renderChecks();
+    renderCounts();
+    renderEvents();
+    renderTimeViews();
+    renderTrSummary();
+    renderTrList();
+    renderBackupStatus();
+    updateQuarterCalc(); updateSemesterCalc(); updateNextMajor();
+  }
+
+  var firstRun = jget(META_KEY, {});
+  if (!firstRun.firstSeen) touchMeta("firstSeen");
+  buildStdPicker();
+  initTracker();
+  loadAll();
+  renderAll();
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) { renderNow(); renderWeekPlan(); renderDash(); renderEvents(); renderBackupStatus(); } });
+  var startTab = tabFromHash() || (jget(KEYS.ui, {}).tab) || "start";
+  showTab(TAB_SET[startTab] ? startTab : "start", { hash: !!tabFromHash(), scroll: false, reveal: true });
+  if (!tabFromHash()) { try { location.replace("#" + hashFor(curTab)); } catch (e) { /* ignore */ } }
+  updateNavFade();
 })();
+
 </script>
 </body>
 </html>

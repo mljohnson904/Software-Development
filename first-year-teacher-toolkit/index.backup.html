@@ -1,0 +1,1778 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personal Finance Teacher Toolkit</title>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --card: #ffffff;
+    --ink: #1f2933;
+    --muted: #5b6770;
+    --accent: #2f6f5e;
+    --accent-soft: #dcefe9;
+    --line: #d9d4c7;
+    --warn: #9a4f1f;
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161a1d;
+      --card: #20262b;
+      --ink: #e6e9ec;
+      --muted: #9aa5ae;
+      --accent: #6cc3ab;
+      --accent-soft: #1f3a34;
+      --line: #343d44;
+      --warn: #e0a070;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161a1d;
+    --card: #20262b;
+    --ink: #e6e9ec;
+    --muted: #9aa5ae;
+    --accent: #6cc3ab;
+    --accent-soft: #1f3a34;
+    --line: #343d44;
+    --warn: #e0a070;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header {
+    padding: 28px 16px 12px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 { margin: 0 0 4px; font-size: 1.8rem; }
+  header p { margin: 0; color: var(--muted); }
+  nav {
+    position: sticky; top: 0; z-index: 2;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; gap: 6px; overflow-x: auto;
+    padding: 8px 16px;
+  }
+  nav button {
+    flex: 0 0 auto;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    padding: 7px 12px;
+    border-radius: 999px;
+    font: inherit; font-size: 0.92rem;
+    cursor: pointer;
+  }
+  nav button[aria-selected="true"] {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  section.panel { display: none; }
+  section.panel.active { display: block; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .card h2 { margin: 0 0 8px; font-size: 1.2rem; }
+  .card h3 { margin: 16px 0 6px; font-size: 1rem; color: var(--accent); }
+  .muted { color: var(--muted); }
+  .tip {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 10px 0;
+  }
+  .warn {
+    border-left: 4px solid var(--warn);
+    padding: 6px 12px;
+    margin: 10px 0;
+  }
+  ul.checklist { list-style: none; padding: 0; margin: 0; }
+  ul.checklist li { margin: 0; border-bottom: 1px solid var(--line); }
+  ul.checklist li:last-child { border-bottom: none; }
+  ul.checklist label {
+    display: flex; gap: 10px; padding: 9px 0; cursor: pointer; align-items: flex-start;
+  }
+  ul.checklist input[type="checkbox"] { margin-top: 5px; width: 18px; height: 18px; flex: 0 0 auto; accent-color: var(--accent); }
+  ul.checklist input:checked + span { text-decoration: line-through; color: var(--muted); }
+  .progress { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; margin: 10px 0 4px; }
+  .progress > div { height: 100%; background: var(--accent); width: 0; transition: width .2s; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  button.action, a.action {
+    background: var(--accent); color: #fff; border: none;
+    padding: 9px 14px; border-radius: 8px; font: inherit; cursor: pointer;
+    text-decoration: none; display: inline-block;
+  }
+  button.ghost {
+    background: transparent; color: var(--ink); border: 1px solid var(--line);
+    padding: 8px 12px; border-radius: 8px; font: inherit; cursor: pointer;
+  }
+  label.field { display: block; font-weight: 600; margin: 12px 0 4px; font-size: 0.95rem; }
+  input[type="text"], input[type="date"], textarea, select {
+    width: 100%; font: inherit; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+  }
+  textarea { min-height: 80px; resize: vertical; }
+  .grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 700px) { .grid.two { grid-template-columns: 1fr 1fr; } }
+  pre.template {
+    white-space: pre-wrap; word-wrap: break-word;
+    background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; padding: 12px; font: 0.92rem/1.5 ui-monospace, Menlo, Consolas, monospace;
+    margin: 8px 0 0;
+  }
+  details { border-top: 1px solid var(--line); padding: 10px 0; }
+  details:first-of-type { border-top: none; }
+  summary { cursor: pointer; font-weight: 600; }
+  dl dt { font-weight: 600; margin-top: 10px; }
+  dl dd { margin: 2px 0 0 0; color: var(--muted); }
+  table.data { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  table.data th, table.data td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.data th { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
+  table.data td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.data tr.past { color: var(--muted); }
+  table.data tr.past td:first-child { text-decoration: line-through; }
+  .badge {
+    display: inline-block; font-size: 0.75rem; padding: 1px 8px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--muted); white-space: nowrap;
+  }
+  .badge.quarter { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .badge.grades { background: var(--accent-soft); color: var(--ink); border-color: var(--accent); }
+  .badge.half { border-color: var(--warn); color: var(--warn); }
+  .badge.exam { background: var(--warn); color: #fff; border-color: var(--warn); }
+  .table-wrap { overflow-x: auto; }
+  table.data select { width: auto; padding: 4px 6px; }
+  table.data tr.wk-current td { background: var(--accent-soft); }
+  .small { font-size: 0.85rem; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  .filters select, .filters input[type="text"] { width: auto; min-width: 140px; }
+  .stat { display: inline-block; min-width: 110px; padding: 8px 12px; margin: 0 8px 8px 0; border: 1px solid var(--line); border-radius: 8px; }
+  .stat b { display: block; font-size: 1.3rem; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  @media print {
+    nav, .no-print { display: none !important; }
+    body { background: #fff; color: #000; }
+    .card { border: 1px solid #999; break-inside: avoid; }
+    section.panel { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Personal Finance Teacher Toolkit</h1>
+  <p>For first-year teachers of Advanced Personal Finance, grades 9–12. Your progress saves in this browser only.</p>
+</header>
+
+<nav role="tablist" aria-label="Toolkit sections">
+  <div class="inner">
+    <button role="tab" aria-selected="true" aria-controls="p-start" data-tab="start">Start Here</button>
+    <button role="tab" aria-selected="false" aria-controls="p-checklist" data-tab="checklist">Checklists</button>
+    <button role="tab" aria-selected="false" aria-controls="p-calendar" data-tab="calendar">Calendar &amp; Pacing</button>
+    <button role="tab" aria-selected="false" aria-controls="p-standards" data-tab="standards">Standards &amp; Grading</button>
+    <button role="tab" aria-selected="false" aria-controls="p-tracker" data-tab="tracker">Standards Tracker</button>
+    <button role="tab" aria-selected="false" aria-controls="p-policies" data-tab="policies">School Policies</button>
+    <button role="tab" aria-selected="false" aria-controls="p-lesson" data-tab="lesson">Lesson Planner</button>
+    <button role="tab" aria-selected="false" aria-controls="p-ideas" data-tab="ideas">Unit Activities</button>
+    <button role="tab" aria-selected="false" aria-controls="p-management" data-tab="management">Classroom Management</button>
+    <button role="tab" aria-selected="false" aria-controls="p-scripts" data-tab="scripts">Words to Use</button>
+    <button role="tab" aria-selected="false" aria-controls="p-survival" data-tab="survival">Survival Guide</button>
+    <button role="tab" aria-selected="false" aria-controls="p-glossary" data-tab="glossary">Jargon Decoder</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- START HERE -->
+  <section id="p-start" class="panel active" role="tabpanel">
+    <div class="card">
+      <h2>Welcome. You do not have to be a financial expert yet.</h2>
+      <p>You are teaching a skill, not a list of facts. The goal of this course is for students to make better money decisions when they are on their own. Your job is to build those decisions through practice, math, and honest conversation.</p>
+      <ol>
+        <li><strong>Teach with real numbers.</strong> Students remember a $1,200 car payment they calculated far better than a definition.</li>
+        <li><strong>Make it relevant to their lives.</strong> First paychecks, phone plans, car insurance, streaming subscriptions, and buy-now-pay-later offers.</li>
+        <li><strong>Keep it judgment-free.</strong> Students come from very different households. Some are already earning or helping pay family bills.</li>
+        <li><strong>Stay neutral on investing and politics.</strong> Teach how things work. Avoid recommending specific stocks, funds, or coins. Follow your district's guidance.</li>
+      </ol>
+      <div class="tip"><strong>Give yourself permission:</strong> You will not know every tax rule or loan term off the top of your head. Say, "Good question, let me verify that," and check it before the next class. Students respect that more than a confident wrong answer.</div>
+    </div>
+
+    <div class="card">
+      <h2>Your first three priorities</h2>
+      <div class="grid two">
+        <div>
+          <h3>1. Know your course and standards</h3>
+          <ul>
+            <li>Get the course description and any required pacing guide</li>
+            <li>Find your state's personal finance standards (requirements vary a lot by state)</li>
+            <li>Check whether the course is a graduation requirement or an elective</li>
+            <li>Confirm the grading policy, late work rules, and any required final</li>
+          </ul>
+        </div>
+        <div>
+          <h3>2. Know your students</h3>
+          <ul>
+            <li>Check the roster for IEP and 504 accommodations (read-aloud, calculators, extended time)</li>
+            <li>Ask who already has a job or pays bills at home, privately, if at all</li>
+            <li>Learn names and how to pronounce them</li>
+            <li>Know which students are already seniors who need this course to graduate</li>
+          </ul>
+        </div>
+      </div>
+      <h3>3. Protect student privacy from day one</h3>
+      <p class="muted">Never ask students to share family income, debts, bank details, or Social Security numbers. Do not put a student's personal money situation on the board or in a group discussion. Avoid assignments that require real family financial information, like "Show me your parents' budget." Offer a fictional family or a template instead.</p>
+    </div>
+
+    <div class="card">
+      <h2>Quick tips that save you real time</h2>
+      <ul>
+        <li><strong>Use calculators and spreadsheets deliberately.</strong> Teach the formula first, then let the tool check the work.</li>
+        <li><strong>Build a bank of ready-made scenarios.</strong> Keep a folder of "first apartment," "first car," and "first credit card" situations you can reuse every year.</li>
+        <li><strong>Plan for the school's tech and AI policies.</strong> Students may use AI tools for budgets and essays. Decide early what counts as help and what counts as copying, and say it out loud.</li>
+        <li><strong>Grade the thinking, not just the answer.</strong> Give points for showing the calculation and explaining a decision.</li>
+        <li><strong>Ask a veteran math, business, or social studies teacher</strong> for their favorite finance lesson. Most have one.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CHECKLISTS -->
+  <section id="p-checklist" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Progress</h2>
+      <p class="muted" id="progressText">0 of 0 done</p>
+      <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+      <div class="row no-print" style="margin-top:8px">
+        <button class="ghost" id="resetChecks" type="button">Reset all checkboxes</button>
+      </div>
+    </div>
+    <div id="checklists"></div>
+  </section>
+
+  <!-- CALENDAR & PACING -->
+  <section id="p-calendar" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>2026–27 school year at a glance</h2>
+      <p class="muted">Built from the Sumter School District Modified Year Round 2026–2027 calendar. Always confirm dates against the official calendar, since the district can change them.</p>
+      <p id="calNow"></p>
+      <div id="calNext"></div>
+    </div>
+
+    <div class="card">
+      <h2>Instructional days per quarter</h2>
+      <p class="muted">Counts weekdays only. No-school days (holidays, breaks, teacher workdays) are removed. Half days are counted separately, and the high school exam half days are shown as exam days instead of instruction. Fall Break (Oct 12) and the March 26 spring holiday are listed on the calendar as inclement weather days, so they could become school days if weather days are needed.</p>
+      <div class="table-wrap">
+        <table class="data" id="calCounts">
+          <thead><tr><th>Quarter</th><th>Dates</th><th class="num">Full days</th><th class="num">Half days</th><th class="num">Exam half days</th><th class="num">Instructional days (about)</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Your 20-week plan (Semester 1)</h2>
+      <p class="muted">From the Week Audit sheet of your APF 5131 mastery tracker. Week 1 is the week of Aug 3, and Week 20 is the week of Dec 14 (exam half days Dec 17–18). The tracker notes the fall holidays and Fall Break in these weeks, and the dates below line up with the district calendar. Spring weeks are not mapped here yet.</p>
+      <div class="table-wrap">
+        <table class="data" id="weekPlan">
+          <thead><tr><th>Week</th><th>Dates</th><th>Focus</th><th>Grade entries</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="tip"><strong>Point values:</strong> Minor = 20 points, Major = 50 points. The final is a separate category, not a Major. Week 17 is a calendar buffer for Thanksgiving week and standards recovery.</div>
+    </div>
+
+    <div class="card">
+      <h2>Grading rhythm</h2>
+      <p>Plan your major assessments so grades are in before each reporting date.</p>
+      <ul>
+        <li><strong>Interims issued:</strong> Sep 4, Nov 12, Feb 5, Apr 21. By the 4½ week mark the manual requires at least 8 grades, including 2 majors. Earlier checkpoints: 4 grades with 1 major at 2¼ weeks, and 12 with 3 majors at 6¾ weeks.</li>
+        <li><strong>Report cards issued:</strong> Oct 20, Jan 21, Mar 25, May 21. The manual requires at least 18 grades, including 4 majors, per quarter. Finalize grades a few days earlier and send D/F letters at the end of each quarter.</li>
+        <li><strong>Parent-teacher conference half days:</strong> Sep 18 and Mar 12. Use the conference script in "Words to Use."</li>
+        <li><strong>High school exam half days:</strong> Dec 17–18 and May 20–21. Plan review the week before, not the day before.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Every date on the calendar</h2>
+      <label class="row" style="margin-bottom:8px"><input type="checkbox" id="calHidePast" checked> <span>Hide dates that have passed</span></label>
+      <div class="table-wrap">
+        <table class="data" id="calEvents">
+          <thead><tr><th>Date</th><th>What</th><th>Type</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- STANDARDS & GRADING -->
+  <section id="p-standards" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Your course: Advanced Personal Finance, SCDE course 5131</h2>
+      <p>Your standards tracker lists <strong>141 indicators in sixteen domains (A–P)</strong>, and every indicator is mapped to a week, a first-teach point, and a planned assessment. The Standards Tracker tab in this toolkit holds them all, so you can update statuses as you teach.</p>
+      <ul>
+        <li><strong>Teach, then practice, then assess.</strong> A mention does not count as mastery.</li>
+        <li><strong>Assessed is not mastery.</strong> Mark mastery only after dated evidence is reviewed, with the block or cohort noted.</li>
+        <li><strong>Reteach flag:</strong> set it when student evidence shows a gap. Clear it only after new evidence.</li>
+        <li><strong>Week 20 is final verification</strong>, not first exposure.</li>
+        <li><strong>Spring:</strong> reset every status to Not Yet Taught and track the new cohort on its own.</li>
+      </ul>
+      <p class="muted">The domain letters, indicator numbers, and the skill, assessment, and week fields come from your mastery tracker. The domain names shown in this toolkit are my short labels. The official domain names are in the SCDE document.</p>
+    </div>
+
+    <div class="card">
+      <h2>District grading rules, 2026–27</h2>
+      <p class="muted">From the Sumter School District Grading Manual, "Best Practices in Grading: A Guide for Teachers 2026–2027" (revised July 2026), Secondary Grading Procedures, grades 6–12. Page numbers are the manual's printed pages.</p>
+
+      <h3>How the grade is built</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Piece</th><th class="num">Weight</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Major assessments (summative)</td><td class="num">60%</td><td>Tests, essays, lab reports, presentations, projects, portfolios, formal performances (p. 19)</td></tr>
+            <tr><td>Minor assessments (formative)</td><td class="num">40%</td><td>Quizzes, classwork, journals, exit slips. Homework may be recorded as a minor grade (p. 19–20)</td></tr>
+            <tr><td>Each quarter</td><td class="num">45%</td><td>Two quarters per semester (from your note)</td></tr>
+            <tr><td>Final exam</td><td class="num">10%</td><td>For non-EOCEP courses, 10% of the final course grade (p. 20). EOCEP courses (Algebra 1, Biology 1, English 2, US History) use 20%.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">So a semester grade is 45% Quarter 1 + 45% Quarter 2 + 10% final exam. Use the calculator below to try numbers.</p>
+
+      <h3>Grading scale (p. 18, 29)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Letter</th><th class="num">Percent</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td class="num">90–100</td></tr>
+            <tr><td>B</td><td class="num">80–89</td></tr>
+            <tr><td>C</td><td class="num">70–79</td></tr>
+            <tr><td>D</td><td class="num">60–69</td></tr>
+            <tr><td>F</td><td class="num">59 and below</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Minimum grades in the gradebook (p. 18, 28)</h3>
+      <ul>
+        <li>At least <strong>2 grades per week</strong> and at least <strong>4 major grades per quarter</strong> in the PowerTeacherPro gradebook. Publish updated grades weekly. The principal or designee monitors gradebooks weekly.</li>
+      </ul>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Report</th><th>When</th><th class="num">Minimum grades</th><th class="num">Of those, major</th></tr></thead>
+          <tbody>
+            <tr><td>Progress report</td><td>2¼ week mark</td><td class="num">4</td><td class="num">1</td></tr>
+            <tr><td>Interim report</td><td>4½ week mark</td><td class="num">8</td><td class="num">2</td></tr>
+            <tr><td>Progress report</td><td>6¾ week mark</td><td class="num">12</td><td class="num">3</td></tr>
+            <tr><td>Report card</td><td>9-week mark</td><td class="num">18</td><td class="num">4</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">Send D/F letters to parents at the end of each quarter. MAP and district benchmark or common formative assessments are not graded (p. 18).</p>
+    </div>
+
+    <div class="card">
+      <h2>Redo, make-up, late work, and recovery</h2>
+      <h3>Redo / retake (p. 21–22)</h3>
+      <ul>
+        <li>A student who scores <strong>below 80 on a major assessment</strong> may redo or retake up to <strong>4 per semester</strong>.</li>
+        <li>The student must take part in intervention aimed at the targeted standards. The teacher decides whether to retake the whole assessment or use an alternative on the same standards.</li>
+        <li>The student keeps the higher of the two scores, <strong>capped at 80</strong>.</li>
+        <li><strong>Student:</strong> complete the Redo/Retake Plan of Study (Appendix J), get a parent signature, and submit it within <strong>3 instructional days</strong> of getting the score.</li>
+        <li><strong>Teacher:</strong> review the plan, schedule the retake within <strong>7 instructional days</strong> (before, during, or after school), sign and send a copy home, provide the intervention, and keep a copy.</li>
+        <li>Major writing assignments, projects, and portfolios turned in late are <strong>not eligible</strong>.</li>
+      </ul>
+      <h3>Make-up work (p. 22)</h3>
+      <ul>
+        <li>Students may make up assignments and tests within <strong>5 instructional days</strong> after an absence.</li>
+        <li>Record a zero while work is missing. Update the gradebook when it is submitted.</li>
+        <li>A student should not have to take a quiz or test on the day they return if it was announced while they were absent.</li>
+        <li>Make-up work, including tests, may be an alternate version.</li>
+      </ul>
+      <h3>Late major writing, projects, and portfolios (p. 23)</h3>
+      <ul>
+        <li>Give notice of the due date in advance.</li>
+        <li>Up to 24 hours late: 10% deduction. One to five days late: 20% deduction.</li>
+        <li>Not accepted after 5 instructional days. A zero is recorded until the work is submitted. Work turned in after the quarter ends gets a zero.</li>
+      </ul>
+      <h3>Content recovery (p. 25–26)</h3>
+      <ul>
+        <li>Available when the grading-period average is below 70. Students at 60–69 can ask for it. Students below 60 are assigned it by the teacher.</li>
+        <li>The student must have completed required assignments, turned work in on time, taken part in reteaching, and made a good-faith effort. Not eligible if the grade came from cheating or plagiarism that is not yet resolved, or from excessive absences.</li>
+        <li>Reteaching comes first (for example, APEX tutorials). Everything must finish before the grading period closes unless the principal approves otherwise.</li>
+        <li>The highest recovered grade for a grading period is <strong>80</strong>. The recovery grade replaces the original grade in the gradebook.</li>
+      </ul>
+      <h3>Credit recovery (p. 27)</h3>
+      <p>For a student who earned a final course grade of 50–59 and met the other requirements. It earns credit only. The original failing grade stays on the transcript and GPA.</p>
+    </div>
+
+    <div class="card">
+      <h2>Academic honesty, refusal to work, and other rules</h2>
+      <h3>Plagiarism and AI (p. 24–25)</h3>
+      <p>Using generative AI for any assignment without the instructor's permission, or not acknowledging AI use, counts as plagiarism.</p>
+      <ol>
+        <li><strong>First offense:</strong> tell the student, enter a zero with the comment "Plagiarism," assign the Academic Honesty Tutorial, call the parent and send Plagiarism Letter #1 (Appendix L), and allow 5 instructional days to finish the tutorial and resubmit for full credit.</li>
+        <li><strong>Second offense:</strong> call or email the parent and send Letter #2. Enter a zero with the comment "Plagiarism 2nd Violation."</li>
+        <li><strong>Tutorial or resubmission not done:</strong> Letter #2 and a zero with the comment "Plagiarism-did not complete process."</li>
+      </ol>
+      <h3>Refusal to work (p. 23–24)</h3>
+      <p>First talk with the student privately and rule out illness or other legitimate reasons.</p>
+      <ol>
+        <li><strong>First offense:</strong> explain the consequences, have the student sign the Refusal to Do Assigned Work form (Appendix K), enter a zero if graded, and call the parent.</li>
+        <li><strong>Second offense:</strong> all of the above, refer to the school counselor, and notify the parent of the repeated behavior.</li>
+        <li><strong>Later offenses:</strong> also tell the MTSS coordinator and the assigned administrator, and request a parent conference with the student and the intervention team.</li>
+      </ol>
+      <h3>Other rules</h3>
+      <ul>
+        <li><strong>Extra credit:</strong> not a research-based best practice. The district gives multiple chances through redo, content recovery, and credit recovery.</li>
+        <li><strong>Final exam exemption:</strong> a student needs a 90 or above average to exempt a final exam (not EOCEP courses) (p. 20).</li>
+        <li><strong>Homework:</strong> never a disciplinary measure. Return graded work in a timely way. Homework for all subjects combined should not exceed 10 hours a week in grades 9–12 (p. 20).</li>
+        <li><strong>IEPs and multilingual learners:</strong> grade on grade level with IEP accommodations. A student may not receive a failing grade only because of limited English proficiency (p. 20).</li>
+        <li><strong>No minimum-grade floor:</strong> the board removed the 50% grading floor on Aug 12, 2024. On May 18, 2026, the General Assembly added Section 59-29-250, which prohibits systems that require a teacher to give a grade higher than the student's actual performance on required assignments and district-selected benchmarks (p. 7).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Does your APF 5131 plan meet the minimums?</h2>
+      <p>Counting your Week Audit sheet, Weeks 1–9 have <strong>19 graded entries and 4 Majors</strong> (Weeks 3, 5, 6, and 8). Weeks 10–20 have <strong>19 entries and 4 Majors</strong> (Weeks 11, 14, 16, and 19), plus the final exam, which is a separate category. Week 17 has no required grade. That is at or above the manual's 18 grades and 4 majors per quarter.</p>
+      <div class="warn"><strong>Check the quarter boundary.</strong> Quarter 1 ended Tuesday, Oct 6, in the middle of Week 10. Make sure the right Week 10 grades land in the right quarter in PowerTeacherPro, and confirm the counts there.</div>
+    </div>
+
+    <div class="card">
+      <h2>Grade calculator</h2>
+      <p class="muted">Uses the 60/40 category weights and the 45/45/10 semester split. Enter percentages from 0 to 100.</p>
+      <h3>Quarter grade</h3>
+      <div class="grid two">
+        <div><label class="field" for="gcMajor">Major average (60%)</label><input type="text" id="gcMajor" inputmode="decimal" placeholder="e.g., 82"></div>
+        <div><label class="field" for="gcMinor">Minor average (40%)</label><input type="text" id="gcMinor" inputmode="decimal" placeholder="e.g., 91"></div>
+      </div>
+      <p><strong id="gcQuarter" role="status">Enter both averages.</strong></p>
+      <h3>Semester grade</h3>
+      <div class="grid two">
+        <div><label class="field" for="gcQ1">Quarter 1 grade (45%)</label><input type="text" id="gcQ1" inputmode="decimal"></div>
+        <div><label class="field" for="gcQ2">Quarter 2 grade (45%)</label><input type="text" id="gcQ2" inputmode="decimal"></div>
+        <div><label class="field" for="gcFinal">Final exam (10%)</label><input type="text" id="gcFinal" inputmode="decimal"></div>
+      </div>
+      <p><strong id="gcSemester" role="status">Enter all three scores.</strong></p>
+      <p class="muted" id="gcNeed"></p>
+    </div>
+
+    <div class="card">
+      <h2>Official sources</h2>
+      <ul>
+        <li><a href="https://ed.sc.gov/instruction/career-and-technical-education/programs-and-courses/career-clusters/business-management-and-administration/advanced-personal-finance-standards/" target="_blank" rel="noopener">SCDE Advanced Personal Finance standards (course 5131)</a>, the source named in your tracker</li>
+        <li><a href="https://ed.sc.gov/newsroom/10-point-scale-faq/" target="_blank" rel="noopener">SCDE 10-point grading scale FAQ</a></li>
+        <li><a href="https://academics.sumterschools.net/assessment-and-grading" target="_blank" rel="noopener">Sumter School District assessment and grading page</a>, where the current grading manual is posted</li>
+        <li><a href="https://v3.boardpolicyonline.com/b/sumter" target="_blank" rel="noopener">Sumter School District Board Policy Manual</a></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>My notes from the official documents</h2>
+      <p class="muted">These save in this browser only.</p>
+      <div class="grid two">
+        <div><label class="field" for="spCourse">My course name and code</label><input type="text" id="spCourse" placeholder="Advanced Personal Finance, 5131"></div>
+        <div><label class="field" for="spScale">Grading scale</label><input type="text" id="spScale" placeholder="A 90-100, B 80-89, ..."></div>
+        <div><label class="field" for="spWeights">Category weights</label><input type="text" id="spWeights" placeholder="Major 60%, Minor 40%; Q1 45%, Q2 45%, final 10%"></div>
+        <div><label class="field" for="spCount">Grades required per quarter</label><input type="text" id="spCount" placeholder="2 per week, 18 and 4 major per quarter"></div>
+        <div><label class="field" for="spExam">Exam weight / how semester grade is figured</label><input type="text" id="spExam" placeholder="Final exam 10%"></div>
+        <div><label class="field" for="spEntry">Grade entry deadlines</label><input type="text" id="spEntry" placeholder="Interims, report cards"></div>
+      </div>
+      <label class="field" for="spLate">Late work, make-up, and reassessment policy</label>
+      <textarea id="spLate" placeholder="Paste or summarize the wording"></textarea>
+      <label class="field" for="spStandards">Other notes</label>
+      <textarea id="spStandards" style="min-height:120px" placeholder="Anything else from the official documents"></textarea>
+    </div>
+  </section>
+
+  <!-- STANDARDS TRACKER -->
+  <section id="p-tracker" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>APF 5131 standards tracker</h2>
+      <p class="muted">All 141 indicators from your mastery tracker. Starting statuses are copied from the file's "Live Semester Status" column. They are curriculum-history records, not proof of mastery. Your changes save in this browser only.</p>
+      <div id="trSummary"></div>
+      <div class="row no-print">
+        <button class="ghost" id="trReset" type="button">Reset to the file's starting statuses</button>
+        <button class="ghost" id="trSpring" type="button">Spring reset: all Not Yet Taught</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>By domain</h2>
+      <div class="table-wrap">
+        <table class="data" id="trDomains">
+          <thead><tr><th>Domain</th><th>Topic (short label)</th><th class="num">Total</th><th class="num">Not yet</th><th class="num">Introduced</th><th class="num">Practiced</th><th class="num">Assessed</th><th class="num">Reteach</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Indicators</h2>
+      <div class="filters">
+        <label class="sr-only" for="trDomain">Domain</label>
+        <select id="trDomain"></select>
+        <label class="sr-only" for="trStatus">Status</label>
+        <select id="trStatus"></select>
+        <label class="sr-only" for="trSearch">Search</label>
+        <input type="text" id="trSearch" placeholder="Search skills (for example, credit)">
+      </div>
+      <p class="muted small" id="trCount"></p>
+      <div class="table-wrap">
+        <table class="data" id="trList">
+          <thead><tr><th>Indicator</th><th>Skill and planned evidence</th><th>First teach / assess</th><th>Status</th><th>Reteach</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHOOL POLICIES -->
+  <section id="p-policies" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Sumter High School policies, 2026–27</h2>
+      <p class="muted">Summarized from the SHS Teacher Handbook, the 2026–27 tardy policy, and the 2026–27 High School Code of Conduct. The Code of Conduct file is marked "Draft" and I read the first 16 of its 39 pages (Category I offenses and the start of Category II). Use the originals for exact wording.</p>
+      <div class="tip"><strong>Privacy note:</strong> This toolkit lives in a public GitHub repository, so I left staff names and phone extensions out. Handbook pages 5–14 have the full directory. You can paste names into the notes fields on the Standards &amp; Grading tab, which stay in your browser only.</div>
+    </div>
+
+    <div class="card">
+      <h2>Daily teacher expectations</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Area</th><th>What the handbook says</th></tr></thead>
+          <tbody>
+            <tr><td>Duty hours</td><td>Report by 8:00 a.m. and stay until 4:00 p.m. unless an administrator approves otherwise. Perform assigned duties.</td></tr>
+            <tr><td>Attendance</td><td>Take attendance accurately every class period and promptly verify corrections.</td></tr>
+            <tr><td>Supervision</td><td>Never leave students unattended.</td></tr>
+            <tr><td>Lesson plans</td><td>Keep current lesson plans for administrative review. The district lesson planning protocol and templates are linked in the handbook (page 19).</td></tr>
+            <tr><td>Learning targets</td><td>Post the daily learning target and standards for each lesson.</td></tr>
+            <tr><td>Instruction</td><td>Bell-to-bell instruction, differentiation, content recovery for students not meeting standards, and timely feedback on progress.</td></tr>
+            <tr><td>Accommodations</td><td>Implement all required IEP, 504, MTSS, and multilingual learner accommodations.</td></tr>
+            <tr><td>Hall passes</td><td>Use only approved school passes. Limit how many students leave at once, except in a true emergency.</td></tr>
+            <tr><td>Phones and devices</td><td>No phones, headphones, or other electronic devices used or visible in classrooms or at school. Refer to district policy.</td></tr>
+            <tr><td>IDs</td><td>Wear your staff ID at all times. Students must have IDs in class. If they don't, write a temporary ID.</td></tr>
+            <tr><td>Communication</td><td>Keep timely, positive communication with students, parents, and colleagues, and document it.</td></tr>
+            <tr><td>AI and technology</td><td>Use instructional technology and AI tools according to district guidelines. Keep the focus on student-centered learning.</td></tr>
+            <tr><td>Safety</td><td>Keep classroom doors secured per district procedure, monitor hallways during transitions, take part in drills, and report safety concerns to an administrator or the SRO right away.</td></tr>
+            <tr><td>Substitute folder</td><td>Keep an up-to-date substitute folder all year.</td></tr>
+            <tr><td>Field trips</td><td>Get administrative approval before making arrangements. The handbook says 50 days in advance.</td></tr>
+            <tr><td>Purchases and fundraisers</td><td>Get approval before buying anything or submitting requisitions. Ratifications are not allowed. Fundraisers need administrative approval before you advertise or collect funds.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Classroom discipline steps (handbook)</h2>
+      <p>Teachers are the first level of classroom discipline.</p>
+      <ol>
+        <li>Redirect the behavior.</li>
+        <li>Conference with the student.</li>
+        <li>Contact the parent or guardian. Refer to the counselor.</li>
+        <li>Document your interventions. Refer the student to MTSS.</li>
+        <li>Submit an office referral when appropriate.</li>
+      </ol>
+      <p class="muted">Always follow the district Student Code of Conduct and school discipline procedures.</p>
+    </div>
+
+    <div class="card">
+      <h2>Tardy policy, 2026–27</h2>
+      <h3>What the teacher does</h3>
+      <ol>
+        <li><strong>1st tardy:</strong> warning.</li>
+        <li><strong>2nd tardy:</strong> student and parent conference or call.</li>
+        <li><strong>3rd tardy:</strong> counselor referral. Tell the student the next tardy will result in a referral.</li>
+        <li><strong>4th tardy:</strong> office referral. Students should get an office referral for each tardy after the 4th, through the course.</li>
+      </ol>
+      <div class="warn"><strong>Document every step in Simple Discipline.</strong></div>
+      <h3>Administrative consequences (office referrals)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Referral</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>1st</td><td>1 lunch detention</td></tr>
+            <tr><td>2nd</td><td>1 day ISS</td></tr>
+            <tr><td>3rd</td><td>1 day OSS</td></tr>
+            <tr><td>4th</td><td>3 days OSS (pre-expulsion notification)</td></tr>
+            <tr><td>5th</td><td>5–10 days OSS and referral for an evidentiary hearing</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">The Code of Conduct lists Tardy (code 180) and says to follow the Sumter School District Attendance and Tardy Guidelines when a school needs to record discipline for excessive tardies.</p>
+    </div>
+
+    <div class="card">
+      <h2>Code of Conduct highlights (draft, grades 9–12)</h2>
+      <ul>
+        <li><strong>Category I (disorderly conduct)</strong> should first be handled with classroom-based interventions and collaborative problem-solving with the student, parents, and administrators. It includes cheating, disrupting class, refusal to obey, tardy, ID violation, dress code, and unauthorized device.</li>
+        <li><strong>Category II (disruptive conduct)</strong> includes fighting, bullying, harassment, intimidation, and phone violation. Bullying, cyberbullying, fighting, harassment, and intimidation can reach a hearing officer on the second offense.</li>
+        <li><strong>Accumulation:</strong> four or more documented Level I and/or Level II offenses may lead to a disciplinary transfer or hearing officer referral. At least one MTSS meeting is required.</li>
+        <li><strong>Students with disabilities</strong> are disciplined under federal and state law. After 10 cumulative school days of removal in a year, the school must review whether additional IDEA protections apply.</li>
+        <li><strong>Extenuating, mitigating, and aggravating circumstances</strong> can change the consequence, so write down context in your documentation.</li>
+      </ul>
+      <h3>Offenses you are most likely to see in class (first offense)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Offense (code)</th><th>First offense response in the draft code</th></tr></thead>
+          <tbody>
+            <tr><td>Cheating (190)</td><td>Parent contact, school counselor referral, and ISS (1–5 days)</td></tr>
+            <tr><td>Disrupting class (007)</td><td>Parent contact and ISS (1–5 days)</td></tr>
+            <tr><td>Refusal to obey / defiant (270)</td><td>Parent contact, school counselor referral, and ISS (3–5 days)</td></tr>
+            <tr><td>Unauthorized device (390)</td><td>Parent contact and ISS (3–5 days)</td></tr>
+            <tr><td>Dress code violation (280)</td><td>Parent contact and a warning</td></tr>
+            <tr><td>ID violation (360)</td><td>Parent contact, school counselor referral, and ISS (1–5 days)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">Administrators decide the consequence. Your part is the intervention, the parent contact, the documentation, and the referral.</p>
+    </div>
+
+    <div class="card">
+      <h2>Who to contact, by role</h2>
+      <ul>
+        <li><strong>Instruction and curriculum:</strong> your department chair first.</li>
+        <li><strong>School procedures, personnel, discipline, or operations:</strong> the assistant principal assigned to the student (by last name; see handbook pages 5–9).</li>
+        <li><strong>Schoolwide or administrative matters:</strong> the principal and the principal's administrative assistant.</li>
+        <li><strong>Grades, report cards, PowerSchool issues:</strong> the PowerSchool clerk and system administrator.</li>
+        <li><strong>Schoology:</strong> the assistant principal listed in the handbook and the school's innovative specialists.</li>
+        <li><strong>504 plans:</strong> the 504 coordinator or the assistant principal over 504 students.</li>
+        <li><strong>Emails, IDs, laptops, Chromebooks:</strong> the media center.</li>
+        <li><strong>Attendance:</strong> attendance office staff, split by student last name.</li>
+        <li><strong>Scheduling, college and career planning, dual enrollment:</strong> the student's counselor, a career specialist, or the lead counselor.</li>
+        <li><strong>Safety concerns:</strong> an administrator or the school resource officer, immediately.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- LESSON PLANNER -->
+  <section id="p-lesson" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Lesson Planner</h2>
+      <p class="muted">Fill in the fields, then copy the plan or print it. Anchor each lesson in one real money decision. Use the same format every day so planning gets faster.</p>
+      <div class="grid two">
+        <div>
+          <label class="field" for="lpTitle">Lesson title</label>
+          <input type="text" id="lpTitle" placeholder="e.g., Comparing two cell phone plans">
+        </div>
+        <div>
+          <label class="field" for="lpDate">Date</label>
+          <input type="date" id="lpDate">
+        </div>
+        <div>
+          <label class="field" for="lpClass">Class / period</label>
+          <input type="text" id="lpClass" placeholder="e.g., Adv. Personal Finance, period 2, grade 11">
+        </div>
+        <div>
+          <label class="field" for="lpLength">Length (minutes)</label>
+          <input type="text" id="lpLength" placeholder="e.g., 50">
+        </div>
+      </div>
+      <label class="field" for="lpObjective">Objective: "Students will be able to..."</label>
+      <input type="text" id="lpObjective" placeholder="Students will be able to compare total costs of two credit card offers using APR.">
+      <label class="field" for="lpContext">Real-world decision (the scenario students face)</label>
+      <textarea id="lpContext" placeholder="e.g., You just got your first job at $13/hour. Which is the better deal for a phone: $35 a month for 24 months, or $850 up front?"></textarea>
+      <label class="field" for="lpSuccess">How will I know they got it? (success criteria)</label>
+      <textarea id="lpSuccess" placeholder="e.g., 4 of 5 students compute a monthly interest charge correctly and state a decision with one reason"></textarea>
+      <label class="field" for="lpMaterials">Materials</label>
+      <textarea id="lpMaterials" placeholder="Slides, handout, calculators, spreadsheet template, scenario cards..."></textarea>
+
+      <div class="card" style="margin-top:14px; background: var(--bg)">
+        <h3 style="margin-top:0">Lesson flow (time each part)</h3>
+        <div class="grid two">
+          <div><label class="field" for="lpWarm">Warm-up / hook (min)</label><input type="text" id="lpWarm"></div>
+          <div><label class="field" for="lpTeach">Model the math / concept (min)</label><input type="text" id="lpTeach"></div>
+          <div><label class="field" for="lpPractice">Guided practice together (min)</label><input type="text" id="lpPractice"></div>
+          <div><label class="field" for="lpIndep">Independent or partner scenario (min)</label><input type="text" id="lpIndep"></div>
+        </div>
+        <label class="field" for="lpClose">Closing / exit ticket</label>
+        <input type="text" id="lpClose" placeholder="e.g., Which offer would you choose, and what is the total cost?">
+      </div>
+
+      <label class="field" for="lpDiff">Support and extension</label>
+      <textarea id="lpDiff" placeholder="IEP/504 supports (calculator, formula sheet, extended time). Extension: 'What if the interest rate doubled?'"></textarea>
+      <label class="field" for="lpNotes">Notes for next time</label>
+      <textarea id="lpNotes" placeholder="Which numbers confused students? Did the scenario feel real?"></textarea>
+
+      <div class="row no-print" style="margin-top:14px">
+        <button class="action" type="button" id="lpCopy">Copy plan as text</button>
+        <button class="ghost" type="button" id="lpPrint">Print</button>
+        <button class="ghost" type="button" id="lpClear">Clear</button>
+        <span id="lpStatus" class="muted" role="status"></span>
+      </div>
+      <pre class="template" id="lpPreview" style="display:none"></pre>
+    </div>
+
+    <div class="card">
+      <h2>Weekly plan skeleton</h2>
+      <pre class="template">WEEK OF: ____________     UNIT: ______________________
+
+Monday   | Objective:                  | Assessment:
+Tuesday  | Objective:                  | Assessment:
+Wednesday| Objective:                  | Assessment:
+Thursday | Objective:                  | Assessment:
+Friday   | Objective:                  | Assessment:
+
+Quiz, project, or test due dates:
+Calculator / spreadsheet skills to reteach:
+Students who need a check-in (missing work, IEP/504 supports):
+Parent contacts to make (positive first!):
+Materials to prep / copy / print by Monday:
+Plan B if we fall behind (what gets cut first?):</pre>
+      <div class="tip"><strong>Tip:</strong> Plan the unit assessment first, then work backward. Finance units often run long because the math takes time. Protect the final project or test date.</div>
+    </div>
+  </section>
+
+  <!-- UNIT ACTIVITIES -->
+  <section id="p-ideas" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Activities that work in a finance course</h2>
+      <p class="muted">Each one is hands-on, uses numbers, and gives students a decision to defend. Adapt the amounts to your state's cost of living.</p>
+    </div>
+
+    <div class="card">
+      <h2>Paycheck and taxes</h2>
+      <p><strong>Activity:</strong> Give each student a job offer (for example, $16/hour, 25 hours a week). Have them calculate gross pay, then subtract federal income tax, Social Security (6.2%), Medicare (1.45%), and state tax. Compare net pay to the offer.</p>
+      <div class="tip"><strong>Teaching point:</strong> Gross pay is not take-home pay. Use your state's current tax tables or a withholding calculator, and say that the numbers are estimates. Real withholding depends on the employee's W-4.</div>
+    </div>
+
+    <div class="card">
+      <h2>Budget simulation: first apartment</h2>
+      <p><strong>Activity:</strong> Students receive a fictional income and a "life card" with random events (car repair, a friend's birthday, a job loss, a sale at a store). Each month they make a budget using 50/30/20 as a starting point (needs, wants, savings) and then react to the event cards.</p>
+      <div class="tip"><strong>Teaching point:</strong> Budgets fail when they are not planned for surprises. An emergency fund (commonly 3 to 6 months of essential expenses) is the answer students usually discover.</div>
+    </div>
+
+    <div class="card">
+      <h2>Interest on a credit card in one minute</h2>
+      <p><strong>Activity:</strong> A $1,000 balance at 24% APR costs about $20 a month in interest if you carry it (1,000 × 0.24 ÷ 12 = $20). Have students calculate the interest on several balances and APRs, then ask what happens if they pay only $25 a month.</p>
+      <div class="tip"><strong>Teaching point:</strong> Explain that many card issuers compute interest daily on the average balance. Your monthly estimate is a simplification. Say so, then move on to the decision.</div>
+    </div>
+
+    <div class="card">
+      <h2>Compound interest and the Rule of 72</h2>
+      <p><strong>Activity:</strong> Two students start investing $100 a month. One starts at age 18, one at age 28, both earning the same hypothetical 7% return. Compare balances at 65 using a spreadsheet's FV function. Then introduce the Rule of 72: years to double ≈ 72 ÷ rate (at 6%, about 12 years).</p>
+      <div class="tip"><strong>Teaching point:</strong> Returns are never guaranteed. Use the hypothetical as a math lesson, not an investment recommendation.</div>
+    </div>
+
+    <div class="card">
+      <h2>Phone plan or car loan comparison</h2>
+      <p><strong>Activity:</strong> Give students two offers with different upfront costs, monthly payments, and terms. They calculate the total cost of each, then write a one-paragraph recommendation that includes one risk.</p>
+      <div class="tip"><strong>Teaching point:</strong> The cheapest monthly payment is often the most expensive loan. Look at the total cost.</div>
+    </div>
+
+    <div class="card">
+      <h2>Scam or real? Spot the warning signs</h2>
+      <p><strong>Activity:</strong> Show a mix of real and fake messages: a bank text asking for a code, a "you won a prize" email, a job offer that asks for upfront payment, a "guaranteed 30% a month" investment pitch. Students label each one and name the warning sign.</p>
+      <div class="warn"><strong>Use fake examples only.</strong> Do not show real phishing messages or screenshots of a real company's logo and branding. Make your own samples.</div>
+    </div>
+
+    <div class="card">
+      <h2>Insurance deductibles and premiums</h2>
+      <p><strong>Activity:</strong> Give scenarios: a $1,500 car repair, a $5,000 emergency room visit. Students pay for each under two insurance plans (low premium with high deductible, high premium with low deductible).</p>
+    </div>
+  </section>
+
+  <!-- CLASSROOM MANAGEMENT -->
+  <section id="p-management" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>The first-week plan</h2>
+      <p class="muted">High schoolers respond to routines and respect. Explain why each routine helps them, and let them help set it up.</p>
+      <div class="grid two">
+        <div>
+          <h3>Day 1: Arrive and settle</h3>
+          <ul>
+            <li>Greet students at the door by name when you can</li>
+            <li>Post a short warm-up question: "What is one money decision you have made this month?"</li>
+            <li>Introduce the course: what they will be able to do by the end</li>
+            <li>Set two or three class norms together (respect, privacy, participation)</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Days 2 to 5: Teach the systems</h3>
+          <ul>
+            <li>Phone and device rule: the Sumter High handbook says no phones, headphones, or other electronic devices used or visible in classrooms</li>
+            <li>Where to find the calculator, formula sheets, and handouts</li>
+            <li>Due dates, late work, and how to make up a missed quiz</li>
+            <li>How to ask a question during a calculation (raise a hand, use a card, or write it down)</li>
+            <li>Group work roles and how partners rotate</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Expectations for a discussion-heavy course</h2>
+      <p>Money topics get personal fast. Set norms that protect everyone:</p>
+      <div class="grid two">
+        <div class="tip"><strong>Good norms:</strong> "Talk about ideas, not people's families," "Pass if you do not want to share," "We do not shame anyone for their money situation," "Use fake names in examples"</div>
+        <div class="warn"><strong>Avoid:</strong> Calling on a student to disclose their family's finances, mocking a classmate's clothes or phone, or letting one student dominate a debate</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>A simple response ladder for high school</h2>
+      <p>Use the same steps every time. Teens notice fairness quickly.</p>
+      <ol>
+        <li><strong>Quiet, private reminder</strong> (move closer, a nod, a quick "Phone away, please")</li>
+        <li><strong>Choice statement:</strong> "You can join your group now, or come talk with me after class. Which one?"</li>
+        <li><strong>Brief private conversation</strong> during class or at a calm moment, not in front of peers</li>
+        <li><strong>Follow your school's written process</strong> (referral, parent contact, counselor or dean support)</li>
+      </ol>
+      <div class="warn"><strong>Do not:</strong> argue in front of the class, threaten consequences you cannot deliver, or take phones and keep them in a drawer without following school policy.</div>
+    </div>
+
+    <div class="card">
+      <h2>Keeping students engaged</h2>
+      <ul>
+        <li><strong>Give them real decisions.</strong> Teens engage when they have a choice and a reason to care.</li>
+        <li><strong>Use short, active blocks.</strong> Switch every 10 to 15 minutes: a problem, a partner talk, a quick poll, back to the problem.</li>
+        <li><strong>Respect the work they already do.</strong> Students with jobs often know more about paychecks than the textbook. Ask them to share, without asking for personal details.</li>
+        <li><strong>Catch effort, not just results.</strong> Specific praise ("You checked your interest math before you answered") works better than "Good job."</li>
+        <li><strong>Call one student home each week with good news.</strong> Parents of teens hear from school mostly when something goes wrong.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Managing group projects</h2>
+      <ul>
+        <li>Assign roles: calculator lead, researcher, presenter, timekeeper.</li>
+        <li>Require a short written reflection on each partner's contribution.</li>
+        <li>Set checkpoints so groups do not wait until the day before to start.</li>
+        <li>Share a rubric that grades the math, the decision, and the explanation separately.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>When a lesson falls apart</h2>
+      <ul>
+        <li>Pause and wait. Silence works on teenagers too, if you hold it.</li>
+        <li>Switch to a quick, low-stakes task: a whiteboard answer, a think-pair-share, or a standing vote.</li>
+        <li>Name the reset clearly: "Eyes up, pencils down. Here is the next step."</li>
+        <li>Afterward, write down what happened and what to change. Share it with a colleague.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SCRIPTS -->
+  <section id="p-scripts" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Scripts and templates</h2>
+      <p class="muted">Copy these and adjust them. Check your school's communication policies before sending, and loop in a counselor when a student's situation is serious.</p>
+    </div>
+
+    <div class="card">
+      <h2>Parent emails</h2>
+      <details open>
+        <summary>First positive contact</summary>
+        <pre class="template">Subject: [Student's first name] in Personal Finance
+
+Hello [Parent/Guardian name],
+
+I'm [Your name], and I teach Advanced Personal Finance this year. I'm glad to have [Student] in class.
+
+[Specific positive detail, e.g., "[Student] worked through the cell phone plan comparison and explained the total cost clearly to a partner."]
+
+This course covers budgeting, credit, taxes, and banking, so students will use these skills right away. Please reach me at [email/phone/preferred contact] with any questions.
+
+Thank you,
+[Your name]</pre>
+      </details>
+      <details>
+        <summary>Missing work or falling behind</summary>
+        <pre class="template">Subject: Checking in about [Student's first name]'s progress
+
+Hello [Parent/Guardian name],
+
+I want to share that [Student] has [specific, factual observation, e.g., "missed the last two budget assignments"]. The course builds on each unit, so catching up now will help a lot.
+
+[Student] has shown real strength in [specific skill]. Could we set up a quick call or meeting this week? I'm available [times]. I can also share a list of what's due so you can check in at home.
+
+Thank you,
+[Your name]</pre>
+      </details>
+      <details>
+        <summary>Reply to a concerned parent about money content</summary>
+        <pre class="template">Hello [Parent/Guardian name],
+
+Thank you for reaching out about [topic, e.g., "the credit card unit"]. I'm glad you're interested in what [Student] is learning.
+
+The course uses real-world scenarios and fictional examples. We teach how credit works, how to compare offers, and how to avoid scams. It does not recommend specific investments or products, and students are never asked to share family financial information.
+
+I'd be happy to walk you through the unit materials. Would [day/time] work for a short call?
+
+Best,
+[Your name]</pre>
+      </details>
+      <details>
+        <summary>Parent-teacher conference (half days: Sep 18 and Mar 12)</summary>
+        <pre class="template">Before the meeting, bring: current grade and missing work, one strength with a specific example, one growth area with a specific next step, and a work sample.
+
+Opening: "Thank you for coming. I want to start with what [Student] is doing well: [specific example]."
+Growth area: "The area I'd like to work on together is [specific skill]. Here's what I'm doing in class: [action]. Here's something that helps at home: [simple suggestion]."
+Listen: "What are you noticing at home? Is there anything I should know that would help me teach [Student] better?"
+Close: "Here's our plan: [1-2 next steps and a date]. I'll follow up by [email/call] on [day]."
+
+If a parent raises something outside your role (grades appeals, discipline, services): "I want to make sure you get the right answer. Let me connect you with [counselor/administrator] and follow up this week."</pre>
+      </details>
+      <div class="tip"><strong>Rule of thumb:</strong> Wait before replying to an angry email. Stick to facts, and loop in your administrator if the conversation escalates.</div>
+    </div>
+
+    <div class="card">
+      <h2>Messages to students</h2>
+      <pre class="template">Hey [Name], quick heads-up: the budget project is due Friday. You are close. If you want, come to lunch on Thursday and we can run your numbers together.</pre>
+      <pre class="template">[Name], I noticed you missed the last two checks. No penalty. Can you message me by Wednesday with a plan for turning them in?</pre>
+    </div>
+
+    <div class="card">
+      <h2>Sentences for hard moments</h2>
+      <dl>
+        <dt>When a student says they can't afford the activity or supplies</dt>
+        <dd>"Thanks for telling me. You don't need to explain anything. Let's find a version that works, like a free calculator or a partner's printout."</dd>
+        <dt>When a student shares a personal money problem in class</dt>
+        <dd>"That sounds stressful, and I appreciate you trusting us. Let's talk after class so I can connect you with [counselor's name]."</dd>
+        <dt>When a student asks, "Why do I need this when I'll just get a job?"</dt>
+        <dd>"Most people never sign a loan, card, or lease until they're already on their own. Let's look at a real example together."</dd>
+        <dt>When a student asks about a specific stock, crypto coin, or product</dt>
+        <dd>"I can't recommend specific investments, but I can show you how to evaluate any investment: fees, risk, time horizon, and whether you understand what you're buying."</dd>
+        <dt>When a student wants you to confirm a family's money situation</dt>
+        <dd>"I can't speak to any family's situation, and you don't need to share anything personal. Let's use our scenario instead."</dd>
+        <dt>When you don't know the answer</dt>
+        <dd>"Great question. I want to check the current rule before I answer, and I'll bring it back tomorrow."</dd>
+      </dl>
+      <div class="warn"><strong>Mandated reporting still applies.</strong> If a student discloses abuse, neglect, or that they are in danger, follow your state law and district policy. Money stress alone is not reportable, but it is worth a counselor referral.</div>
+    </div>
+
+    <div class="card">
+      <h2>Asking colleagues and admin for help</h2>
+      <pre class="template">Hi [Name], do you have 10 minutes this week? I'm building a unit on [topic, e.g., "credit and debt"] and would love to see what has worked for you. Do you have any scenarios or assessments you'd recommend?</pre>
+      <pre class="template">Hi [Admin name], I wanted to flag [situation] early so we can plan together. Here's what I've tried: [1-2 bullets]. Is there a policy on [topic, e.g., phones or late work] I should follow? What support can you offer?</pre>
+    </div>
+  </section>
+
+  <!-- SURVIVAL -->
+  <section id="p-survival" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Time management</h2>
+      <ul>
+        <li><strong>Build a bank of reusable scenarios and spreadsheets.</strong> Finance units are reusable. Your second year should go faster than your first.</li>
+        <li><strong>Batch your grading.</strong> Use answer keys and a simple rubric so you can grade quickly and consistently.</li>
+        <li><strong>Use a simple task list.</strong> Three must-dos each day, plus one thing for your own life.</li>
+        <li><strong>Set an end-of-day shutdown routine:</strong> check tomorrow's plan, close tabs, leave.</li>
+        <li><strong>Protect at least one evening and one weekend day</strong> each week.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Your own money as a new teacher</h2>
+      <p>Teachers often get a first-year paycheck that feels smaller than expected, and many are still figuring out their benefits. Practice what you teach:</p>
+      <ul>
+        <li><strong>Read your pay stub and benefits packet.</strong> Know your gross pay, what is deducted, and what your health plan costs.</li>
+        <li><strong>Find out how your retirement works.</strong> Many teachers have a pension through the state, a 403(b), or a 457 plan. Ask HR how enrollment works and whether your employer matches contributions. Matching money is one of the best returns available.</li>
+        <li><strong>Build an emergency fund before you upgrade your lifestyle.</strong> Even a small starter cushion helps.</li>
+        <li><strong>Check your credit report</strong> at no cost through the official free annual report site, and set up fraud alerts if needed.</li>
+        <li><strong>Get advice from a fee-only fiduciary</strong> or your retirement plan's free counseling if you have bigger decisions, like a home purchase or student loan repayment.</li>
+      </ul>
+      <div class="tip"><strong>Credibility note:</strong> Students will notice when you are living the lesson. You do not need to be perfect. You do need to be honest about what you are still learning.</div>
+    </div>
+
+    <div class="card">
+      <h2>Mental health and burnout</h2>
+      <ul>
+        <li>Feeling overwhelmed in year one is common. Persistent exhaustion, dread, or hopelessness is worth talking about with someone you trust.</li>
+        <li>Find one colleague you can vent to, and one who will help you problem-solve.</li>
+        <li>Keep a "good things" list. Write down one student moment each day, even a small one.</li>
+        <li>If you are struggling significantly, contact your school's counselor, employee assistance program, or your doctor.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Who to go to for what</h2>
+      <div class="grid two">
+        <div>
+          <h3>Course content and standards</h3>
+          <p class="muted">Department head, social studies or business team, district curriculum coordinator</p>
+        </div>
+        <div>
+          <h3>Behavior, phones, or safety</h3>
+          <p class="muted">Administrator, dean of students, counselor. Follow your school's reporting process immediately for any safety concern.</p>
+        </div>
+        <div>
+          <h3>IEP or 504 accommodations</h3>
+          <p class="muted">Case manager or special education coordinator</p>
+        </div>
+        <div>
+          <h3>Students with money or college concerns</h3>
+          <p class="muted">School counselor. They know about financial aid, FAFSA support, and community resources.</p>
+        </div>
+        <div>
+          <h3>Grades, attendance, and systems</h3>
+          <p class="muted">Front office, data specialist, or tech support</p>
+        </div>
+        <div>
+          <h3>Pay, benefits, retirement, or leave</h3>
+          <p class="muted">HR, your retirement plan's counselor, or your union representative</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Documentation habits</h2>
+      <p>Keep a simple, dated log for important conversations and incidents. Note the date, who was involved, what happened, what you did, and any follow-up. Keep your notes factual and professional. Assume a parent or administrator could read them.</p>
+    </div>
+
+    <div class="card">
+      <h2>Questions to ask in your first month</h2>
+      <ul>
+        <li>Is there a required textbook, curriculum, or pacing guide for this course?</li>
+        <li>What is the school's policy on phones, calculators, and AI tools?</li>
+        <li>How are grades weighted, and what is the late work policy?</li>
+        <li>Who handles financial aid or FAFSA questions for seniors?</li>
+        <li>Are there guest speakers, a bank partnership, or field trips I can use?</li>
+        <li>What do I do if a student discloses a problem at home?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="p-glossary" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Jargon decoder</h2>
+      <p class="muted">Use these definitions in class. Verify current rates, limits, and tax figures before teaching them, since they change.</p>
+      <dl>
+        <dt>APR (Annual Percentage Rate)</dt>
+        <dd>The yearly cost of borrowing, expressed as a percentage. It includes interest and certain fees and does not include compounding within the year.</dd>
+        <dt>APY (Annual Percentage Yield)</dt>
+        <dd>The yearly return on savings, including the effect of compounding. Use APY to compare savings accounts and APR to compare loans.</dd>
+        <dt>Compound interest</dt>
+        <dd>Interest earned on both the original amount and the interest already added. Works for savings and debt.</dd>
+        <dt>Credit score (FICO)</dt>
+        <dd>A three-digit number from 300 to 850 that predicts repayment risk. Main factors: payment history (about 35%), amounts owed (about 30%), length of credit history (about 15%), new credit (about 10%), and credit mix (about 10%).</dd>
+        <dt>Credit utilization</dt>
+        <dd>The percentage of available credit you are using. Lower is generally better for your score.</dd>
+        <dt>Credit report</dt>
+        <dd>A record of your borrowing history kept by the major credit bureaus. You can get a free report from each bureau through the official free annual report site.</dd>
+        <dt>Minimum payment trap</dt>
+        <dd>Paying only the minimum on a credit card keeps the balance high, so interest costs stay large for years.</dd>
+        <dt>Gross pay vs. net pay</dt>
+        <dd>Gross is pay before deductions. Net (take-home) is what remains after taxes, benefits, and retirement contributions.</dd>
+        <dt>FICA</dt>
+        <dd>Payroll taxes for Social Security (6.2% for employees) and Medicare (1.45% for employees). Employers pay matching amounts.</dd>
+        <dt>W-4</dt>
+        <dd>The form an employee fills out to tell an employer how much federal income tax to withhold from each paycheck.</dd>
+        <dt>Emergency fund</dt>
+        <dd>Savings set aside for unexpected costs. A common goal is 3 to 6 months of essential expenses.</dd>
+        <dt>50/30/20 rule</dt>
+        <dd>A budgeting guideline: about 50% of after-tax income for needs, 30% for wants, and 20% for savings and debt payoff. It is a starting point, not a requirement.</dd>
+        <dt>Opportunity cost</dt>
+        <dd>What you give up when you choose one option over another. Spending $50 on dinner means not spending it on something else.</dd>
+        <dt>FDIC insurance</dt>
+        <dd>Federal protection for deposits at insured banks, up to $250,000 per depositor, per insured bank, per ownership category.</dd>
+        <dt>Rule of 72</dt>
+        <dd>A shortcut to estimate how long money takes to double: 72 divided by the annual rate. At 6%, about 12 years.</dd>
+        <dt>401(k), 403(b), 457</dt>
+        <dd>Employer-sponsored retirement plans. Contributions are often pre-tax (traditional) or after-tax (Roth, where offered). Many employers offer a match.</dd>
+        <dt>Roth IRA</dt>
+        <dd>An individual retirement account funded with after-tax money, where qualified withdrawals in retirement are generally tax-free. Eligibility depends on income.</dd>
+        <dt>Index fund</dt>
+        <dd>A fund that holds many investments to match a market index. Teach what it is. Do not recommend specific funds.</dd>
+        <dt>Diversification</dt>
+        <dd>Spreading money across different investments to reduce the impact of any one loss. It does not guarantee against loss.</dd>
+        <dt>Deductible, premium, copay, coinsurance</dt>
+        <dd>Deductible: what you pay before insurance starts paying. Premium: the regular cost of coverage. Copay: a fixed fee per visit. Coinsurance: your percentage share after the deductible.</dd>
+        <dt>FAFSA</dt>
+        <dd>Free Application for Federal Student Aid. Students use it to apply for federal grants, work-study, and loans. Counselors can help seniors complete it.</dd>
+        <dt>Predatory lending</dt>
+        <dd>Loans with very high fees or interest, often targeting people with limited options. Examples include some payday loans and certain title loans.</dd>
+        <dt>Phishing</dt>
+        <dd>A scam where someone pretends to be a trusted source (a bank, employer, or agency) to steal login details, codes, or money.</dd>
+        <dt>Buy now, pay later (BNPL)</dt>
+        <dd>Short-term financing that splits a purchase into installments. Late fees and stacked plans can add up, and some plans may affect credit reports.</dd>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Tabs ----------
+  var tabs = Array.prototype.slice.call(document.querySelectorAll("nav [data-tab]"));
+  function showTab(name) {
+    tabs.forEach(function (btn) {
+      var on = btn.dataset.tab === name;
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    document.querySelectorAll("section.panel").forEach(function (p) {
+      p.classList.toggle("active", p.id === "p-" + name);
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  tabs.forEach(function (btn) {
+    btn.addEventListener("click", function () { showTab(btn.dataset.tab); });
+  });
+
+  // ---------- Checklists ----------
+  var CHECKLISTS = [
+    {
+      title: "Before the first day",
+      items: [
+        "Get the course description, pacing guide, and any required textbook or materials",
+        "Find your state's personal finance standards and confirm how this course counts",
+        "Read the roster and note IEP/504 accommodations (calculators, read-aloud, extended time)",
+        "Confirm the school's policies on phones, calculators, and AI tools",
+        "Set up your gradebook with clear categories (homework, quizzes, projects, final)",
+        "Build a folder of starter scenarios: first job, first apartment, first car, first credit card",
+        "Test any spreadsheet or calculator tool you plan to use in class",
+        "Write a short class norms poster on privacy and respectful discussion"
+      ]
+    },
+    {
+      title: "Weeks 1 to 3",
+      items: [
+        "Run a no-stakes diagnostic to see what students already know about money",
+        "Teach and practice class routines: entry, supplies, calculators, and asking questions",
+        "Set norms that protect privacy: no family financial details, no shaming",
+        "Introduce the course roadmap and what the final project looks like",
+        "Make at least one positive phone call or email home per class",
+        "Confirm the late work and make-up policy with students in writing",
+        "Meet your department head or a colleague who teaches finance or business",
+        "Find out who handles FAFSA and financial aid support for seniors",
+        "Learn the tardy ladder and log each step in Simple Discipline"
+      ]
+    },
+    {
+      title: "Unit checkpoints (repeat each unit)",
+      items: [
+        "Define the real-world decision students will make at the end of the unit",
+        "Model the math with a worked example before independent practice",
+        "Give one formative check (exit ticket or quick poll) and adjust next lesson",
+        "Check that IEP/504 accommodations are in place for quizzes and projects",
+        "Review missing work and contact families of students falling behind",
+        "Add one current example (a real product, a rate change, or a news story) with the names removed",
+        "Grade the unit assessment, and note which concepts need reteaching",
+        "Post the daily learning target and the standard indicator codes (for example, K.3)",
+        "Update the Standards Tracker statuses for this unit"
+      ]
+    },
+    {
+      title: "Midyear",
+      items: [
+        "Review grades and missing work with each class",
+        "Reflect: which activities built the most understanding? Which fell flat?",
+        "Check in with your mentor or department head about pacing",
+        "Plan a fraud and scam awareness lesson before winter break or any high-risk season",
+        "Review your own retirement enrollment and emergency fund with HR or a counselor",
+        "Ask students for anonymous feedback on what helped them learn",
+        "Take a real break, even a short one, and rest"
+      ]
+    },
+    {
+      title: "End of year",
+      items: [
+        "Finish grades and confirm they are submitted on time",
+        "Save units, scenarios, and handouts in a shared folder by topic",
+        "Write a reflection: what will you keep, change, or drop?",
+        "Note which students asked for more help with credit, taxes, or saving",
+        "Thank your mentor and colleagues who helped you",
+        "Celebrate your first year. You made it."
+      ]
+    }
+  ];
+
+  var STORE_KEY = "financeToolkit.checks.v1";
+  function loadChecks() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+  function saveChecks(state) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* storage blocked: keep working in memory */ }
+  }
+  var checkState = loadChecks();
+  var allBoxes = [];
+
+  var container = document.getElementById("checklists");
+  CHECKLISTS.forEach(function (list, li) {
+    var card = document.createElement("div");
+    card.className = "card";
+    var h = document.createElement("h2");
+    h.textContent = list.title;
+    card.appendChild(h);
+    var ul = document.createElement("ul");
+    ul.className = "checklist";
+    list.items.forEach(function (text, ii) {
+      var key = li + "-" + ii;
+      var li2 = document.createElement("li");
+      var label = document.createElement("label");
+      var box = document.createElement("input");
+      box.type = "checkbox";
+      box.dataset.key = key;
+      box.checked = !!checkState[key];
+      var span = document.createElement("span");
+      span.textContent = text;
+      label.appendChild(box);
+      label.appendChild(span);
+      li2.appendChild(label);
+      ul.appendChild(li2);
+      allBoxes.push(box);
+      box.addEventListener("change", function () {
+        checkState[key] = box.checked;
+        saveChecks(checkState);
+        updateProgress();
+      });
+    });
+    card.appendChild(ul);
+    container.appendChild(card);
+  });
+
+  function updateProgress() {
+    var done = allBoxes.filter(function (b) { return b.checked; }).length;
+    var total = allBoxes.length;
+    document.getElementById("progressText").textContent = done + " of " + total + " done";
+    document.getElementById("progressBar").style.width = total ? (done / total * 100) + "%" : "0";
+  }
+  document.getElementById("resetChecks").addEventListener("click", function () {
+    if (!confirm("Clear all checkboxes?")) return;
+    checkState = {};
+    saveChecks(checkState);
+    allBoxes.forEach(function (b) { b.checked = false; });
+    updateProgress();
+  });
+  updateProgress();
+
+  // ---------- Calendar & pacing (Sumter SD modified year-round, 2026-27) ----------
+  function ymd(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function dkey(d) {
+    return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+  }
+  function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+  function dateRange(a, b) {
+    var out = [], d = ymd(a), end = ymd(b);
+    while (d <= end) { out.push(dkey(d)); d = addDays(d, 1); }
+    return out;
+  }
+  function fmt(d, withYear) {
+    var o = { weekday: "short", month: "short", day: "numeric" };
+    if (withYear) o.year = "numeric";
+    return d.toLocaleDateString("en-US", o);
+  }
+  function mk(tag, text, cls) {
+    var e = document.createElement(tag);
+    if (text != null) e.textContent = text;
+    if (cls) e.className = cls;
+    return e;
+  }
+
+  // No-school weekdays for students (holidays, breaks, teacher workdays)
+  var NO_SCHOOL = [].concat(
+    ["2026-09-07", "2026-10-12", "2026-11-03", "2026-11-11"],
+    dateRange("2026-11-23", "2026-11-27"),
+    dateRange("2026-12-21", "2027-01-01"),
+    ["2027-01-04", "2027-01-18", "2027-02-15"],
+    dateRange("2027-03-26", "2027-04-02"),
+    ["2027-04-23", "2027-05-24", "2027-05-31"]
+  );
+  var HALF_DAYS = ["2026-08-28", "2026-09-18", "2026-10-09", "2027-01-15", "2027-03-12"];
+  var EXAM_DAYS = ["2026-12-17", "2026-12-18", "2027-05-20", "2027-05-21"];
+  var QUARTERS = [
+    { id: "q1", name: "Quarter 1", start: "2026-08-04", end: "2026-10-06" },
+    { id: "q2", name: "Quarter 2", start: "2026-10-07", end: "2026-12-18" },
+    { id: "q3", name: "Quarter 3", start: "2027-01-05", end: "2027-03-10" },
+    { id: "q4", name: "Quarter 4", start: "2027-03-11", end: "2027-05-21" }
+  ];
+
+  var EVENTS = [
+    { d: "2026-08-03", t: "workday", w: "Teacher workday (no students)" },
+    { d: "2026-08-04", t: "quarter", w: "First day of school" },
+    { d: "2026-08-28", t: "half", w: "½ day: school professional learning day" },
+    { d: "2026-09-04", t: "grades", w: "Interims issued" },
+    { d: "2026-09-07", t: "off", w: "Labor Day" },
+    { d: "2026-09-18", t: "half", w: "Parent-teacher conferences, ½ day" },
+    { d: "2026-10-06", t: "quarter", w: "End of Quarter 1" },
+    { d: "2026-10-07", t: "quarter", w: "First day of Quarter 2" },
+    { d: "2026-10-09", t: "half", w: "½ day: district collaborative planning" },
+    { d: "2026-10-12", t: "off", w: "Fall Break (also an inclement weather day)" },
+    { d: "2026-10-20", t: "grades", w: "Report cards issued" },
+    { d: "2026-11-03", t: "off", w: "Election Day" },
+    { d: "2026-11-11", t: "off", w: "Veterans Day" },
+    { d: "2026-11-12", t: "grades", w: "Interims issued" },
+    { d: "2026-11-23", e: "2026-11-27", t: "off", w: "Thanksgiving break" },
+    { d: "2026-12-17", t: "exam", w: "High school exams, ½ day" },
+    { d: "2026-12-18", t: "exam", w: "High school exams, ½ day. Last day of Quarter 2" },
+    { d: "2026-12-21", e: "2027-01-01", t: "off", w: "Winter holiday" },
+    { d: "2027-01-04", t: "workday", w: "Teacher workday, no students (also an inclement weather day)" },
+    { d: "2027-01-05", t: "quarter", w: "School resumes. First day of Quarter 3" },
+    { d: "2027-01-15", t: "half", w: "½ day: district collaborative planning" },
+    { d: "2027-01-18", t: "off", w: "Dr. Martin Luther King Jr. holiday" },
+    { d: "2027-01-21", t: "grades", w: "Report cards issued" },
+    { d: "2027-02-05", t: "grades", w: "Interims issued" },
+    { d: "2027-02-15", t: "workday", w: "Teacher workday (no students)" },
+    { d: "2027-03-10", t: "quarter", w: "Last day of Quarter 3" },
+    { d: "2027-03-11", t: "quarter", w: "First day of Quarter 4" },
+    { d: "2027-03-12", t: "half", w: "Parent-teacher conferences, ½ day" },
+    { d: "2027-03-25", t: "grades", w: "Report cards issued" },
+    { d: "2027-03-26", e: "2027-04-02", t: "off", w: "Spring holiday (Mar 26 is also an inclement weather day)" },
+    { d: "2027-04-21", t: "grades", w: "Interims issued" },
+    { d: "2027-04-23", t: "workday", w: "Teacher workday (no students)" },
+    { d: "2027-05-20", t: "exam", w: "High school exams, ½ day" },
+    { d: "2027-05-21", t: "exam", w: "High school exams, ½ day. Last day of school. Report cards issued" },
+    { d: "2027-05-24", t: "workday", w: "Teacher workday (no students)" },
+    { d: "2027-05-31", t: "off", w: "Memorial Day" }
+  ];
+  var TYPE_LABEL = { quarter: "Quarter", grades: "Grades", half: "Half day", exam: "Exams", off: "No school", workday: "Workday" };
+
+  function countDays(start, end) {
+    var full = 0, half = 0, exam = 0, d = ymd(start), last = ymd(end);
+    while (d <= last) {
+      var dow = d.getDay();
+      if (dow !== 0 && dow !== 6) {
+        var k = dkey(d);
+        if (NO_SCHOOL.indexOf(k) === -1) {
+          if (EXAM_DAYS.indexOf(k) !== -1) exam++;
+          else if (HALF_DAYS.indexOf(k) !== -1) half++;
+          else full++;
+        }
+      }
+      d = addDays(d, 1);
+    }
+    return { full: full, half: half, exam: exam };
+  }
+  function sumCounts(list) {
+    return list.reduce(function (a, c) {
+      return { full: a.full + c.full, half: a.half + c.half, exam: a.exam + c.exam };
+    }, { full: 0, half: 0, exam: 0 });
+  }
+  function instr(c) { return Math.round(c.full + c.half / 2); }
+
+  var qCounts = {};
+  QUARTERS.forEach(function (q) { qCounts[q.id] = countDays(q.start, q.end); });
+
+  function startOfToday() { var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+
+  function renderNow() {
+    var today = startOfToday();
+    var nowEl = document.getElementById("calNow");
+    var q = null;
+    QUARTERS.forEach(function (x) { if (today >= ymd(x.start) && today <= ymd(x.end)) q = x; });
+    var msg;
+    if (q) {
+      var left = Math.round((ymd(q.end) - today) / 86400000);
+      msg = "Today is " + fmt(today, true) + ". You are in " + q.name + " (" + fmt(ymd(q.start)) + " to " + fmt(ymd(q.end)) + "), which ends in " + left + " calendar day" + (left === 1 ? "" : "s") + ".";
+    } else if (today < ymd("2026-08-04")) {
+      msg = "Today is " + fmt(today, true) + ". The first day of school is " + fmt(ymd("2026-08-04")) + ".";
+    } else if (today > ymd("2027-05-21")) {
+      msg = "Today is " + fmt(today, true) + ". The 2026–27 school year has ended.";
+    } else {
+      msg = "Today is " + fmt(today, true) + ". Students are on a break or between quarters.";
+    }
+    var wk = weekNumber(today);
+    if (wk) msg += " That is week " + wk + " of the 20-week plan.";
+    nowEl.textContent = msg;
+
+    var nextEl = document.getElementById("calNext");
+    nextEl.textContent = "";
+    var upcoming = EVENTS.filter(function (ev) { return ymd(ev.e || ev.d) >= today; }).slice(0, 5);
+    if (!upcoming.length) return;
+    nextEl.appendChild(mk("h3", "Coming up"));
+    var ul = document.createElement("ul");
+    upcoming.forEach(function (ev) {
+      var li = document.createElement("li");
+      var when = ev.e ? fmt(ymd(ev.d)) + " to " + fmt(ymd(ev.e)) : fmt(ymd(ev.d));
+      li.appendChild(mk("strong", when + ": "));
+      li.appendChild(document.createTextNode(ev.w));
+      ul.appendChild(li);
+    });
+    nextEl.appendChild(ul);
+  }
+
+  function renderCounts() {
+    var body = document.querySelector("#calCounts tbody");
+    body.textContent = "";
+    function row(name, dates, c, bold) {
+      var tr = document.createElement("tr");
+      tr.appendChild(mk(bold ? "th" : "td", name));
+      tr.appendChild(mk("td", dates));
+      tr.appendChild(mk("td", String(c.full), "num"));
+      tr.appendChild(mk("td", String(c.half), "num"));
+      tr.appendChild(mk("td", String(c.exam), "num"));
+      tr.appendChild(mk("td", String(instr(c)), "num"));
+      body.appendChild(tr);
+    }
+    QUARTERS.forEach(function (q) {
+      row(q.name, fmt(ymd(q.start)) + " to " + fmt(ymd(q.end)), qCounts[q.id]);
+    });
+    row("Semester 1", "Quarters 1 and 2", sumCounts([qCounts.q1, qCounts.q2]), true);
+    row("Semester 2", "Quarters 3 and 4", sumCounts([qCounts.q3, qCounts.q4]), true);
+    row("Whole year", "Aug 4 to May 21", sumCounts([qCounts.q1, qCounts.q2, qCounts.q3, qCounts.q4]), true);
+  }
+
+  // ----- 20-week plan (Semester 1), from the APF 5131 mastery tracker's Week Audit sheet -----
+  // Each row: [week, focus, domains, grade entry 1, grade entry 2, notes]
+  var WEEKS = [[1, "Course Launch, Safety, Privacy & Financial Decision Foundations", "A; C; F; H; B intro", "Minor 1 — Safety, Privacy & Responsible Technology — 20", "Minor 2 — Financial Choices & Course Readiness — 20", "CTSO introduced; formal closure W9."], [2, "Career Choice & Planning", "E; F; G", "Minor 1 — Career Fit & Evidence Comparison — 20", "Minor 2 — Career Pathway Decision & Plan — 20", "G.6 geographic cost-of-living calculation closes W13; detailed aid reserved W19."], [3, "Getting the Job", "C; D; E", "Minor 1 — Interview & STAR Evidence — 20", "Major 1 — Career Application Portfolio — 50", "No employment-application component; application skill assessed W6."], [4, "Workplace Expectations, Responsibilities & Customer Service", "D; E; A/C support", "Minor 1 — Workplace Expectations & Human Relations — 20", "Minor 2 — Responsibilities & Customer Service Lab — 20", "Friday integrated challenge is practice/revision only."], [5, "Pay, Benefits & Working Conditions", "E; G", "Minor 1 — Paycheck Evidence Check — 20", "Major 2 — Total Compensation Decision — 50; Minor 2 — Employment Decision Challenge — 20", "Insurance/retirement only introduced as compensation components."], [6, "Taxes & Different Ways of Getting Paid", "G; M", "Minor 1 — Job Application Completion Evidence — 20", "Major 3 — Income & Tax Filing Case — 50", "M.3/M.5/M.6/M.8 strongest; M.1/M.2/M.4/M.7 formally repaired W10."], [7, "Budgeting & Financial Records", "F; H", "Minor 1 — Budget Build & Deficit Repair — 20", "Minor 2 — Weekly Budget Rescue Application — 20", "H.3 and stronger H.5/H.7 evidence close W9."], [8, "Banking & Payment Systems", "I", "Minor 1 — Account/Register/Reconciliation Check — 20", "Major 4 — Bank Choice & Account Management Simulation — 50", "Fall packet issued; no structural change."], [9, "Saving, Interest, Records & Financial Goals", "B; H; I; O", "Minor 1 — Savings Product Comparison — 20", "Minor 2 — Savings Strategy & Records Application — 20", "Closes spending-log/records/goal-funding gaps and CTSO connection."], [10, "Tax Gap Repair + Credit Launch", "F; K; M", "Minor 1 — Tax Concepts Gap Check — 20", "Minor 2 — Credit Offer Decision Lab — 20", "Q1/Q2 transition; no Major."], [11, "Credit Reports, Scores & Debt Solutions", "K", "Minor 1 — Credit Report Audit Check — 20", "Major 5 — Credit Report & Debt Case — 50", "Fall Break Monday; four-day week."], [12, "Consumer Protection, Contracts & Cybersecurity", "C; F; K; L", "Minor 1 — Contract/Fraud Evidence Check — 20", "Minor 2 — Consumer Self-Defense Case — 20", "Higher-level consumer response; avoids repeating basic phishing."], [13, "Independent Living & Housing I", "F; G; N", "Minor 1 — Geographic Cost-of-Living & Rental Comparison — 20", "Minor 2 — Independent-Living Housing Choice — 20", "No stand-alone Transportation unit/Major."], [14, "Housing II: Mortgages & Major-Purchase Financing", "K/L application; N", "Minor 1 — Mortgage & Amortization Check — 20", "Major 6 — Housing & Major-Purchase Decision — 50", "Fall Election Day Tuesday/no school."], [15, "Insurance & Risk Management", "P", "Minor 1 — Risk & Policy Comparison Check — 20", "Minor 2 — Insurance Coverage Case — 20", "Fall Veterans Day Wednesday/no school."], [16, "Investing Fundamentals & Portfolio Choices", "O", "Minor 1 — Investment Source/Risk Analysis — 20", "Major 7 — Investment Portfolio Defense — 50", "Week 9 growth math is retrieval; no single required allocation."], [17, "Calendar Buffer / Holiday / Standards Recovery", "—", "No required grade", "—", "Fall Thanksgiving; Spring Holiday/buffer deployment."], [18, "Retirement, Social Security & Life-Stage Planning", "G; O", "Minor 1 — Retirement Account Comparison — 20", "Minor 2 — Retirement Plan Recommendation — 20", "Current rules verified through official sources; Social Security is one source."], [19, "Education & Training Finance", "J", "Minor 1 — Pathway Net-Cost Comparison — 20", "Major 8 — Post-Secondary Net-Cost Decision — 50", "Full cost → net price; loans finance cost but do not reduce price."], [20, "Integrated Financial Life Capstone + SLO/Final", "Cumulative", "Minor 1 — Integrated Capstone Evidence Check — 20", "54-item APF Course 5131 SLO/Post-Test — Final Exam", "Final is separate category, not a Major; no separate 100-point cumulative final."]];
+  var WEEK1_START = "2026-08-03";
+
+  function weekStart(w) { return addDays(ymd(WEEK1_START), (w - 1) * 7); }
+  function weekNumber(d) {
+    var days = Math.floor((d - ymd(WEEK1_START)) / 86400000);
+    if (days < 0) return 0;
+    var w = Math.floor(days / 7) + 1;
+    return w <= WEEKS.length ? w : 0;
+  }
+
+  function renderWeekPlan() {
+    var body = document.querySelector("#weekPlan tbody");
+    body.textContent = "";
+    var cur = weekNumber(startOfToday());
+    var short = { month: "short", day: "numeric" };
+    WEEKS.forEach(function (r) {
+      var tr = document.createElement("tr");
+      if (r[0] === cur) tr.className = "wk-current";
+      var start = weekStart(r[0]);
+      var end = addDays(start, 4);
+      tr.appendChild(mk("td", "W" + r[0] + (r[0] === cur ? " (now)" : "")));
+      tr.appendChild(mk("td", start.toLocaleDateString("en-US", short) + " to " + end.toLocaleDateString("en-US", short)));
+      var focus = document.createElement("td");
+      focus.appendChild(mk("strong", r[1]));
+      if (r[2] && r[2] !== "—") focus.appendChild(mk("div", "Domains: " + r[2], "muted small"));
+      if (r[5]) focus.appendChild(mk("div", r[5], "muted small"));
+      tr.appendChild(focus);
+      var g = document.createElement("td");
+      [r[3], r[4]].forEach(function (x) { if (x) g.appendChild(mk("div", x, "small")); });
+      tr.appendChild(g);
+      body.appendChild(tr);
+    });
+  }
+
+  // ----- Standards tracker (APF 5131) -----
+  // Each row: [indicator, skill, first teach, spiral/practice, planned assessment week, assessment evidence, starting status]
+  var IND = [["A.1", "Review school safety policies", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.2", "Review classroom safety rules", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.3", "Review classroom equipment safety", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.4", "Identify office/work accident causes", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["A.5", "Demonstrate office/work safety skills", "W1", "W1; W4; W12", "W1", "Minor 1 — Safety, Privacy & Responsible Technology", "Assessed"], ["B.1", "Identify CTSO purpose and goals", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.2", "Explain CTSO connection to course/cluster", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.3", "Explain CTSO member benefits and responsibilities", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.4", "Identify CTSO leadership/service/competition opportunities", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["B.5", "Explain lifelong benefits of CTSO participation", "W1", "W1; W9; W20", "W9", "CTSO/FBLA closure + course-readiness evidence", "Practiced"], ["C.1", "Use occupation-specific technology", "W2", "W2; W3", "W2", "Career Fit & Evidence Comparison", "Assessed"], ["C.2", "Use proper digital communication/netiquette", "W3", "W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["C.3", "Identify technology abuse/unethical use", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.4", "Explain consequences of illegal/unethical technology use", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.5", "Apply copyright/fair use/licensing ethics", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.6", "Safeguard confidential business information", "W1", "W1; W3; W12", "W1/W12", "Safety/Privacy Minor + Consumer Self-Defense Case", "Assessed"], ["C.7", "Identify cyber threats and prevention methods", "W1", "W1; W12", "W12", "Consumer Self-Defense Case", "Practiced"], ["D.1", "Creativity and innovation", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.2", "Critical thinking and problem solving", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.3", "Initiative and self-direction", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.4", "Integrity", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.5", "Work ethic", "W2", "W2; W3; W4", "W3", "Career Application Portfolio", "Assessed"], ["D.6", "Conflict resolution", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.7", "Listening and speaking", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.8", "Respect for diversity", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.9", "Customer-service orientation", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["D.10", "Teamwork", "W4", "W4; W20", "W4", "Workplace Expectations / Customer Service Minors", "Assessed"], ["E.1", "Big-picture thinking", "W1", "W1; W2; W20", "W20", "Integrated Capstone Evidence Check", "Practiced"], ["E.2", "Career/life management and goal setting", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.3", "Continuous learning/adaptability", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.4", "Time/resource management", "W1", "W1; W2; W20", "W20", "Integrated Capstone Evidence Check", "Practiced"], ["E.5", "Information literacy", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.6", "Information security", "W1", "W1; W3; W12", "W12", "Consumer Self-Defense Case", "Practiced"], ["E.7", "Information technology", "W1", "W1; W3; W12", "W12", "Consumer Self-Defense Case", "Practiced"], ["E.8", "Job-specific tools/technology", "W2", "W2; W3; W20", "W2/W3", "Career Pathway Plan / Career Portfolio", "Assessed"], ["E.9", "Job-specific mathematics", "W5", "W5; W6; W7; W10; W13; W16", "W5/W6", "Pay/Benefits Major + Income/Tax Case", "Introduced"], ["E.10", "Workplace professionalism", "W3", "W3; W4; W20", "W3/W4", "Career Portfolio / Workplace Minors", "Assessed"], ["E.11", "Reading/writing", "W3", "W3; W4; W20", "W3/W4", "Career Portfolio / Workplace Minors", "Assessed"], ["E.12", "Workplace safety", "W1", "W1; W4", "W1", "Safety, Privacy & Responsible Technology", "Assessed"], ["F.1", "Take responsibility for personal financial decisions", "W1", "W1; W7; W20", "W1", "Financial Choices & Course Readiness", "Assessed"], ["F.2", "Use SMART decision-making for financial choices", "W1", "W1; W7; W20", "W1", "Financial Choices & Course Readiness", "Assessed"], ["F.3", "Make informed purchasing decisions", "W1", "W1; W12; W13; W14; W20", "W12/W13", "Consumer Self-Defense + Independent-Living Housing Choice", "Practiced"], ["F.4", "Explain debt impact on financial health", "W10", "W10; W11; W20", "W11", "Credit Report & Debt Case", "Not Yet Taught"], ["F.5", "Explain budgeting importance", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["F.6", "Analyze marketing influence on spending", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense", "Not Yet Taught"], ["F.7", "Safeguard financial information from attacks/fraud", "W12", "W12; W20", "W12", "Consumer Self-Defense Case", "Not Yet Taught"], ["G.1", "Complete/analyze career inventory", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.2", "Compare career growth/wage trends", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.3", "Understand sources of income and benefits", "W5", "W5; W6; W18", "W5", "Pay, Benefits & Working Conditions Major", "Introduced"], ["G.4", "Research careers, education, skills, income, regional cost of living", "W2", "W2; W13; W19; W20", "W13/W19", "Geographic Cost-of-Living Comparison + Postsecondary Decision", "Assessed"], ["G.5", "Analyze education options and earning power", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.6", "Calculate cost of living for career/location", "W13", "W13; W20", "W13", "Geographic Cost-of-Living & Rental Comparison", "Assessed"], ["G.7", "Develop career plan", "W2", "W2; W13; W19; W20", "W2", "Career Fit & Pathway Plan", "Assessed"], ["G.8", "Compute gross pay, deductions, net pay", "W5", "W5; W6; W7", "W6", "Income & Tax Filing Case", "Introduced"], ["G.9", "Evaluate taxes/transfers/benefits and disposable income", "W5", "W5; W6; W18; W20", "W5/W6/W20", "Pay/Benefits evidence + Tax Case + cumulative disposable-income application", "Introduced"], ["G.10", "Identify employer and individual retirement plans", "W5", "W5; W18", "W18", "Retirement Account Comparison/Plan", "Introduced"], ["H.1", "Contrast needs and wants", "W1", "W1; W7", "W1", "Financial Choices & Course Readiness", "Assessed"], ["H.2", "Identify budget components", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["H.3", "Create spending log", "W9", "W9; W20", "W9", "Spending Log, Records & Goal Tracking evidence", "Not Yet Taught"], ["H.4", "Explain budgeting for emergencies", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["H.5", "Identify financial-record tools", "W7", "W7; W9; W20", "W9", "Spending Log, Records & Goal Tracking evidence", "Not Yet Taught"], ["H.6", "Evaluate budget surplus/deficit", "W7", "W7; W9; W20", "W7", "Budget Build & Budget Rescue", "Not Yet Taught"], ["H.7", "Develop budget from career/lifestyle with SMART goals", "W7", "W7; W9; W20", "W9/W20", "Savings Strategy & Records Application + Integrated Capstone", "Not Yet Taught"], ["I.1", "Differentiate financial institutions", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.2", "Compare bank account types/services/costs", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.3", "Explain deposit insurance protections", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.4", "Explain technology impact on banking", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.5", "Differentiate electronic transaction types/regulations", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.6", "Compare modern payment services", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.7", "Assess banking fees/incentives", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.8", "Compare savings options", "W9", "W9; W16", "W9", "Savings Product Comparison/Strategy", "Not Yet Taught"], ["I.9", "Calculate simple/compound interest", "W9", "W9; W16", "W9", "Savings Product Comparison/Strategy", "Not Yet Taught"], ["I.10", "Differentiate debit and credit cards", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.11", "Explain unbanked/underbanked risks", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.12", "Identify requirements/forms to open accounts", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.13", "Maintain check register", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["I.14", "Reconcile checking account", "W8", "W8; W9; W20", "W8", "Account/Register Check + Banking Simulation", "Not Yet Taught"], ["J.1", "Compare postsecondary/training costs", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.2", "Identify financial-aid sources", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.3", "Explain financial-aid application process", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.4", "Compare education funding options and net cost", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.5", "Analyze FAFSA and related aid processes", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.6", "Evaluate student-loan types and repayment", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["J.7", "Describe education investment options such as 529/Coverdell", "W19", "W19; W20", "W19", "Pathway Net-Cost Comparison + Post-Secondary Decision", "Not Yet Taught"], ["K.1", "Identify credit/debt types and sources", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["K.2", "Evaluate credit costs/benefits: rates, terms, fees", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["K.3", "Calculate cost of credit", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["K.4", "Explain 5 Cs and relation to creditworthiness", "W11", "W11; W20", "W11", "Credit Report & Debt Case", "Not Yet Taught"], ["K.5", "Evaluate credit-card features", "W10", "W10; W11; W13; W20", "W10", "Borrowing-Cost Check + Credit Offer Decision Lab", "Not Yet Taught"], ["K.6", "Identify major credit bureaus", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.7", "Evaluate factors in credit scores", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.8", "Explain how to contest incorrect billing", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.9", "Create plan for credit problems", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.10", "Explain consumer credit rights/responsibilities", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.11", "Differentiate bankruptcy types/causes/avoidance", "W11", "W11; W12; W20", "W11", "Credit Report Audit + Credit Report & Debt Case", "Not Yet Taught"], ["K.12", "Calculate borrowing capacity", "W10", "W10; W11; W14; W20", "W10", "Credit Offer Decision Lab", "Not Yet Taught"], ["L.1", "Analyze advertising/marketing influence on demand", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.2", "Identify consumer-protection laws/organizations", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.3", "Analyze factors affecting final prices", "W12", "W12; W13; W14; W20", "W12/W13", "Consumer Self-Defense + Housing/Independent-Living cost comparison", "Not Yet Taught"], ["L.4", "Explain identity theft/compromise methods", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.5", "Safeguard financial information from attacks/fraud", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["L.6", "Identify components/legal obligations of simple contracts", "W12", "W12; W20", "W12", "Contract/Fraud Evidence + Consumer Self-Defense Case", "Not Yet Taught"], ["M.1", "Compare taxable and nontaxable income", "W10", "W10; W20", "W10", "Tax Concepts Gap Check", "Not Yet Taught"], ["M.2", "Evaluate earned and unearned income", "W10", "W10; W20", "W10", "Tax Concepts Gap Check", "Not Yet Taught"], ["M.3", "Differentiate mandatory and voluntary withholdings", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["M.4", "Summarize local/state/federal taxes and purposes", "W6", "W6; W10; W20", "W10", "Week 6 tax application + Tax Concepts Gap Check", "Not Yet Taught"], ["M.5", "Compute local taxes on goods/services", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["M.6", "Explain W-2, 1099, W-4 purposes", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["M.7", "Compare standard and itemized deductions", "W10", "W10; W20", "W10", "Tax Concepts Gap Check", "Not Yet Taught"], ["M.8", "Compute/file state and federal income taxes", "W6", "W6; W20", "W6", "Income & Tax Filing Case", "Not Yet Taught"], ["N.1", "Compare renting vs buying property", "W13", "W13; W14; W20", "W13/W14", "Independent-Living Housing Choice + Housing Major", "Not Yet Taught"], ["N.2", "Calculate utilities/services/maintenance/other housing costs", "W13", "W13; W14; W20", "W13/W14", "Rental cost evidence + Housing Major", "Not Yet Taught"], ["N.3", "Compare fixed vs adjustable-rate mortgages", "W14", "W14; W20", "W14", "Mortgage & Amortization Check + Housing Major", "Not Yet Taught"], ["N.4", "Analyze renting process and lease-related costs", "W13", "W13; W14; W20", "W13", "Lease Process & Independent-Living Housing Choice", "Not Yet Taught"], ["N.5", "Compare leasing and buying", "W13", "W13; W14; W20", "W13/W14", "Rent-vs-buy evidence + Housing Major", "Not Yet Taught"], ["N.6", "Calculate cost of ownership/amortization", "W14", "W14; W20", "W14", "Mortgage & Amortization Check + Housing Major", "Not Yet Taught"], ["N.7", "Identify fair-market-value sources", "W13", "W13; W14; W20", "W14", "Fair-value evidence in Housing Major", "Not Yet Taught"], ["N.8", "Identify laws affecting home financing", "W14", "W14; W20", "W14", "Housing protection/disclosure evidence", "Not Yet Taught"], ["N.9", "Complete a mortgage application", "W14", "W14; W20", "W14", "Fictional mortgage-application evidence", "Not Yet Taught"], ["O.1", "Calculate growth using Rule of 72", "W9", "W9; W16; W18; W20", "W9/W16", "Interest/Rule of 72 practice + Investment evidence", "Not Yet Taught"], ["O.2", "Explain risk-return relationship", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.3", "Analyze stock market/trading app history, function, risks", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.4", "Evaluate investment alternatives", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.5", "Evaluate investment-information sources", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.6", "Explain SEC role", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.7", "Create/manage diversified portfolio", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.8", "Describe buying/selling investments and fees", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.9", "Analyze investment tax implications", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.10", "Explain changing financial-planning needs by life stage", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.11", "Explain estate-planning purpose", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.12", "Analyze Social Security in retirement planning", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.13", "Compare retirement investment types", "W18", "W18; W20", "W18", "Retirement Account Comparison + Retirement Plan Recommendation", "Not Yet Taught"], ["O.14", "Identify illegal investment practices", "W16", "W16; W18; W20", "W16", "Investment Source/Risk Analysis + Portfolio Defense", "Not Yet Taught"], ["O.15", "Defend saving/investing for wealth and goals", "W9", "W9; W16; W18; W20", "W9/W16/W18", "Savings Strategy + Portfolio Defense + Retirement Recommendation", "Not Yet Taught"], ["P.1", "Define insurance principles and terminology", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.2", "Explain risk-management methods", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.3", "Explain auto-policy terms/features", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.4", "Analyze factors affecting premiums", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.5", "Explain health-insurance features/costs", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.6", "Compare life-insurance products", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"], ["P.7", "Investigate homeowners/renters/disability/liability insurance", "W15", "W15; W20", "W15", "Risk & Policy Comparison + Insurance Coverage Case", "Not Yet Taught"]];
+  var DOMAIN_NAMES = {
+    A: "Safety", B: "CTSO / FBLA", C: "Technology and ethics", D: "Employability skills",
+    E: "Workplace readiness", F: "Financial responsibility", G: "Careers, income, and benefits",
+    H: "Budgeting", I: "Banking, saving, and interest", J: "Paying for education",
+    K: "Credit and debt", L: "Consumer protection", M: "Taxes", N: "Housing",
+    O: "Investing and retirement", P: "Insurance"
+  };
+  var STATUSES = ["Not Yet Taught", "Introduced", "Practiced", "Assessed"];
+  var TR_STORE = "financeToolkit.tracker.v1";
+  var trState = {};
+  try { trState = JSON.parse(localStorage.getItem(TR_STORE)) || {}; } catch (e) { trState = {}; }
+  function saveTr() { try { localStorage.setItem(TR_STORE, JSON.stringify(trState)); } catch (e) { /* ignore */ } }
+  function trStatus(row) { var s = trState[row[0]]; return s && s.s ? s.s : row[6]; }
+  function trReteach(row) { var s = trState[row[0]]; return !!(s && s.r); }
+
+  function renderTrSummary() {
+    var counts = { "Not Yet Taught": 0, "Introduced": 0, "Practiced": 0, "Assessed": 0 };
+    var reteach = 0;
+    var dom = {};
+    Object.keys(DOMAIN_NAMES).forEach(function (k) {
+      dom[k] = { total: 0, "Not Yet Taught": 0, "Introduced": 0, "Practiced": 0, "Assessed": 0, reteach: 0 };
+    });
+    IND.forEach(function (row) {
+      var st = trStatus(row), d = row[0].charAt(0);
+      counts[st]++;
+      dom[d].total++; dom[d][st]++;
+      if (trReteach(row)) { reteach++; dom[d].reteach++; }
+    });
+    var box = document.getElementById("trSummary");
+    box.textContent = "";
+    function stat(label, n) {
+      var d = mk("div", null, "stat");
+      d.appendChild(mk("b", String(n)));
+      d.appendChild(document.createTextNode(label));
+      box.appendChild(d);
+    }
+    stat("Total indicators", IND.length);
+    STATUSES.forEach(function (s) { stat(s, counts[s]); });
+    stat("Reteach flagged", reteach);
+    stat("Assessed (not mastery)", Math.round(counts.Assessed / IND.length * 100) + "%");
+
+    var body = document.querySelector("#trDomains tbody");
+    body.textContent = "";
+    Object.keys(DOMAIN_NAMES).forEach(function (k) {
+      var d = dom[k], tr = document.createElement("tr");
+      tr.appendChild(mk("td", k));
+      tr.appendChild(mk("td", DOMAIN_NAMES[k]));
+      [d.total, d["Not Yet Taught"], d.Introduced, d.Practiced, d.Assessed, d.reteach].forEach(function (n) {
+        tr.appendChild(mk("td", String(n), "num"));
+      });
+      body.appendChild(tr);
+    });
+  }
+
+  function renderTrList() {
+    var dSel = document.getElementById("trDomain").value;
+    var sSel = document.getElementById("trStatus").value;
+    var q = document.getElementById("trSearch").value.trim().toLowerCase();
+    var body = document.querySelector("#trList tbody");
+    body.textContent = "";
+    var shown = 0;
+    IND.forEach(function (row) {
+      if (dSel && row[0].charAt(0) !== dSel) return;
+      var st = trStatus(row);
+      if (sSel === "__reteach") { if (!trReteach(row)) return; }
+      else if (sSel && st !== sSel) return;
+      if (q && (row[1] + " " + row[5] + " " + row[0]).toLowerCase().indexOf(q) === -1) return;
+      shown++;
+      var tr = document.createElement("tr");
+      tr.appendChild(mk("td", row[0]));
+      var skill = document.createElement("td");
+      skill.appendChild(document.createTextNode(row[1]));
+      skill.appendChild(mk("div", "Evidence: " + row[5], "muted small"));
+      tr.appendChild(skill);
+      tr.appendChild(mk("td", "Teach " + row[2] + ", assess " + row[4], "small"));
+      var tdS = document.createElement("td");
+      var sel = document.createElement("select");
+      sel.setAttribute("aria-label", "Status for " + row[0]);
+      STATUSES.forEach(function (s) {
+        var o = document.createElement("option");
+        o.value = s; o.textContent = s;
+        if (s === st) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", function () {
+        var cur = trState[row[0]] || {};
+        cur.s = sel.value;
+        trState[row[0]] = cur;
+        saveTr();
+        renderTrSummary();
+      });
+      tdS.appendChild(sel);
+      tr.appendChild(tdS);
+      var tdR = document.createElement("td");
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = trReteach(row);
+      cb.setAttribute("aria-label", "Reteach needed for " + row[0]);
+      cb.addEventListener("change", function () {
+        var cur = trState[row[0]] || {};
+        cur.r = cb.checked;
+        trState[row[0]] = cur;
+        saveTr();
+        renderTrSummary();
+      });
+      tdR.appendChild(cb);
+      tr.appendChild(tdR);
+      body.appendChild(tr);
+    });
+    document.getElementById("trCount").textContent = "Showing " + shown + " of " + IND.length + " indicators.";
+  }
+
+  function renderTracker() {
+    var dSel = document.getElementById("trDomain");
+    var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "All domains"; dSel.appendChild(o0);
+    Object.keys(DOMAIN_NAMES).forEach(function (k) {
+      var o = document.createElement("option"); o.value = k; o.textContent = k + ": " + DOMAIN_NAMES[k]; dSel.appendChild(o);
+    });
+    var sSel = document.getElementById("trStatus");
+    var s0 = document.createElement("option"); s0.value = ""; s0.textContent = "All statuses"; sSel.appendChild(s0);
+    STATUSES.forEach(function (s) { var o = document.createElement("option"); o.value = s; o.textContent = s; sSel.appendChild(o); });
+    var sr = document.createElement("option"); sr.value = "__reteach"; sr.textContent = "Reteach flagged"; sSel.appendChild(sr);
+    dSel.addEventListener("change", renderTrList);
+    sSel.addEventListener("change", renderTrList);
+    document.getElementById("trSearch").addEventListener("input", renderTrList);
+    document.getElementById("trReset").addEventListener("click", function () {
+      if (!confirm("Reset every indicator to the starting statuses from your tracker file and clear reteach flags?")) return;
+      trState = {};
+      saveTr();
+      renderTrSummary();
+      renderTrList();
+    });
+    document.getElementById("trSpring").addEventListener("click", function () {
+      if (!confirm("Set every indicator to Not Yet Taught and clear reteach flags, for a new cohort?")) return;
+      trState = {};
+      IND.forEach(function (row) { trState[row[0]] = { s: "Not Yet Taught", r: false }; });
+      saveTr();
+      renderTrSummary();
+      renderTrList();
+    });
+    renderTrSummary();
+    renderTrList();
+  }
+
+
+  function renderEvents() {
+    var today = startOfToday();
+    var hidePast = document.getElementById("calHidePast").checked;
+    var body = document.querySelector("#calEvents tbody");
+    body.textContent = "";
+    EVENTS.forEach(function (ev) {
+      var past = ymd(ev.e || ev.d) < today;
+      if (past && hidePast) return;
+      var tr = document.createElement("tr");
+      if (past) tr.className = "past";
+      tr.appendChild(mk("td", ev.e ? fmt(ymd(ev.d)) + " to " + fmt(ymd(ev.e)) : fmt(ymd(ev.d))));
+      tr.appendChild(mk("td", ev.w));
+      var tdType = document.createElement("td");
+      tdType.appendChild(mk("span", TYPE_LABEL[ev.t], "badge " + ev.t));
+      tr.appendChild(tdType);
+      body.appendChild(tr);
+    });
+    if (!body.children.length) {
+      var tr2 = document.createElement("tr");
+      var td2 = mk("td", "No upcoming dates left on the calendar.");
+      td2.colSpan = 3;
+      tr2.appendChild(td2);
+      body.appendChild(tr2);
+    }
+  }
+  document.getElementById("calHidePast").addEventListener("change", renderEvents);
+
+  renderNow();
+  renderCounts();
+  renderWeekPlan();
+  renderTracker();
+  renderEvents();
+
+  // ---------- Standards & grading notes ----------
+  var SP_FIELDS = ["spCourse", "spScale", "spWeights", "spCount", "spExam", "spEntry", "spLate", "spStandards"];
+  var SP_STORE = "financeToolkit.standards.v1";
+  try {
+    var spSaved = JSON.parse(localStorage.getItem(SP_STORE));
+    SP_FIELDS.forEach(function (id) {
+      if (spSaved && spSaved[id] != null) document.getElementById(id).value = spSaved[id];
+    });
+  } catch (e) { /* ignore */ }
+  var spTimer;
+  SP_FIELDS.forEach(function (id) {
+    document.getElementById(id).addEventListener("input", function () {
+      clearTimeout(spTimer);
+      spTimer = setTimeout(function () {
+        var out = {};
+        SP_FIELDS.forEach(function (f) { out[f] = document.getElementById(f).value; });
+        try { localStorage.setItem(SP_STORE, JSON.stringify(out)); } catch (e) { /* ignore */ }
+      }, 300);
+    });
+  });
+
+  // ---------- Grade calculator (60/40 categories, 45/45/10 semester) ----------
+  function parsePct(id) {
+    var v = document.getElementById(id).value.trim();
+    if (v === "") return null;
+    var n = parseFloat(v);
+    return isFinite(n) && n >= 0 && n <= 100 ? n : NaN;
+  }
+  function letterFor(p) { return p >= 90 ? "A" : p >= 80 ? "B" : p >= 70 ? "C" : p >= 60 ? "D" : "F"; }
+  function updateQuarterCalc() {
+    var out = document.getElementById("gcQuarter");
+    var maj = parsePct("gcMajor"), min = parsePct("gcMinor");
+    if (maj === null || min === null) { out.textContent = "Enter both averages."; return; }
+    if (isNaN(maj) || isNaN(min)) { out.textContent = "Enter numbers from 0 to 100."; return; }
+    var g = maj * 0.6 + min * 0.4;
+    out.textContent = "Quarter grade: " + g.toFixed(1) + " (" + letterFor(g) + ")";
+  }
+  function updateSemesterCalc() {
+    var out = document.getElementById("gcSemester"), need = document.getElementById("gcNeed");
+    var q1 = parsePct("gcQ1"), q2 = parsePct("gcQ2"), fin = parsePct("gcFinal");
+    need.textContent = "";
+    if (q1 === null || q2 === null) { out.textContent = "Enter both quarter grades."; return; }
+    if (isNaN(q1) || isNaN(q2) || isNaN(fin)) { out.textContent = "Enter numbers from 0 to 100."; return; }
+    var base = q1 * 0.45 + q2 * 0.45;
+    if (fin === null) {
+      out.textContent = "Enter the final exam score, or see what you need below.";
+    } else {
+      var g = base + fin * 0.1;
+      out.textContent = "Semester grade: " + g.toFixed(1) + " (" + letterFor(g) + ")";
+    }
+    var parts = [];
+    [[90, "A"], [80, "B"], [70, "C"], [60, "D"]].forEach(function (t) {
+      var req = (t[0] - base) / 0.1;
+      if (req <= 0) parts.push(t[1] + ": already secured");
+      else if (req > 100) parts.push(t[1] + ": not reachable");
+      else parts.push(t[1] + ": " + req.toFixed(1));
+    });
+    need.textContent = "Final exam score needed for each letter (" + parts.join("; ") + ").";
+  }
+  ["gcMajor", "gcMinor"].forEach(function (id) { document.getElementById(id).addEventListener("input", updateQuarterCalc); });
+  ["gcQ1", "gcQ2", "gcFinal"].forEach(function (id) { document.getElementById(id).addEventListener("input", updateSemesterCalc); });
+
+  // ---------- Lesson planner ----------
+  var LP_FIELDS = ["lpTitle", "lpDate", "lpClass", "lpLength", "lpObjective", "lpContext", "lpSuccess",
+    "lpMaterials", "lpWarm", "lpTeach", "lpPractice", "lpIndep", "lpClose", "lpDiff", "lpNotes"];
+  var LP_STORE = "financeToolkit.lesson.v1";
+
+  function readLP() {
+    var out = {};
+    LP_FIELDS.forEach(function (id) { out[id] = document.getElementById(id).value; });
+    return out;
+  }
+  function writeLP(data) {
+    LP_FIELDS.forEach(function (id) {
+      if (data && data[id] != null) document.getElementById(id).value = data[id];
+    });
+  }
+  try { writeLP(JSON.parse(localStorage.getItem(LP_STORE))); } catch (e) { /* ignore */ }
+
+  var lpSaveTimer;
+  LP_FIELDS.forEach(function (id) {
+    document.getElementById(id).addEventListener("input", function () {
+      clearTimeout(lpSaveTimer);
+      lpSaveTimer = setTimeout(function () {
+        try { localStorage.setItem(LP_STORE, JSON.stringify(readLP())); } catch (e) { /* ignore */ }
+      }, 300);
+    });
+  });
+
+  function line(label, value) {
+    return label + ": " + (value && value.trim() ? value.trim() : "(not filled in)");
+  }
+  function buildPlan(d) {
+    return [
+      "LESSON PLAN: " + (d.lpTitle.trim() || "(untitled)"),
+      line("Date", d.lpDate),
+      line("Class", d.lpClass),
+      line("Length", d.lpLength ? d.lpLength + " min" : ""),
+      "",
+      line("Objective", d.lpObjective),
+      line("Real-world decision", d.lpContext),
+      line("Success criteria", d.lpSuccess),
+      line("Materials", d.lpMaterials),
+      "",
+      "FLOW",
+      "  Warm-up / hook: " + (d.lpWarm || "-") + " min",
+      "  Model the math / concept: " + (d.lpTeach || "-") + " min",
+      "  Guided practice: " + (d.lpPractice || "-") + " min",
+      "  Independent or partner scenario: " + (d.lpIndep || "-") + " min",
+      "  Closing / exit ticket: " + (d.lpClose || "(none)"),
+      "",
+      line("Support and extension", d.lpDiff),
+      line("Notes for next time", d.lpNotes)
+    ].join("\n");
+  }
+
+  var preview = document.getElementById("lpPreview");
+  var status = document.getElementById("lpStatus");
+  document.getElementById("lpCopy").addEventListener("click", function () {
+    var text = buildPlan(readLP());
+    preview.textContent = text;
+    preview.style.display = "block";
+    function done(ok) { status.textContent = ok ? "Copied." : "Copy failed. The plan is shown below; select and copy it."; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+    } else {
+      done(false);
+    }
+  });
+  document.getElementById("lpPrint").addEventListener("click", function () {
+    window.print();
+  });
+  document.getElementById("lpClear").addEventListener("click", function () {
+    if (!confirm("Clear this lesson plan?")) return;
+    LP_FIELDS.forEach(function (id) { document.getElementById(id).value = ""; });
+    try { localStorage.removeItem(LP_STORE); } catch (e) { /* ignore */ }
+    preview.style.display = "none";
+    status.textContent = "";
+  });
+})();
+</script>
+</body>
+</html>

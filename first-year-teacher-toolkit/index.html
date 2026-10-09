@@ -138,6 +138,21 @@
   summary { cursor: pointer; font-weight: 600; }
   dl dt { font-weight: 600; margin-top: 10px; }
   dl dd { margin: 2px 0 0 0; color: var(--muted); }
+  table.data { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  table.data th, table.data td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.data th { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
+  table.data td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.data tr.past { color: var(--muted); }
+  table.data tr.past td:first-child { text-decoration: line-through; }
+  .badge {
+    display: inline-block; font-size: 0.75rem; padding: 1px 8px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--muted); white-space: nowrap;
+  }
+  .badge.quarter { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .badge.grades { background: var(--accent-soft); color: var(--ink); border-color: var(--accent); }
+  .badge.half { border-color: var(--warn); color: var(--warn); }
+  .badge.exam { background: var(--warn); color: #fff; border-color: var(--warn); }
+  .table-wrap { overflow-x: auto; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   @media print {
     nav, .no-print { display: none !important; }
@@ -158,6 +173,7 @@
   <div class="inner">
     <button role="tab" aria-selected="true" aria-controls="p-start" data-tab="start">Start Here</button>
     <button role="tab" aria-selected="false" aria-controls="p-checklist" data-tab="checklist">Checklists</button>
+    <button role="tab" aria-selected="false" aria-controls="p-calendar" data-tab="calendar">Calendar &amp; Pacing</button>
     <button role="tab" aria-selected="false" aria-controls="p-lesson" data-tab="lesson">Lesson Planner</button>
     <button role="tab" aria-selected="false" aria-controls="p-ideas" data-tab="ideas">Unit Activities</button>
     <button role="tab" aria-selected="false" aria-controls="p-management" data-tab="management">Classroom Management</button>
@@ -232,6 +248,71 @@
       </div>
     </div>
     <div id="checklists"></div>
+  </section>
+
+  <!-- CALENDAR & PACING -->
+  <section id="p-calendar" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>2026–27 school year at a glance</h2>
+      <p class="muted">Built from the Sumter School District Modified Year Round 2026–2027 calendar. Always confirm dates against the official calendar, since the district can change them.</p>
+      <p id="calNow"></p>
+      <div id="calNext"></div>
+    </div>
+
+    <div class="card">
+      <h2>Instructional days per quarter</h2>
+      <p class="muted">Counts weekdays only. No-school days (holidays, breaks, teacher workdays) are removed. Half days are counted separately, and the high school exam half days are shown as exam days instead of instruction. Fall Break (Oct 12) and the March 26 spring holiday are listed on the calendar as inclement weather days, so they could become school days if weather days are needed.</p>
+      <div class="table-wrap">
+        <table class="data" id="calCounts">
+          <thead><tr><th>Quarter</th><th>Dates</th><th class="num">Full days</th><th class="num">Half days</th><th class="num">Exam half days</th><th class="num">Instructional days (about)</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Suggested pacing for your course</h2>
+      <p class="muted">A starting point for a one-semester Advanced Personal Finance course. Pick the stretch of the calendar you are planning for. The day counts adjust to the real number of instructional days, and you can change the order or weights to match your state standards and district pacing guide.</p>
+      <label class="field" for="pacePick">Plan for</label>
+      <select id="pacePick">
+        <option value="s1">Semester 1 (Quarters 1 and 2)</option>
+        <option value="s2">Semester 2 (Quarters 3 and 4)</option>
+        <option value="q1">Quarter 1</option>
+        <option value="q2">Quarter 2</option>
+        <option value="q3">Quarter 3</option>
+        <option value="q4">Quarter 4</option>
+      </select>
+      <p id="paceTotal" class="muted"></p>
+      <div class="table-wrap">
+        <table class="data" id="paceTable">
+          <thead><tr><th>Unit</th><th class="num">Share</th><th class="num">Days</th><th>Anchor decision for students</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="tip"><strong>Build in slack:</strong> Hold two or three days back for reteaching, make-up quizzes, and weather days. Put the capstone project due date a few days before the exam half days so it does not collide with exams.</div>
+    </div>
+
+    <div class="card">
+      <h2>Grading rhythm</h2>
+      <p>Plan your major assessments so grades are in before each reporting date.</p>
+      <ul>
+        <li><strong>Interims issued:</strong> Sep 4, Nov 12, Feb 5, Apr 21. Have at least two or three grades entered before each one so parents see a real picture.</li>
+        <li><strong>Report cards issued:</strong> Oct 20, Jan 21, Mar 25, May 21. Finalize grades a few days earlier.</li>
+        <li><strong>Parent-teacher conference half days:</strong> Sep 18 and Mar 12. Use the conference script in "Words to Use."</li>
+        <li><strong>High school exam half days:</strong> Dec 17–18 and May 20–21. Plan review the week before, not the day before.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Every date on the calendar</h2>
+      <label class="row" style="margin-bottom:8px"><input type="checkbox" id="calHidePast" checked> <span>Hide dates that have passed</span></label>
+      <div class="table-wrap">
+        <table class="data" id="calEvents">
+          <thead><tr><th>Date</th><th>What</th><th>Type</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
   <!-- LESSON PLANNER -->
@@ -491,6 +572,17 @@ I'd be happy to walk you through the unit materials. Would [day/time] work for a
 
 Best,
 [Your name]</pre>
+      </details>
+      <details>
+        <summary>Parent-teacher conference (half days: Sep 18 and Mar 12)</summary>
+        <pre class="template">Before the meeting, bring: current grade and missing work, one strength with a specific example, one growth area with a specific next step, and a work sample.
+
+Opening: "Thank you for coming. I want to start with what [Student] is doing well: [specific example]."
+Growth area: "The area I'd like to work on together is [specific skill]. Here's what I'm doing in class: [action]. Here's something that helps at home: [simple suggestion]."
+Listen: "What are you noticing at home? Is there anything I should know that would help me teach [Student] better?"
+Close: "Here's our plan: [1-2 next steps and a date]. I'll follow up by [email/call] on [day]."
+
+If a parent raises something outside your role (grades appeals, discipline, services): "I want to make sure you get the right answer. Let me connect you with [counselor/administrator] and follow up this week."</pre>
       </details>
       <div class="tip"><strong>Rule of thumb:</strong> Wait before replying to an angry email. Stick to facts, and loop in your administrator if the conversation escalates.</div>
     </div>
@@ -815,6 +907,248 @@ Best,
     updateProgress();
   });
   updateProgress();
+
+  // ---------- Calendar & pacing (Sumter SD modified year-round, 2026-27) ----------
+  function ymd(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function dkey(d) {
+    return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+  }
+  function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+  function dateRange(a, b) {
+    var out = [], d = ymd(a), end = ymd(b);
+    while (d <= end) { out.push(dkey(d)); d = addDays(d, 1); }
+    return out;
+  }
+  function fmt(d, withYear) {
+    var o = { weekday: "short", month: "short", day: "numeric" };
+    if (withYear) o.year = "numeric";
+    return d.toLocaleDateString("en-US", o);
+  }
+  function mk(tag, text, cls) {
+    var e = document.createElement(tag);
+    if (text != null) e.textContent = text;
+    if (cls) e.className = cls;
+    return e;
+  }
+
+  // No-school weekdays for students (holidays, breaks, teacher workdays)
+  var NO_SCHOOL = [].concat(
+    ["2026-09-07", "2026-10-12", "2026-11-03", "2026-11-11"],
+    dateRange("2026-11-23", "2026-11-27"),
+    dateRange("2026-12-21", "2027-01-01"),
+    ["2027-01-04", "2027-01-18", "2027-02-15"],
+    dateRange("2027-03-26", "2027-04-02"),
+    ["2027-04-23", "2027-05-24", "2027-05-31"]
+  );
+  var HALF_DAYS = ["2026-08-28", "2026-09-18", "2026-10-09", "2027-01-15", "2027-03-12"];
+  var EXAM_DAYS = ["2026-12-17", "2026-12-18", "2027-05-20", "2027-05-21"];
+  var QUARTERS = [
+    { id: "q1", name: "Quarter 1", start: "2026-08-04", end: "2026-10-06" },
+    { id: "q2", name: "Quarter 2", start: "2026-10-07", end: "2026-12-18" },
+    { id: "q3", name: "Quarter 3", start: "2027-01-05", end: "2027-03-10" },
+    { id: "q4", name: "Quarter 4", start: "2027-03-11", end: "2027-05-21" }
+  ];
+
+  var EVENTS = [
+    { d: "2026-08-03", t: "workday", w: "Teacher workday (no students)" },
+    { d: "2026-08-04", t: "quarter", w: "First day of school" },
+    { d: "2026-08-28", t: "half", w: "½ day: school professional learning day" },
+    { d: "2026-09-04", t: "grades", w: "Interims issued" },
+    { d: "2026-09-07", t: "off", w: "Labor Day" },
+    { d: "2026-09-18", t: "half", w: "Parent-teacher conferences, ½ day" },
+    { d: "2026-10-06", t: "quarter", w: "End of Quarter 1" },
+    { d: "2026-10-07", t: "quarter", w: "First day of Quarter 2" },
+    { d: "2026-10-09", t: "half", w: "½ day: district collaborative planning" },
+    { d: "2026-10-12", t: "off", w: "Fall Break (also an inclement weather day)" },
+    { d: "2026-10-20", t: "grades", w: "Report cards issued" },
+    { d: "2026-11-03", t: "off", w: "Election Day" },
+    { d: "2026-11-11", t: "off", w: "Veterans Day" },
+    { d: "2026-11-12", t: "grades", w: "Interims issued" },
+    { d: "2026-11-23", e: "2026-11-27", t: "off", w: "Thanksgiving break" },
+    { d: "2026-12-17", t: "exam", w: "High school exams, ½ day" },
+    { d: "2026-12-18", t: "exam", w: "High school exams, ½ day. Last day of Quarter 2" },
+    { d: "2026-12-21", e: "2027-01-01", t: "off", w: "Winter holiday" },
+    { d: "2027-01-04", t: "workday", w: "Teacher workday, no students (also an inclement weather day)" },
+    { d: "2027-01-05", t: "quarter", w: "School resumes. First day of Quarter 3" },
+    { d: "2027-01-15", t: "half", w: "½ day: district collaborative planning" },
+    { d: "2027-01-18", t: "off", w: "Dr. Martin Luther King Jr. holiday" },
+    { d: "2027-01-21", t: "grades", w: "Report cards issued" },
+    { d: "2027-02-05", t: "grades", w: "Interims issued" },
+    { d: "2027-02-15", t: "workday", w: "Teacher workday (no students)" },
+    { d: "2027-03-10", t: "quarter", w: "Last day of Quarter 3" },
+    { d: "2027-03-11", t: "quarter", w: "First day of Quarter 4" },
+    { d: "2027-03-12", t: "half", w: "Parent-teacher conferences, ½ day" },
+    { d: "2027-03-25", t: "grades", w: "Report cards issued" },
+    { d: "2027-03-26", e: "2027-04-02", t: "off", w: "Spring holiday (Mar 26 is also an inclement weather day)" },
+    { d: "2027-04-21", t: "grades", w: "Interims issued" },
+    { d: "2027-04-23", t: "workday", w: "Teacher workday (no students)" },
+    { d: "2027-05-20", t: "exam", w: "High school exams, ½ day" },
+    { d: "2027-05-21", t: "exam", w: "High school exams, ½ day. Last day of school. Report cards issued" },
+    { d: "2027-05-24", t: "workday", w: "Teacher workday (no students)" },
+    { d: "2027-05-31", t: "off", w: "Memorial Day" }
+  ];
+  var TYPE_LABEL = { quarter: "Quarter", grades: "Grades", half: "Half day", exam: "Exams", off: "No school", workday: "Workday" };
+
+  function countDays(start, end) {
+    var full = 0, half = 0, exam = 0, d = ymd(start), last = ymd(end);
+    while (d <= last) {
+      var dow = d.getDay();
+      if (dow !== 0 && dow !== 6) {
+        var k = dkey(d);
+        if (NO_SCHOOL.indexOf(k) === -1) {
+          if (EXAM_DAYS.indexOf(k) !== -1) exam++;
+          else if (HALF_DAYS.indexOf(k) !== -1) half++;
+          else full++;
+        }
+      }
+      d = addDays(d, 1);
+    }
+    return { full: full, half: half, exam: exam };
+  }
+  function sumCounts(list) {
+    return list.reduce(function (a, c) {
+      return { full: a.full + c.full, half: a.half + c.half, exam: a.exam + c.exam };
+    }, { full: 0, half: 0, exam: 0 });
+  }
+  function instr(c) { return Math.round(c.full + c.half / 2); }
+
+  var qCounts = {};
+  QUARTERS.forEach(function (q) { qCounts[q.id] = countDays(q.start, q.end); });
+
+  function startOfToday() { var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+
+  function renderNow() {
+    var today = startOfToday();
+    var nowEl = document.getElementById("calNow");
+    var q = null;
+    QUARTERS.forEach(function (x) { if (today >= ymd(x.start) && today <= ymd(x.end)) q = x; });
+    var msg;
+    if (q) {
+      var left = Math.round((ymd(q.end) - today) / 86400000);
+      msg = "Today is " + fmt(today, true) + ". You are in " + q.name + " (" + fmt(ymd(q.start)) + " to " + fmt(ymd(q.end)) + "), which ends in " + left + " calendar day" + (left === 1 ? "" : "s") + ".";
+    } else if (today < ymd("2026-08-04")) {
+      msg = "Today is " + fmt(today, true) + ". The first day of school is " + fmt(ymd("2026-08-04")) + ".";
+    } else if (today > ymd("2027-05-21")) {
+      msg = "Today is " + fmt(today, true) + ". The 2026–27 school year has ended.";
+    } else {
+      msg = "Today is " + fmt(today, true) + ". Students are on a break or between quarters.";
+    }
+    nowEl.textContent = msg;
+
+    var nextEl = document.getElementById("calNext");
+    nextEl.textContent = "";
+    var upcoming = EVENTS.filter(function (ev) { return ymd(ev.e || ev.d) >= today; }).slice(0, 5);
+    if (!upcoming.length) return;
+    nextEl.appendChild(mk("h3", "Coming up"));
+    var ul = document.createElement("ul");
+    upcoming.forEach(function (ev) {
+      var li = document.createElement("li");
+      var when = ev.e ? fmt(ymd(ev.d)) + " to " + fmt(ymd(ev.e)) : fmt(ymd(ev.d));
+      li.appendChild(mk("strong", when + ": "));
+      li.appendChild(document.createTextNode(ev.w));
+      ul.appendChild(li);
+    });
+    nextEl.appendChild(ul);
+  }
+
+  function renderCounts() {
+    var body = document.querySelector("#calCounts tbody");
+    body.textContent = "";
+    function row(name, dates, c, bold) {
+      var tr = document.createElement("tr");
+      tr.appendChild(mk(bold ? "th" : "td", name));
+      tr.appendChild(mk("td", dates));
+      tr.appendChild(mk("td", String(c.full), "num"));
+      tr.appendChild(mk("td", String(c.half), "num"));
+      tr.appendChild(mk("td", String(c.exam), "num"));
+      tr.appendChild(mk("td", String(instr(c)), "num"));
+      body.appendChild(tr);
+    }
+    QUARTERS.forEach(function (q) {
+      row(q.name, fmt(ymd(q.start)) + " to " + fmt(ymd(q.end)), qCounts[q.id]);
+    });
+    row("Semester 1", "Quarters 1 and 2", sumCounts([qCounts.q1, qCounts.q2]), true);
+    row("Semester 2", "Quarters 3 and 4", sumCounts([qCounts.q3, qCounts.q4]), true);
+    row("Whole year", "Aug 4 to May 21", sumCounts([qCounts.q1, qCounts.q2, qCounts.q3, qCounts.q4]), true);
+  }
+
+  var UNITS = [
+    { name: "Course launch and money mindset", w: 5, anchor: "What do I want my money to do for me?" },
+    { name: "Income, careers, and paychecks", w: 12, anchor: "Which job offer is the better deal after taxes and benefits?" },
+    { name: "Taxes", w: 10, anchor: "How much of my first paycheck do I keep, and how should I fill out a W-4?" },
+    { name: "Banking and budgeting", w: 14, anchor: "Which account and which budget fit my first year on my own?" },
+    { name: "Saving and investing", w: 18, anchor: "How do I start saving $100 a month, and what are the tradeoffs of each place to put it?" },
+    { name: "Credit and debt", w: 16, anchor: "Should I take this card, loan, or buy-now-pay-later offer?" },
+    { name: "Insurance and risk", w: 8, anchor: "Which plan costs less when something goes wrong?" },
+    { name: "Big purchases, consumer protection, and scams", w: 9, anchor: "Is this deal real, and can I afford the total cost?" },
+    { name: "Capstone project and review", w: 8, anchor: "Put it together: a one-year financial plan." }
+  ];
+
+  function allocate(total) {
+    var raw = UNITS.map(function (u) { return u.w / 100 * total; });
+    var days = raw.map(Math.floor);
+    var short = total - days.reduce(function (a, b) { return a + b; }, 0);
+    raw.map(function (r, i) { return { i: i, f: r - Math.floor(r) }; })
+      .sort(function (a, b) { return b.f - a.f; })
+      .slice(0, short)
+      .forEach(function (x) { days[x.i]++; });
+    return days;
+  }
+
+  function renderPacing() {
+    var pick = document.getElementById("pacePick").value;
+    var c;
+    if (pick === "s1") c = sumCounts([qCounts.q1, qCounts.q2]);
+    else if (pick === "s2") c = sumCounts([qCounts.q3, qCounts.q4]);
+    else c = qCounts[pick];
+    var total = instr(c);
+    document.getElementById("paceTotal").textContent =
+      "About " + total + " instructional days (" + c.full + " full days, " + c.half + " half days counted as half, and " + c.exam + " exam half days not counted).";
+    var days = allocate(total);
+    var body = document.querySelector("#paceTable tbody");
+    body.textContent = "";
+    UNITS.forEach(function (u, i) {
+      var tr = document.createElement("tr");
+      tr.appendChild(mk("td", u.name));
+      tr.appendChild(mk("td", u.w + "%", "num"));
+      tr.appendChild(mk("td", String(days[i]), "num"));
+      tr.appendChild(mk("td", u.anchor));
+      body.appendChild(tr);
+    });
+  }
+  document.getElementById("pacePick").addEventListener("change", renderPacing);
+
+  function renderEvents() {
+    var today = startOfToday();
+    var hidePast = document.getElementById("calHidePast").checked;
+    var body = document.querySelector("#calEvents tbody");
+    body.textContent = "";
+    EVENTS.forEach(function (ev) {
+      var past = ymd(ev.e || ev.d) < today;
+      if (past && hidePast) return;
+      var tr = document.createElement("tr");
+      if (past) tr.className = "past";
+      tr.appendChild(mk("td", ev.e ? fmt(ymd(ev.d)) + " to " + fmt(ymd(ev.e)) : fmt(ymd(ev.d))));
+      tr.appendChild(mk("td", ev.w));
+      var tdType = document.createElement("td");
+      tdType.appendChild(mk("span", TYPE_LABEL[ev.t], "badge " + ev.t));
+      tr.appendChild(tdType);
+      body.appendChild(tr);
+    });
+    if (!body.children.length) {
+      var tr2 = document.createElement("tr");
+      var td2 = mk("td", "No upcoming dates left on the calendar.");
+      td2.colSpan = 3;
+      tr2.appendChild(td2);
+      body.appendChild(tr2);
+    }
+  }
+  document.getElementById("calHidePast").addEventListener("change", renderEvents);
+
+  renderNow();
+  renderCounts();
+  renderPacing();
+  renderEvents();
 
   // ---------- Lesson planner ----------
   var LP_FIELDS = ["lpTitle", "lpDate", "lpClass", "lpLength", "lpObjective", "lpContext", "lpSuccess",

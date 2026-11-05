@@ -11,10 +11,26 @@ const isHidden = atom<'usage-monitor', 'isHidden'>({ plugin: 'usage-monitor', ke
 
 const PANE = 'usage-monitor'
 
-const bar = (pct: number, width = 24) => {
-  const n = Math.max(0, Math.min(width, Math.round((pct / 100) * width)))
-  return '█'.repeat(n) + '░'.repeat(width - n)
+const EIGHTHS = ['', '▏', '▎', '▍', '▌', '▋', '▊', '▉']
+
+// Smooth bar: whole blocks plus one partial block, then a thin track.
+const bar = (pct: number, width = 20) => {
+  const eighths = Math.round((Math.max(0, Math.min(100, pct)) / 100) * width * 8)
+  const full = Math.floor(eighths / 8)
+  const part = EIGHTHS[eighths % 8] ?? ''
+  const filled = '█'.repeat(full) + part
+  return { filled, track: '─'.repeat(Math.max(0, width - filled.length)) }
 }
+
+const until = (iso: string | undefined, now: number) => {
+  const ms = iso ? Date.parse(iso) - now : NaN
+  if (!Number.isFinite(ms) || ms <= 0) return ''
+  const m = Math.floor(ms / 60000)
+  const d = Math.floor(m / 1440)
+  const h = Math.floor((m % 1440) / 60)
+  return d > 0 ? `resets ${d}d ${h}h` : h > 0 ? `resets ${h}h ${m % 60}m` : `resets ${m}m`
+}
+
 const label = (k: string) =>
   k === 'five_hour' ? '5-hour' : k === 'seven_day' ? '7-day' : k
 const tint = (p: number) => (p >= 90 ? 'red' : p >= 70 ? 'yellow' : 'green')
@@ -63,39 +79,56 @@ async function view($: any, e: any) {
   if (!s) return <Text dimColor>Waiting for usage data…</Text>
   const crabList = await read($, crabs)
   const running = crabList.filter(c => !c.isDone).length
+  const now = await $.clock.now()
+
+  const rows: { key: string; name: string; pct: number; note: string }[] = []
+  if (s.percent !== null) {
+    rows.push({
+      key: 'ctx',
+      name: 'Context',
+      pct: s.percent,
+      note: s.tokens !== null ? `${Math.round(s.tokens / 1000)}k / ${Math.round(s.window / 1000)}k` : '',
+    })
+  }
+  for (const l of s.limits) {
+    rows.push({ key: l.kind, name: label(l.kind), pct: l.percentUsed, note: until(l.resetsAt, now) })
+  }
+
   return (
-    <Box flexDirection="column">
-      {s.percent !== null && (
-        <Text color={tint(s.percent)}>
-          Context {bar(s.percent)} {Math.round(s.percent)}%
-        </Text>
-      )}
-      {s.tokens !== null && (
-        <Text dimColor>
-          {s.tokens.toLocaleString()} / {s.window.toLocaleString()} tokens
-        </Text>
-      )}
-      {s.limits.map(l => (
-        <Text key={l.kind} color={tint(l.percentUsed)}>
-          {label(l.kind)} {bar(l.percentUsed)} {Math.round(l.percentUsed)}%
-        </Text>
-      ))}
-      {s.limits.length === 0 && <Text dimColor>No rate-limit data yet</Text>}
-      {s.usd !== null && <Text>Session cost ${s.usd.toFixed(2)}</Text>}
-      <Text bold>Subagents ({running} running)</Text>
-      {crabList.length === 0 && <Text dimColor>none yet</Text>}
-      {crabList.length > 0 && (
-        <Box flexDirection="row" flexWrap="wrap">
-          {crabList.map(c => (
-            <Text key={c.id} dimColor={c.isDone}>
-              {c.isDone ? '🦀💤' : '🦀'}{' '}
-            </Text>
-          ))}
-        </Box>
-      )}
+    <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={1}>
+      <Box justifyContent="space-between">
+        <Text bold color="cyan">◆ USAGE</Text>
+        {s.usd !== null && <Text color="magenta">${s.usd.toFixed(2)}</Text>}
+      </Box>
+      {rows.map(row => {
+        const b = bar(row.pct)
+        return (
+          <Box key={row.key}>
+            <Text bold>{row.name.padEnd(8)}</Text>
+            <Text color={tint(row.pct)}>{b.filled}</Text>
+            <Text dimColor>{b.track}</Text>
+            <Text color={tint(row.pct)} bold>{` ${String(Math.round(row.pct)).padStart(3)}%`}</Text>
+            <Text dimColor>{row.note ? `  ${row.note}` : ''}</Text>
+          </Box>
+        )
+      })}
+      {rows.length === 0 && <Text dimColor>No usage data yet</Text>}
+      <Box>
+        <Text bold>{'Agents'.padEnd(8)}</Text>
+        {running > 0 ? (
+          <Text color="green">● {running} running</Text>
+        ) : (
+          <Text dimColor>○ idle</Text>
+        )}
+        {crabList.length > 0 && <Text> </Text>}
+        {crabList.slice(-12).map(c => (
+          <Text key={c.id} dimColor={c.isDone}>
+            {c.isDone ? '🦀💤' : '🦀'}{' '}
+          </Text>
+        ))}
+      </Box>
     </Box>
   )
-
 }
 
 export const register: Register = on => {

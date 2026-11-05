@@ -1,0 +1,1 @@
+{ "name": "usage-monitor", "version": "0.1.0", "description": "Always-visible pane and status line showing context, rate-limit and cost usage", "types": "./types/index.d.ts" }
